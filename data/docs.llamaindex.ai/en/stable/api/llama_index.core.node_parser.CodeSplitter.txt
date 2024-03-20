@@ -1,0 +1,43 @@
+CodeSplitter#
+- pydantic model llama_index.core.node_parser.CodeSplitter#
+Split code using a AST parser.
+Thank you to Kevin Lu / SweepAI for suggesting this elegant code splitting solution. https://docs.sweep.dev/blogs/chunking-2m-files
+Show JSON schema
+{ "title": "CodeSplitter", "description": "Split code using a AST parser.\n\nThank you to Kevin Lu / SweepAI for suggesting this elegant code splitting solution.\nhttps://docs.sweep.dev/blogs/chunking-2m-files", "type": "object", "properties": { "include_metadata": { "title": "Include Metadata", "description": "Whether or not to consider metadata when splitting.", "default": true, "type": "boolean" }, "include_prev_next_rel": { "title": "Include Prev Next Rel", "description": "Include prev/next node relationships.", "default": true, "type": "boolean" }, "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "language": { "title": "Language", "description": "The programming language of the code being split.", "type": "string" }, "chunk_lines": { "title": "Chunk Lines", "description": "The number of lines to include in each chunk.", "default": 40, "exclusiveMinimum": 0, "type": "integer" }, "chunk_lines_overlap": { "title": "Chunk Lines Overlap", "description": "How many lines of code each chunk overlaps with.", "default": 15, "exclusiveMinimum": 0, "type": "integer" }, "max_chars": { "title": "Max Chars", "description": "Maximum number of characters per chunk.", "default": 1500, "exclusiveMinimum": 0, "type": "integer" }, "class_name": { "title": "Class Name", "type": "string", "default": "CodeSplitter" } }, "required": [ "language" ] }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+chunk_lines (int)
+chunk_lines_overlap (int)
+language (str)
+max_chars (int)
+-
+- Validators
+_validate_id_func»
+id_func
+-
+- field chunk_lines: int = 40#
+The number of lines to include in each chunk.
+- Constraints
+exclusiveMinimum = 0
+-
+- field chunk_lines_overlap: int = 15#
+How many lines of code each chunk overlaps with.
+- Constraints
+exclusiveMinimum = 0
+-
+- field language: str [Required]#
+The programming language of the code being split.
+- field max_chars: int = 1500#
+Maximum number of characters per chunk.
+- Constraints
+exclusiveMinimum = 0
+-
+- classmethod class_name() str #
+Get the class name, used as a unique ID in serialization.
+This provides a key that makes serialization robust against actual class name changes.
+- classmethod from_defaults(language: str, chunk_lines: int = 40, chunk_lines_overlap: int = 15, max_chars: int = 1500, callback_manager: Optional[CallbackManager] = None, parser: Any = None) CodeSplitter #
+Create a CodeSplitter with default values.
+- split_text(text: str) List[str] #
+Split incoming code and return chunks using the AST.

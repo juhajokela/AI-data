@@ -1,0 +1,32 @@
+Retriever Query Engine#
+- class llama_index.core.query_engine.retriever_query_engine.RetrieverQueryEngine(retriever: BaseRetriever, response_synthesizer: Optional[BaseSynthesizer] = None, node_postprocessors: Optional[List[BaseNodePostprocessor]] = None, callback_manager: Optional[CallbackManager] = None)#
+Retriever query engine.
+- Parameters
+retriever (BaseRetriever) – A retriever object.
+response_synthesizer (Optional[BaseSynthesizer]) – A BaseSynthesizer object.
+callback_manager (Optional[CallbackManager]) – A callback manager.
+-
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- classmethod from_args(retriever: BaseRetriever, llm: Optional[LLM] = None, response_synthesizer: Optional[BaseSynthesizer] = None, node_postprocessors: Optional[List[BaseNodePostprocessor]] = None, response_mode: ResponseMode = ResponseMode.COMPACT, text_qa_template: Optional[BasePromptTemplate] = None, refine_template: Optional[BasePromptTemplate] = None, summary_template: Optional[BasePromptTemplate] = None, simple_template: Optional[BasePromptTemplate] = None, output_cls: Optional[BaseModel] = None, use_async: bool = False, streaming: bool = False, service_context: Optional[ServiceContext] = None, **kwargs: Any) RetrieverQueryEngine #
+Initialize a RetrieverQueryEngine object.”.
+- Parameters
+retriever (BaseRetriever) – A retriever object.
+service_context (Optional[ServiceContext]) – A ServiceContext object.
+node_postprocessors (Optional[List[BaseNodePostprocessor]]) – A list of node postprocessors.
+verbose (bool) – Whether to print out debug info.
+response_mode (ResponseMode) – A ResponseMode object.
+text_qa_template (Optional[BasePromptTemplate]) – A BasePromptTemplate object.
+refine_template (Optional[BasePromptTemplate]) – A BasePromptTemplate object.
+simple_template (Optional[BasePromptTemplate]) – A BasePromptTemplate object.
+use_async (bool) – Whether to use async.
+streaming (bool) – Whether to use streaming.
+optimizer (Optional[BaseTokenUsageOptimizer]) – A BaseTokenUsageOptimizer object.
+-
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- property retriever: BaseRetriever#
+Get the retriever object.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.

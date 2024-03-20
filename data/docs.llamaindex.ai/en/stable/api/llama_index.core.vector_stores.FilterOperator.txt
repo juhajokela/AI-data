@@ -1,0 +1,18 @@
+FilterOperator#
+- class llama_index.core.vector_stores.FilterOperator(value, names=None, *, module=None, qualname=None, type=None, start=1, boundary=None)#
+Bases:
+str,
+Enum
+Vector store filter operator.
+Attributes Summary
+Attributes Documentation
+- CONTAINS = 'contains'#
+- EQ = '=='#
+- GT = '>'#
+- GTE = '>='#
+- IN = 'in'#
+- LT = '<'#
+- LTE = '<='#
+- NE = '!='#
+- NIN = 'nin'#
+- TEXT_MATCH = 'text_match'#

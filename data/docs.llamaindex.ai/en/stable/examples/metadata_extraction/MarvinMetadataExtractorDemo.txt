@@ -1,0 +1,106 @@
+Metadata Extraction and Augmentation w/ Marvin#
+This notebook walks through using
+Marvin to extract and augment metadata from text. Marvin uses the LLM to identify and extract metadata. Metadata can be anything from additional and enhanced questions and answers to business object identification and elaboration. This notebook will demonstrate pulling out and elaborating on Sports Supplement information in a csv document.
+Note: You will need to supply a valid open ai key below to run this notebook.
+Setup#
+%pip install llama-index-llms-openai
+%pip install llama-index-extractors-marvin
+# !pip install marvin
+from llama_index.core import SimpleDirectoryReader
+from llama_index.llms.openai import OpenAI
+from llama_index.core.node_parser import TokenTextSplitter
+from llama_index.extractors.marvin import MarvinMetadataExtractor
+import os
+import openai
+os.environ["OPENAI_API_KEY"] = "sk-..."
+documents = SimpleDirectoryReader("data").load_data()
+# limit document text length
+documents[0].text = documents[0].text[:10000]
+import marvin
+from marvin import ai_model
+from llama_index.core.bridge.pydantic import BaseModel, Field
+marvin.settings.openai.api_key = os.environ["OPENAI_API_KEY"]
+@ai_model
+class SportsSupplement(BaseModel):
+name: str = Field(..., description="The name of the sports supplement")
+description: str = Field(
+..., description="A description of the sports supplement"
+)
+pros_cons: str = Field(
+..., description="The pros and cons of the sports supplement"
+)
+llm_model = "gpt-3.5-turbo"
+# construct text splitter to split texts into chunks for processing
+# this takes a while to process, you can increase processing time by using larger chunk_size
+# file size is a factor too of course
+node_parser = TokenTextSplitter(
+separator=" ", chunk_size=512, chunk_overlap=128
+)
+# create metadata extractor
+metadata_extractor = MarvinMetadataExtractor(
+marvin_model=SportsSupplement, llm_model_string=llm_model
+) # let's extract custom entities for each node.
+# use node_parser to get nodes from the documents
+from llama_index.core.ingestion import IngestionPipeline
+pipeline = IngestionPipeline(transformations=[node_parser, metadata_extractor])
+nodes = pipeline.run(documents=documents, show_progress=True)
+from pprint import pprint
+for i in range(5):
+pprint(nodes[i].metadata)
+{'marvin_metadata': {'description': 'L-arginine alpha-ketoglutarate',
+'name': 'AAKG',
+'pros_cons': '1.0, peak power output, strength–power, '
+'weight training, OTW, 242, 1, 20, nan, A '
+'2006 study found AAKG supplementation '
+'improved maximum effort 1-repetition bench '
+'press and Wingate peak power performance.'}}
+{'marvin_metadata': {'description': 'Gulping down baking soda (sodium '
+'bicarbonate) makes the blood more '
+'alkaline, improving performance in '
+'lactic-acid-fueled events like the 800m '
+'sprint.',
+'name': 'Baking soda',
+'pros_cons': 'Downside: a badly upset stomach.'}}
+{'marvin_metadata': {'description': 'Branched-chain amino acids (BCAAs) are a '
+'group of essential amino acids that '
+'include leucine, isoleucine, and valine. '
+'They are commonly used as a sports '
+'supplement to improve fatigue resistance '
+'and aerobic endurance during activities '
+'such as cycling and circuit training.',
+'name': 'BCAAs',
+'pros_cons': 'Pros: BCAAs can improve fatigue resistance '
+'and enhance aerobic endurance. Cons: '
+'Limited evidence on their effectiveness and '
+'potential side effects.'}}
+{'marvin_metadata': {'description': 'Branched-chain amino acids (BCAAs) are a '
+'group of three essential amino acids: '
+'leucine, isoleucine, and valine. They are '
+'commonly used as a sports supplement to '
+'improve aerobic performance, endurance, '
+'power, and strength. BCAAs can be '
+'beneficial for both aerobic-endurance and '
+'strength-power activities, such as '
+'cycling and circuit training.',
+'name': 'Branched-chain amino acids',
+'pros_cons': 'Pros: BCAAs have been shown to improve '
+'aerobic performance, reduce muscle '
+'soreness, and enhance muscle protein '
+'synthesis. Cons: BCAAs may not be effective '
+'for everyone, and excessive intake can lead '
+'to an imbalance in amino acids.'}}
+{'marvin_metadata': {'description': 'Branched-chain amino acids (BCAAs) are a '
+'group of three essential amino acids: '
+'leucine, isoleucine, and valine. They are '
+'commonly used as a sports supplement to '
+'improve immune defenses in athletes and '
+'promote general fitness. BCAAs are often '
+'used by runners and athletes in other '
+'sports.',
+'name': 'BCAAs',
+'pros_cons': 'Pros: - Can enhance immune defenses in '
+'athletes\n'
+'- May improve general fitness\n'
+'Cons: - Limited evidence for their '
+'effectiveness\n'
+'- Potential side effects'}}

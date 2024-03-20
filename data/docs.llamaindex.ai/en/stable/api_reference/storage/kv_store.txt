@@ -1,0 +1,29 @@
+KV Storage#
+- class llama_index.core.storage.kvstore.SimpleKVStore(data: Optional[Dict[str, Dict[str, dict]]] = None)#
+Simple in-memory Key-Value store.
+- Parameters
+data (Optional[DATA_TYPE]) – data to initialize the store with
+- async adelete(key: str, collection: str = 'data') bool #
+Delete a value from the store.
+- async aget(key: str, collection: str = 'data') Optional[dict] #
+Get a value from the store.
+- async aget_all(collection: str = 'data') Dict[str, dict] #
+Get all values from the store.
+- async aput(key: str, val: dict, collection: str = 'data') None #
+Put a key-value pair into the store.
+- delete(key: str, collection: str = 'data') bool #
+Delete a value from the store.
+- classmethod from_dict(save_dict: dict) SimpleKVStore #
+Load a SimpleKVStore from dict.
+- classmethod from_persist_path(persist_path: str, fs: Optional[AbstractFileSystem] = None) SimpleKVStore #
+Load a SimpleKVStore from a persist path and filesystem.
+- get(key: str, collection: str = 'data') Optional[dict] #
+Get a value from the store.
+- get_all(collection: str = 'data') Dict[str, dict] #
+Get all values from the store.
+- persist(persist_path: str, fs: Optional[AbstractFileSystem] = None) None #
+Persist the store.
+- put(key: str, val: dict, collection: str = 'data') None #
+Put a key-value pair into the store.
+- to_dict() dict #
+Save the store as dict.

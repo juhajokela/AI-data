@@ -1,0 +1,23 @@
+NodeRelationship#
+- class llama_index.core.schema.NodeRelationship(value, names=None, *, module=None, qualname=None, type=None, start=1, boundary=None)#
+Bases:
+str,
+Enum
+Node relationships used in BaseNode class.
+- SOURCE#
+The node is the source document.
+- PREVIOUS#
+The node is the previous node in the document.
+- NEXT#
+The node is the next node in the document.
+- PARENT#
+The node is the parent node in the document.
+- CHILD#
+The node is a child node in the document.
+Attributes Summary
+Attributes Documentation
+- CHILD = '5'#
+- NEXT = '3'#
+- PARENT = '4'#
+- PREVIOUS = '2'#
+- SOURCE = '1'#

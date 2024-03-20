@@ -1,0 +1,66 @@
+LanceDB Vector Store#
+In this notebook we are going to show how to use LanceDB to perform vector searches in LlamaIndex
+If you’re opening this Notebook on colab, you will probably need to install LlamaIndex 🦙.
+%pip install llama-index-vector-stores-lancedb
+!pip install llama-index
+import logging
+import sys
+# Uncomment to see debug logs
+# logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+# logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
+from llama_index.core import SimpleDirectoryReader, Document, StorageContext
+from llama_index.core import VectorStoreIndex
+from llama_index.vector_stores.lancedb import LanceDBVectorStore
+import textwrap
+Setup OpenAI#
+The first step is to configure the openai key. It will be used to created embeddings for the documents loaded into the index
+import openai
+openai.api_key = ""
+Download Data
+!mkdir -p 'data/paul_graham/'
+!wget 'https://raw.githubusercontent.com/run-llama/llama_index/main/docs/examples/data/paul_graham/paul_graham_essay.txt' -O 'data/paul_graham/paul_graham_essay.txt'
+Loading documents#
+Load the documents stored in the
+data/paul_graham/ using the SimpleDirectoryReader
+documents = SimpleDirectoryReader("./data/paul_graham/").load_data()
+print("Document ID:", documents[0].doc_id, "Document Hash:", documents[0].hash)
+Document ID: 855fe1d1-1c1a-4fbe-82ba-6bea663a5920 Document Hash: 4c702b4df575421e1d1af4b1fd50511b226e0c9863dbfffeccb8b689b8448f35
+Create the index#
+Here we create an index backed by LanceDB using the documents loaded previously. LanceDBVectorStore takes a few arguments.
+uri (str, required): Location where LanceDB will store its files.
+table_name (str, optional): The table name where the embeddings will be stored. Defaults to “vectors”.
+nprobes (int, optional): The number of probes used. A higher number makes search more accurate but also slower. Defaults to 20.
+refine_factor: (int, optional): Refine the results by reading extra elements and re-ranking them in memory. Defaults to None
+More details can be found at the LanceDB docs
+vector_store = LanceDBVectorStore(uri="/tmp/lancedb")
+storage_context = StorageContext.from_defaults(vector_store=vector_store)
+index = VectorStoreIndex.from_documents(
+documents, storage_context=storage_context
+)
+Query the index#
+We can now ask questions using our index.
+query_engine = index.as_query_engine()
+response = query_engine.query("How much did Viaweb charge per month?")
+print(textwrap.fill(str(response), 100))
+Viaweb charged $100 per month for a small store and $300 per month for a big one.
+response = query_engine.query("What did the author do growing up?")
+print(textwrap.fill(str(response), 100))
+The author worked on writing and programming outside of school before college. They wrote short
+stories and tried writing programs on the IBM 1401 computer. They also mentioned getting a
+microcomputer, a TRS-80, and started programming on it.
+Appending data#
+You can also add data to an existing index
+del index
+index = VectorStoreIndex.from_documents(
+[Document(text="The sky is purple in Portland, Maine")],
+uri="/tmp/new_dataset",
+)
+query_engine = index.as_query_engine()
+response = query_engine.query("Where is the sky purple?")
+print(textwrap.fill(str(response), 100))
+The sky is purple in Portland, Maine.
+index = VectorStoreIndex.from_documents(documents, uri="/tmp/new_dataset")
+query_engine = index.as_query_engine()
+response = query_engine.query("What companies did the author start?")
+print(textwrap.fill(str(response), 100))
+The author started two companies: Viaweb and Y Combinator.

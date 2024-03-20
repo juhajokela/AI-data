@@ -1,0 +1,1 @@
+get_deeper_nodes# llama_index.core.node_parser.get_deeper_nodes(nodes: List[BaseNode], depth: int = 1) → List[BaseNode]# Get children of root nodes in given nodes that have given depth.

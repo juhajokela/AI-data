@@ -1,0 +1,436 @@
+Agents#
+This doc shows our agent classes - both the high-level and lower-level components.
+There are also legacy classes (e.g. OldOpenAIAgent, and OldReActAgent) that still work but are deprecated.
+- class llama_index.core.agent.AgentChatResponse(response: str = '', sources: ~typing.List[~llama_index.core.tools.types.ToolOutput] = <factory>, source_nodes: ~typing.List[~llama_index.core.schema.NodeWithScore] = <factory>)#
+Agent chat response.
+- class llama_index.core.agent.AgentRunner(agent_worker: BaseAgentWorker, chat_history: Optional[List[ChatMessage]] = None, state: Optional[AgentState] = None, memory: Optional[BaseMemory] = None, llm: Optional[LLM] = None, callback_manager: Optional[CallbackManager] = None, init_task_state_kwargs: Optional[dict] = None, delete_task_on_finish: bool = False, default_tool_choice: str = 'auto', verbose: bool = False)#
+Agent runner.
+Top-level agent orchestrator that can create tasks, run each step in a task, or run a task e2e. Stores state and keeps track of tasks.
+- Parameters
+agent_worker (BaseAgentWorker) – step executor
+chat_history (Optional[List[ChatMessage]], optional) – chat history. Defaults to None.
+state (Optional[AgentState], optional) – agent state. Defaults to None.
+memory (Optional[BaseMemory], optional) – memory. Defaults to None.
+llm (Optional[LLM], optional) – LLM. Defaults to None.
+callback_manager (Optional[CallbackManager], optional) – callback manager. Defaults to None.
+init_task_state_kwargs (Optional[dict], optional) – init task state kwargs. Defaults to None.
+-
+- async achat(message: str, chat_history: Optional[List[ChatMessage]] = None, tool_choice: Optional[Union[str, dict]] = None) AgentChatResponse #
+Async version of main chat interface.
+- async arun_step(task_id: str, input: Optional[str] = None, step: Optional[TaskStep] = None, **kwargs: Any) TaskStepOutput #
+Run step (async).
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- async astream_chat(message: str, chat_history: Optional[List[ChatMessage]] = None, tool_choice: Optional[Union[str, dict]] = None) StreamingAgentChatResponse #
+Async version of main chat interface.
+- async astream_step(task_id: str, input: Optional[str] = None, step: Optional[TaskStep] = None, **kwargs: Any) TaskStepOutput #
+Run step (async stream).
+- chat(message: str, chat_history: Optional[List[ChatMessage]] = None, tool_choice: Optional[Union[str, dict]] = None) AgentChatResponse #
+Main chat interface.
+- chat_repl() None #
+Enter interactive chat REPL.
+- delete_task(task_id: str) None #
+Delete task.
+NOTE: this will not delete any previous executions from memory.
+- finalize_response(task_id: str, step_output: Optional[TaskStepOutput] = None) Union[AgentChatResponse, StreamingAgentChatResponse] #
+Finalize response.
+- get_completed_step(task_id: str, step_id: str, **kwargs: Any) TaskStepOutput #
+Get completed step.
+- get_completed_steps(task_id: str, **kwargs: Any) List[TaskStepOutput] #
+Get completed steps.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- get_upcoming_steps(task_id: str, **kwargs: Any) List[TaskStep] #
+Get upcoming steps.
+- reset() None #
+Reset conversation state.
+- run_step(task_id: str, input: Optional[str] = None, step: Optional[TaskStep] = None, **kwargs: Any) TaskStepOutput #
+Run step.
+- stream_chat(message: str, chat_history: Optional[List[ChatMessage]] = None, tool_choice: Optional[Union[str, dict]] = None) StreamingAgentChatResponse #
+Stream chat interface.
+- stream_step(task_id: str, input: Optional[str] = None, step: Optional[TaskStep] = None, **kwargs: Any) TaskStepOutput #
+Run step (stream).
+- streaming_chat_repl() None #
+Enter interactive chat REPL with streaming responses.
+- undo_step(task_id: str) None #
+Undo previous step.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- pydantic model llama_index.core.agent.CustomSimpleAgentWorker#
+Custom simple agent worker.
+This is “simple” in the sense that some of the scaffolding is setup already. Assumptions: - assumes that the agent has tools, llm, callback manager, and tool retriever - has a from_tools convenience function - assumes that the agent is sequential, and doesn’t take in any additional intermediate inputs.
+- Parameters
+tools (Sequence[BaseTool]) – Tools to use for reasoning
+llm (LLM) – LLM to use
+callback_manager (CallbackManager) – Callback manager
+tool_retriever (Optional[ObjectRetriever[BaseTool]]) – Tool retriever
+verbose (bool) – Whether to print out reasoning steps
+-
+Show JSON schema
+{ "title": "CustomSimpleAgentWorker", "description": "Custom simple agent worker.\n\nThis is \"simple\" in the sense that some of the scaffolding is setup already.\nAssumptions:\n- assumes that the agent has tools, llm, callback manager, and tool retriever\n- has a `from_tools` convenience function\n- assumes that the agent is sequential, and doesn't take in any additional\nintermediate inputs.\n\nArgs:\n tools (Sequence[BaseTool]): Tools to use for reasoning\n llm (LLM): LLM to use\n callback_manager (CallbackManager): Callback manager\n tool_retriever (Optional[ObjectRetriever[BaseTool]]): Tool retriever\n verbose (bool): Whether to print out reasoning steps", "type": "object", "properties": { "tools": { "title": "Tools" }, "llm": { "title": "Llm", "description": "LLM to use", "allOf": [ { "$ref": "#/definitions/LLM" } ] }, "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "tool_retriever": { "title": "Tool Retriever" }, "verbose": { "title": "Verbose", "description": "Whether to print out reasoning steps", "default": false, "type": "boolean" } }, "required": [ "llm" ], "definitions": { "PydanticProgramMode": { "title": "PydanticProgramMode", "description": "Pydantic program mode.", "enum": [ "default", "openai", "llm", "guidance", "lm-format-enforcer" ], "type": "string" }, "BasePromptTemplate": { "title": "BasePromptTemplate", "description": "Chainable mixin.\n\nA module that can produce a `QueryComponent` from a set of inputs through\n`as_query_component`.\n\nIf plugged in directly into a `QueryPipeline`, the `ChainableMixin` will be\nconverted into a `QueryComponent` with default parameters.", "type": "object", "properties": { "metadata": { "title": "Metadata", "type": "object" }, "template_vars": { "title": "Template Vars", "type": "array", "items": { "type": "string" } }, "kwargs": { "title": "Kwargs", "type": "object", "additionalProperties": { "type": "string" } }, "output_parser": { "title": "Output Parser", "type": "object", "default": {} }, "template_var_mappings": { "title": "Template Var Mappings", "description": "Template variable mappings (Optional).", "type": "object" } }, "required": [ "metadata", "template_vars", "kwargs" ] }, "LLM": { "title": "LLM", "description": "LLM interface.", "type": "object", "properties": { "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "system_prompt": { "title": "System Prompt", "description": "System prompt for LLM calls.", "type": "string" }, "output_parser": { "title": "Output Parser", "description": "Output parser to parse, validate, and correct errors programmatically.", "type": "object", "default": {} }, "pydantic_program_mode": { "default": "default", "allOf": [ { "$ref": "#/definitions/PydanticProgramMode" } ] }, "query_wrapper_prompt": { "title": "Query Wrapper Prompt", "description": "Query wrapper prompt for LLM calls.", "allOf": [ { "$ref": "#/definitions/BasePromptTemplate" } ] }, "class_name": { "title": "Class Name", "type": "string", "default": "base_component" } } } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+callback_manager (llama_index.core.callbacks.base.CallbackManager)
+llm (llama_index.core.llms.llm.LLM)
+tool_retriever (Optional[llama_index.core.objects.base.ObjectRetriever[llama_index.core.tools.types.BaseTool]])
+tools (Sequence[llama_index.core.tools.types.BaseTool])
+verbose (bool)
+-
+- field callback_manager: CallbackManager [Optional]#
+- Constraints
+type = object
+default = {}
+-
+- field llm: LLM [Required]#
+LLM to use
+- field tool_retriever: Optional[ObjectRetriever[BaseTool]] = None#
+Tool retriever
+- field tools: Sequence[BaseTool] [Required]#
+Tools to use for reasoning
+- field verbose: bool = False#
+Whether to print out reasoning steps
+- async astream_step(step: TaskStep, task: Task, **kwargs: Any) TaskStepOutput #
+Run step (async stream).
+- classmethod construct(_fields_set: Optional[SetStr] = None, **values: Any) Model #
+Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data. Default values are respected, but no other validation is performed. Behaves as if Config.extra = ‘allow’ was set since it adds all passed values
+- copy(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, update: Optional[DictStrAny] = None, deep: bool = False) Model #
+Duplicate a model, optionally choose which fields to include, exclude and change.
+- Parameters
+include – fields to include in new model
+exclude – fields to exclude from new model, as with values this takes precedence over include
+update – values to change/add in the new model. Note: the data is not validated before creating the new model: you should trust this data
+deep – set to True to make a deep copy of the model
+-
+- Returns
+new model instance
+- dict(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, by_alias: bool = False, skip_defaults: Optional[bool] = None, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) DictStrAny #
+Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+- classmethod from_orm(obj: Any) Model #
+- classmethod from_tools(tools: Optional[Sequence[BaseTool]] = None, tool_retriever: Optional[ObjectRetriever[BaseTool]] = None, llm: Optional[LLM] = None, callback_manager: Optional[CallbackManager] = None, verbose: bool = False, **kwargs: Any) CustomSimpleAgentWorker #
+Convenience constructor method from set of of BaseTools (Optional).
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- get_tools(input: str) List[AsyncBaseTool] #
+Get tools.
+- json(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, by_alias: bool = False, skip_defaults: Optional[bool] = None, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[Any], Any]] = None, models_as_dict: bool = True, **dumps_kwargs: Any) unicode #
+Generate a JSON representation of the model, include and exclude arguments as per dict().
+encoder is an optional function to supply as default to json.dumps(), other arguments as per json.dumps().
+- classmethod parse_file(path: Union[str, Path], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod parse_obj(obj: Any) Model #
+- classmethod parse_raw(b: Union[str, bytes], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod schema(by_alias: bool = True, ref_template: unicode = '#/definitions/{model}') DictStrAny #
+- classmethod schema_json(*, by_alias: bool = True, ref_template: unicode = '#/definitions/{model}', **dumps_kwargs: Any) unicode #
+- set_callback_manager(callback_manager: CallbackManager) None #
+Set callback manager.
+- classmethod update_forward_refs(**localns: Any) None #
+Try to update ForwardRefs on fields based on this Model, globalns and localns.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- classmethod validate(value: Any) Model #
+- class llama_index.core.agent.MultimodalReActAgentWorker(tools: Sequence[BaseTool], multi_modal_llm: MultiModalLLM, max_iterations: int = 10, react_chat_formatter: Optional[ReActChatFormatter] = None, output_parser: Optional[ReActOutputParser] = None, callback_manager: Optional[CallbackManager] = None, verbose: bool = False, tool_retriever: Optional[ObjectRetriever[BaseTool]] = None)#
+Multimodal ReAct Agent worker.
+NOTE: This is a BETA feature.
+- async astream_step(step: TaskStep, task: Task, **kwargs: Any) TaskStepOutput #
+Run step (async stream).
+- classmethod from_tools(tools: Optional[Sequence[BaseTool]] = None, tool_retriever: Optional[ObjectRetriever[BaseTool]] = None, multi_modal_llm: Optional[MultiModalLLM] = None, max_iterations: int = 10, react_chat_formatter: Optional[ReActChatFormatter] = None, output_parser: Optional[ReActOutputParser] = None, callback_manager: Optional[CallbackManager] = None, verbose: bool = False, **kwargs: Any) MultimodalReActAgentWorker #
+Convenience constructor method from set of of BaseTools (Optional).
+NOTE: kwargs should have been exhausted by this point. In other words the various upstream components such as BaseSynthesizer (response synthesizer) or BaseRetriever should have picked up off their respective kwargs in their constructions.
+- Returns
+ReActAgent
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- get_tools(input: str) List[AsyncBaseTool] #
+Get tools.
+- set_callback_manager(callback_manager: CallbackManager) None #
+Set callback manager.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- class llama_index.core.agent.ParallelAgentRunner(agent_worker: BaseAgentWorker, chat_history: Optional[List[ChatMessage]] = None, state: Optional[DAGAgentState] = None, memory: Optional[BaseMemory] = None, llm: Optional[LLM] = None, callback_manager: Optional[CallbackManager] = None, init_task_state_kwargs: Optional[dict] = None, delete_task_on_finish: bool = False)#
+Parallel agent runner.
+Executes steps in queue in parallel. Requires async support.
+- async achat(message: str, chat_history: Optional[List[ChatMessage]] = None, tool_choice: Union[str, dict] = 'auto') AgentChatResponse #
+Async version of main chat interface.
+- async arun_step(task_id: str, input: Optional[str] = None, step: Optional[TaskStep] = None, **kwargs: Any) TaskStepOutput #
+Run step (async).
+- async arun_steps_in_queue(task_id: str, mode: ChatResponseMode = ChatResponseMode.WAIT, **kwargs: Any) List[TaskStepOutput] #
+Execute all steps in queue.
+All steps in queue are assumed to be ready.
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- async astream_chat(message: str, chat_history: Optional[List[ChatMessage]] = None, tool_choice: Union[str, dict] = 'auto') StreamingAgentChatResponse #
+Async version of main chat interface.
+- async astream_step(task_id: str, input: Optional[str] = None, step: Optional[TaskStep] = None, **kwargs: Any) TaskStepOutput #
+Run step (async stream).
+- chat(message: str, chat_history: Optional[List[ChatMessage]] = None, tool_choice: Union[str, dict] = 'auto') AgentChatResponse #
+Main chat interface.
+- chat_repl() None #
+Enter interactive chat REPL.
+- delete_task(task_id: str) None #
+Delete task.
+NOTE: this will not delete any previous executions from memory.
+- finalize_response(task_id: str, step_output: Optional[TaskStepOutput] = None) Union[AgentChatResponse, StreamingAgentChatResponse] #
+Finalize response.
+- get_completed_step(task_id: str, step_id: str, **kwargs: Any) TaskStepOutput #
+Get completed step.
+- get_completed_steps(task_id: str, **kwargs: Any) List[TaskStepOutput] #
+Get completed steps.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- get_upcoming_steps(task_id: str, **kwargs: Any) List[TaskStep] #
+Get upcoming steps.
+- reset() None #
+Reset conversation state.
+- run_step(task_id: str, input: Optional[str] = None, step: Optional[TaskStep] = None, **kwargs: Any) TaskStepOutput #
+Run step.
+- run_steps_in_queue(task_id: str, mode: ChatResponseMode = ChatResponseMode.WAIT, **kwargs: Any) List[TaskStepOutput] #
+Execute steps in queue.
+Run all steps in queue, clearing it out.
+Assume that all steps can be run in parallel.
+- stream_chat(message: str, chat_history: Optional[List[ChatMessage]] = None, tool_choice: Union[str, dict] = 'auto') StreamingAgentChatResponse #
+Stream chat interface.
+- stream_step(task_id: str, input: Optional[str] = None, step: Optional[TaskStep] = None, **kwargs: Any) TaskStepOutput #
+Run step (stream).
+- streaming_chat_repl() None #
+Enter interactive chat REPL with streaming responses.
+- undo_step(task_id: str) None #
+Undo previous step.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- pydantic model llama_index.core.agent.QueryPipelineAgentWorker#
+Query Pipeline agent worker.
+Barebones agent worker that takes in a query pipeline.
+Assumes that the first component in the query pipeline is an AgentInputComponent and last is AgentFnComponent.
+- Parameters
+pipeline (QueryPipeline) – Query pipeline
+Show JSON schema
+{ "title": "QueryPipelineAgentWorker", "description": "Query Pipeline agent worker.\n\nBarebones agent worker that takes in a query pipeline.\n\nAssumes that the first component in the query pipeline is an\n`AgentInputComponent` and last is `AgentFnComponent`.\n\nArgs:\n pipeline (QueryPipeline): Query pipeline", "type": "object", "properties": { "pipeline": { "title": "Pipeline" }, "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} } }, "required": [ "callback_manager" ] }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+callback_manager (llama_index.core.callbacks.base.CallbackManager)
+pipeline (llama_index.core.query_pipeline.query.QueryPipeline)
+-
+- field callback_manager: CallbackManager [Required]#
+- Constraints
+type = object
+default = {}
+-
+- field pipeline: QueryPipeline [Required]#
+Query pipeline
+- async astream_step(step: TaskStep, task: Task, **kwargs: Any) TaskStepOutput #
+Run step (async stream).
+- classmethod construct(_fields_set: Optional[SetStr] = None, **values: Any) Model #
+Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data. Default values are respected, but no other validation is performed. Behaves as if Config.extra = ‘allow’ was set since it adds all passed values
+- copy(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, update: Optional[DictStrAny] = None, deep: bool = False) Model #
+Duplicate a model, optionally choose which fields to include, exclude and change.
+- Parameters
+include – fields to include in new model
+exclude – fields to exclude from new model, as with values this takes precedence over include
+update – values to change/add in the new model. Note: the data is not validated before creating the new model: you should trust this data
+deep – set to True to make a deep copy of the model
+-
+- Returns
+new model instance
+- dict(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, by_alias: bool = False, skip_defaults: Optional[bool] = None, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) DictStrAny #
+Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+- classmethod from_orm(obj: Any) Model #
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- json(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, by_alias: bool = False, skip_defaults: Optional[bool] = None, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[Any], Any]] = None, models_as_dict: bool = True, **dumps_kwargs: Any) unicode #
+Generate a JSON representation of the model, include and exclude arguments as per dict().
+encoder is an optional function to supply as default to json.dumps(), other arguments as per json.dumps().
+- classmethod parse_file(path: Union[str, Path], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod parse_obj(obj: Any) Model #
+- classmethod parse_raw(b: Union[str, bytes], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod schema(by_alias: bool = True, ref_template: unicode = '#/definitions/{model}') DictStrAny #
+- classmethod schema_json(*, by_alias: bool = True, ref_template: unicode = '#/definitions/{model}', **dumps_kwargs: Any) unicode #
+- set_callback_manager(callback_manager: CallbackManager) None #
+Set callback manager.
+- classmethod update_forward_refs(**localns: Any) None #
+Try to update ForwardRefs on fields based on this Model, globalns and localns.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- classmethod validate(value: Any) Model #
+- property agent_components: List[AgentFnComponent]#
+Get agent output component.
+- property agent_input_component: AgentInputComponent#
+Get agent input component.
+- class llama_index.core.agent.ReActAgent(tools: Sequence[BaseTool], llm: LLM, memory: BaseMemory, max_iterations: int = 10, react_chat_formatter: Optional[ReActChatFormatter] = None, output_parser: Optional[ReActOutputParser] = None, callback_manager: Optional[CallbackManager] = None, verbose: bool = False, tool_retriever: Optional[ObjectRetriever[BaseTool]] = None, context: Optional[str] = None)#
+ReAct agent.
+Subclasses AgentRunner with a ReActAgentWorker.
+For the legacy implementation see:
+`python from llama_index.core.agent.legacy.react.base import ReActAgent `
+- async achat(message: str, chat_history: Optional[List[ChatMessage]] = None, tool_choice: Optional[Union[str, dict]] = None) AgentChatResponse #
+Async version of main chat interface.
+- async arun_step(task_id: str, input: Optional[str] = None, step: Optional[TaskStep] = None, **kwargs: Any) TaskStepOutput #
+Run step (async).
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- async astream_chat(message: str, chat_history: Optional[List[ChatMessage]] = None, tool_choice: Optional[Union[str, dict]] = None) StreamingAgentChatResponse #
+Async version of main chat interface.
+- async astream_step(task_id: str, input: Optional[str] = None, step: Optional[TaskStep] = None, **kwargs: Any) TaskStepOutput #
+Run step (async stream).
+- chat(message: str, chat_history: Optional[List[ChatMessage]] = None, tool_choice: Optional[Union[str, dict]] = None) AgentChatResponse #
+Main chat interface.
+- chat_repl() None #
+Enter interactive chat REPL.
+- delete_task(task_id: str) None #
+Delete task.
+NOTE: this will not delete any previous executions from memory.
+- finalize_response(task_id: str, step_output: Optional[TaskStepOutput] = None) Union[AgentChatResponse, StreamingAgentChatResponse] #
+Finalize response.
+- classmethod from_tools(tools: ~typing.Optional[~typing.List[~llama_index.core.tools.types.BaseTool]] = None, tool_retriever: ~typing.Optional[~llama_index.core.objects.base.ObjectRetriever[~llama_index.core.tools.types.BaseTool]] = None, llm: ~typing.Optional[~llama_index.core.llms.llm.LLM] = None, chat_history: ~typing.Optional[~typing.List[~llama_index.core.base.llms.types.ChatMessage]] = None, memory: ~typing.Optional[~llama_index.core.memory.types.BaseMemory] = None, memory_cls: ~typing.Type[~llama_index.core.memory.types.BaseMemory] = <class 'llama_index.core.memory.chat_memory_buffer.ChatMemoryBuffer'>, max_iterations: int = 10, react_chat_formatter: ~typing.Optional[~llama_index.core.agent.react.formatter.ReActChatFormatter] = None, output_parser: ~typing.Optional[~llama_index.core.agent.react.output_parser.ReActOutputParser] = None, callback_manager: ~typing.Optional[~llama_index.core.callbacks.base.CallbackManager] = None, verbose: bool = False, context: ~typing.Optional[str] = None, **kwargs: ~typing.Any) ReActAgent #
+Convenience constructor method from set of of BaseTools (Optional).
+NOTE: kwargs should have been exhausted by this point. In other words the various upstream components such as BaseSynthesizer (response synthesizer) or BaseRetriever should have picked up off their respective kwargs in their constructions.
+- Returns
+ReActAgent
+- get_completed_step(task_id: str, step_id: str, **kwargs: Any) TaskStepOutput #
+Get completed step.
+- get_completed_steps(task_id: str, **kwargs: Any) List[TaskStepOutput] #
+Get completed steps.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- get_upcoming_steps(task_id: str, **kwargs: Any) List[TaskStep] #
+Get upcoming steps.
+- reset() None #
+Reset conversation state.
+- run_step(task_id: str, input: Optional[str] = None, step: Optional[TaskStep] = None, **kwargs: Any) TaskStepOutput #
+Run step.
+- stream_chat(message: str, chat_history: Optional[List[ChatMessage]] = None, tool_choice: Optional[Union[str, dict]] = None) StreamingAgentChatResponse #
+Stream chat interface.
+- stream_step(task_id: str, input: Optional[str] = None, step: Optional[TaskStep] = None, **kwargs: Any) TaskStepOutput #
+Run step (stream).
+- streaming_chat_repl() None #
+Enter interactive chat REPL with streaming responses.
+- undo_step(task_id: str) None #
+Undo previous step.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- class llama_index.core.agent.ReActAgentWorker(tools: Sequence[BaseTool], llm: LLM, max_iterations: int = 10, react_chat_formatter: Optional[ReActChatFormatter] = None, output_parser: Optional[ReActOutputParser] = None, callback_manager: Optional[CallbackManager] = None, verbose: bool = False, tool_retriever: Optional[ObjectRetriever[BaseTool]] = None)#
+OpenAI Agent worker.
+- async astream_step(step: TaskStep, task: Task, **kwargs: Any) TaskStepOutput #
+Run step (async stream).
+- classmethod from_tools(tools: Optional[Sequence[BaseTool]] = None, tool_retriever: Optional[ObjectRetriever[BaseTool]] = None, llm: Optional[LLM] = None, max_iterations: int = 10, react_chat_formatter: Optional[ReActChatFormatter] = None, output_parser: Optional[ReActOutputParser] = None, callback_manager: Optional[CallbackManager] = None, verbose: bool = False, **kwargs: Any) ReActAgentWorker #
+Convenience constructor method from set of of BaseTools (Optional).
+NOTE: kwargs should have been exhausted by this point. In other words the various upstream components such as BaseSynthesizer (response synthesizer) or BaseRetriever should have picked up off their respective kwargs in their constructions.
+- Returns
+ReActAgent
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- get_tools(input: str) List[AsyncBaseTool] #
+Get tools.
+- set_callback_manager(callback_manager: CallbackManager) None #
+Set callback manager.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- pydantic model llama_index.core.agent.ReActChatFormatter#
+ReAct chat formatter.
+Show JSON schema
+{ "title": "ReActChatFormatter", "description": "ReAct chat formatter.", "type": "object", "properties": { "system_header": { "title": "System Header", "default": "\nYou are designed to help with a variety of tasks, from answering questions to providing summaries to other types of analyses.\n\n## Tools\nYou have access to a wide variety of tools. You are responsible for using\nthe tools in any sequence you deem appropriate to complete the task at hand.\nThis may require breaking the task into subtasks and using different tools\nto complete each subtask.\n\nYou have access to the following tools:\n{tool_desc}\n\n## Output Format\nPlease answer in the same language as the question and use the following format:\n\n```\nThought: The current language of the user is: (user's language). I need to use a tool to help me answer the question.\nAction: tool name (one of {tool_names}) if using a tool.\nAction Input: the input to the tool, in a JSON format representing the kwargs (e.g. {{\"input\": \"hello world\", \"num_beams\": 5}})\n```\n\nPlease ALWAYS start with a Thought.\n\nPlease use a valid JSON format for the Action Input. Do NOT do this {{'input': 'hello world', 'num_beams': 5}}.\n\nIf this format is used, the user will respond in the following format:\n\n```\nObservation: tool response\n```\n\nYou should keep repeating the above format until you have enough information\nto answer the question without using any more tools. At that point, you MUST respond\nin the one of the following two formats:\n\n```\nThought: I can answer without using any more tools. I'll use the user's language to answer\nAnswer: [your answer here (In the same language as the user's question)]\n```\n\n```\nThought: I cannot answer the question with the provided tools.\nAnswer: [your answer here (In the same language as the user's question)]\n```\n\n## Current Conversation\nBelow is the current conversation consisting of interleaving human and assistant messages.\n\n", "type": "string" }, "context": { "title": "Context", "default": "", "type": "string" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+context (str)
+system_header (str)
+-
+- field context: str = ''#
+- field system_header: str = '\nYou are designed to help with a variety of tasks, from answering questions to providing summaries to other types of analyses.\n\n## Tools\nYou have access to a wide variety of tools. You are responsible for using\nthe tools in any sequence you deem appropriate to complete the task at hand.\nThis may require breaking the task into subtasks and using different tools\nto complete each subtask.\n\nYou have access to the following tools:\n{tool_desc}\n\n## Output Format\nPlease answer in the same language as the question and use the following format:\n\n```\nThought: The current language of the user is: (user\'s language). I need to use a tool to help me answer the question.\nAction: tool name (one of {tool_names}) if using a tool.\nAction Input: the input to the tool, in a JSON format representing the kwargs (e.g. {{"input": "hello world", "num_beams": 5}})\n```\n\nPlease ALWAYS start with a Thought.\n\nPlease use a valid JSON format for the Action Input. Do NOT do this {{\'input\': \'hello world\', \'num_beams\': 5}}.\n\nIf this format is used, the user will respond in the following format:\n\n```\nObservation: tool response\n```\n\nYou should keep repeating the above format until you have enough information\nto answer the question without using any more tools. At that point, you MUST respond\nin the one of the following two formats:\n\n```\nThought: I can answer without using any more tools. I\'ll use the user\'s language to answer\nAnswer: [your answer here (In the same language as the user\'s question)]\n```\n\n```\nThought: I cannot answer the question with the provided tools.\nAnswer: [your answer here (In the same language as the user\'s question)]\n```\n\n## Current Conversation\nBelow is the current conversation consisting of interleaving human and assistant messages.\n\n'#
+- classmethod construct(_fields_set: Optional[SetStr] = None, **values: Any) Model #
+Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data. Default values are respected, but no other validation is performed. Behaves as if Config.extra = ‘allow’ was set since it adds all passed values
+- copy(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, update: Optional[DictStrAny] = None, deep: bool = False) Model #
+Duplicate a model, optionally choose which fields to include, exclude and change.
+- Parameters
+include – fields to include in new model
+exclude – fields to exclude from new model, as with values this takes precedence over include
+update – values to change/add in the new model. Note: the data is not validated before creating the new model: you should trust this data
+deep – set to True to make a deep copy of the model
+-
+- Returns
+new model instance
+- dict(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, by_alias: bool = False, skip_defaults: Optional[bool] = None, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) DictStrAny #
+Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+- format(tools: Sequence[BaseTool], chat_history: List[ChatMessage], current_reasoning: Optional[List[BaseReasoningStep]] = None) List[ChatMessage] #
+Format chat history into list of ChatMessage.
+- classmethod from_context(context: str) ReActChatFormatter #
+Create ReActChatFormatter from context.
+NOTE: deprecated
+- classmethod from_defaults(system_header: Optional[str] = None, context: Optional[str] = None) ReActChatFormatter #
+Create ReActChatFormatter from defaults.
+- classmethod from_orm(obj: Any) Model #
+- json(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, by_alias: bool = False, skip_defaults: Optional[bool] = None, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[Any], Any]] = None, models_as_dict: bool = True, **dumps_kwargs: Any) unicode #
+Generate a JSON representation of the model, include and exclude arguments as per dict().
+encoder is an optional function to supply as default to json.dumps(), other arguments as per json.dumps().
+- classmethod parse_file(path: Union[str, Path], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod parse_obj(obj: Any) Model #
+- classmethod parse_raw(b: Union[str, bytes], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod schema(by_alias: bool = True, ref_template: unicode = '#/definitions/{model}') DictStrAny #
+- classmethod schema_json(*, by_alias: bool = True, ref_template: unicode = '#/definitions/{model}', **dumps_kwargs: Any) unicode #
+- classmethod update_forward_refs(**localns: Any) None #
+Try to update ForwardRefs on fields based on this Model, globalns and localns.
+- classmethod validate(value: Any) Model #
+- pydantic model llama_index.core.agent.Task#
+Agent Task.
+Represents a “run” of an agent given a user input.
+Show JSON schema
+{ "title": "Task", "description": "Agent Task.\n\nRepresents a \"run\" of an agent given a user input.", "type": "object", "properties": { "task_id": { "title": "Task Id", "description": "Task ID", "type": "string" }, "input": { "title": "Input", "description": "User input", "type": "string" }, "memory": { "title": "Memory", "description": "Conversational Memory. Maintains state before execution of this task.", "type": "<class 'llama_index.core.memory.types.BaseMemory'>", "allOf": [ { "$ref": "#/definitions/BaseMemory" } ] }, "callback_manager": { "title": "Callback Manager", "description": "Callback manager for the task.", "type": "object", "default": {} }, "extra_state": { "title": "Extra State", "description": "Additional user-specified state for a given task. Can be modified throughout the execution of a task.", "type": "object" } }, "required": [ "input", "memory" ], "definitions": { "BaseMemory": { "title": "BaseMemory", "description": "Base class for all memory types.\n\nNOTE: The interface for memory is not yet finalized and is subject to change.", "type": "object", "properties": { "class_name": { "title": "Class Name", "type": "string", "default": "BaseMemory" } } } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+callback_manager (llama_index.core.callbacks.base.CallbackManager)
+extra_state (Dict[str, Any])
+input (str)
+memory (llama_index.core.memory.types.BaseMemory)
+task_id (str)
+-
+- field callback_manager: CallbackManager [Optional]#
+Callback manager for the task.
+- Constraints
+type = object
+default = {}
+-
+- field extra_state: Dict[str, Any] [Optional]#
+Additional user-specified state for a given task. Can be modified throughout the execution of a task.
+- field input: str [Required]#
+User input
+- field memory: BaseMemory [Required]#
+Conversational Memory. Maintains state before execution of this task.
+- field task_id: str [Optional]#
+Task ID
+- classmethod construct(_fields_set: Optional[SetStr] = None, **values: Any) Model #
+Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data. Default values are respected, but no other validation is performed. Behaves as if Config.extra = ‘allow’ was set since it adds all passed values
+- copy(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, update: Optional[DictStrAny] = None, deep: bool = False) Model #
+Duplicate a model, optionally choose which fields to include, exclude and change.
+- Parameters
+include – fields to include in new model
+exclude – fields to exclude from new model, as with values this takes precedence over include
+update – values to change/add in the new model. Note: the data is not validated before creating the new model: you should trust this data
+deep – set to True to make a deep copy of the model
+-
+- Returns
+new model instance
+- dict(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, by_alias: bool = False, skip_defaults: Optional[bool] = None, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) DictStrAny #
+Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+- classmethod from_orm(obj: Any) Model #
+- json(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, by_alias: bool = False, skip_defaults: Optional[bool] = None, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[Any], Any]] = None, models_as_dict: bool = True, **dumps_kwargs: Any) unicode #
+Generate a JSON representation of the model, include and exclude arguments as per dict().
+encoder is an optional function to supply as default to json.dumps(), other arguments as per json.dumps().
+- classmethod parse_file(path: Union[str, Path], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod parse_obj(obj: Any) Model #
+- classmethod parse_raw(b: Union[str, bytes], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod schema(by_alias: bool = True, ref_template: unicode = '#/definitions/{model}') DictStrAny #
+- classmethod schema_json(*, by_alias: bool = True, ref_template: unicode = '#/definitions/{model}', **dumps_kwargs: Any) unicode #
+- classmethod update_forward_refs(**localns: Any) None #
+Try to update ForwardRefs on fields based on this Model, globalns and localns.
+- classmethod validate(value: Any) Model #

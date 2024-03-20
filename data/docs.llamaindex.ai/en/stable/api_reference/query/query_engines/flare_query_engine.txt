@@ -1,0 +1,27 @@
+Flare Query Engine#
+Query engines based on the FLARE paper.
+Active Retrieval Augmented Generation.
+- class llama_index.core.query_engine.flare.base.FLAREInstructQueryEngine(query_engine: BaseQueryEngine, llm: Optional[LLM] = None, service_context: Optional[ServiceContext] = None, instruct_prompt: Optional[BasePromptTemplate] = None, lookahead_answer_inserter: Optional[BaseLookaheadAnswerInserter] = None, done_output_parser: Optional[IsDoneOutputParser] = None, query_task_output_parser: Optional[QueryTaskOutputParser] = None, max_iterations: int = 10, max_lookahead_query_tasks: int = 1, callback_manager: Optional[CallbackManager] = None, verbose: bool = False)#
+FLARE Instruct query engine.
+This is the version of FLARE that uses retrieval-encouraging instructions.
+NOTE: this is a beta feature. Interfaces might change, and it might not always give correct answers.
+- Parameters
+query_engine (BaseQueryEngine) – query engine to use
+llm (Optional[LLM]) – LLM model. Defaults to None.
+service_context (Optional[ServiceContext]) – service context. Defaults to None.
+instruct_prompt (Optional[PromptTemplate]) – instruct prompt. Defaults to None.
+lookahead_answer_inserter (Optional[BaseLookaheadAnswerInserter]) – lookahead answer inserter. Defaults to None.
+done_output_parser (Optional[IsDoneOutputParser]) – done output parser. Defaults to None.
+query_task_output_parser (Optional[QueryTaskOutputParser]) – query task output parser. Defaults to None.
+max_iterations (int) – max iterations. Defaults to 10.
+max_lookahead_query_tasks (int) – max lookahead query tasks. Defaults to 1.
+callback_manager (Optional[CallbackManager]) – callback manager. Defaults to None.
+verbose (bool) – give verbose outputs. Defaults to False.
+-
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.

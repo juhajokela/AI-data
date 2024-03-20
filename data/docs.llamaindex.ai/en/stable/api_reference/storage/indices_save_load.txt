@@ -1,0 +1,22 @@
+Loading Indices#
+- llama_index.core.indices.loading.load_graph_from_storage(storage_context: StorageContext, root_id: str, **kwargs: Any) ComposableGraph #
+Load composable graph from storage context.
+- Parameters
+storage_context (StorageContext) – storage context containing docstore, index store and vector store.
+root_id (str) – ID of the root index of the graph.
+**kwargs – Additional keyword args to pass to the index constructors.
+-
+- llama_index.core.indices.loading.load_index_from_storage(storage_context: StorageContext, index_id: Optional[str] = None, **kwargs: Any) BaseIndex #
+Load index from storage context.
+- Parameters
+storage_context (StorageContext) – storage context containing docstore, index store and vector store.
+index_id (Optional[str]) – ID of the index to load. Defaults to None, which assumes there’s only a single index in the index store and load it.
+**kwargs – Additional keyword args to pass to the index constructors.
+-
+- llama_index.core.indices.loading.load_indices_from_storage(storage_context: StorageContext, index_ids: Optional[Sequence[str]] = None, **kwargs: Any) List[BaseIndex] #
+Load multiple indices from storage context.
+- Parameters
+storage_context (StorageContext) – storage context containing docstore, index store and vector store.
+index_id (Optional[Sequence[str]]) – IDs of the indices to load. Defaults to None, which loads all indices in the index store.
+**kwargs – Additional keyword args to pass to the index constructors.
+-

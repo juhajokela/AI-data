@@ -1,0 +1,1 @@
+MetadataMode# class llama_index.core.schema.MetadataMode(value, names=None, *, module=None, qualname=None, type=None, start=1, boundary=None)# Bases: str, Enum Attributes Summary ALL EMBED LLM NONE Attributes Documentation ALL = 'all'# EMBED = 'embed'# LLM = 'llm'# NONE = 'none'#

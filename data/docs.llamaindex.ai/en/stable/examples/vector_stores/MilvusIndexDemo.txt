@@ -1,0 +1,93 @@
+Milvus Vector Store#
+In this notebook we are going to show a quick demo of using the MilvusVectorStore.
+If you’re opening this Notebook on colab, you will probably need to install LlamaIndex 🦙.
+%pip install llama-index-vector-stores-milvus
+! pip install llama-index
+import logging
+import sys
+# Uncomment to see debug logs
+# logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+# logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
+from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, Document
+from llama_index.vector_stores.milvus import MilvusVectorStore
+from IPython.display import Markdown, display
+import textwrap
+Setup OpenAI#
+Lets first begin by adding the openai api key. This will allow us to access openai for embeddings and to use chatgpt.
+import openai
+openai.api_key = "sk-"
+Download Data
+! mkdir -p 'data/paul_graham/'
+! wget 'https://raw.githubusercontent.com/run-llama/llama_index/main/docs/examples/data/paul_graham/paul_graham_essay.txt' -O 'data/paul_graham/paul_graham_essay.txt'
+Generate our data#
+With our LLM set, lets start using the Milvus Index. As a first example, lets generate a document from the file found in the
+data/paul_graham/ folder. In this folder there is a single essay from Paul Graham titled
+What I Worked On. To generate the documents we will use the SimpleDirectoryReader.
+# load documents
+documents = SimpleDirectoryReader("./data/paul_graham/").load_data()
+print("Document ID:", documents[0].doc_id)
+Document ID: d33f0397-b51a-4455-9b0f-88a101254d95
+Create an index across the data#
+Now that we have a document, we can can create an index and insert the document. For the index we will use a GPTMilvusIndex. GPTMilvusIndex takes in a few arguments:
+uri (str, optional): The URI to connect to, comes in the form of “http://address:port”. Defaults to “http://localhost:19530”.
+token (str, optional): The token for log in. Empty if not using rbac, if using rbac it will most likely be “username:password”. Defaults to “”.
+collection_name (str, optional): The name of the collection where data will be stored. Defaults to “llamalection”.
+dim (int, optional): The dimension of the embeddings. If it is not provided, collection creation will be done on first insert. Defaults to None.
+embedding_field (str, optional): The name of the embedding field for the collection, defaults to DEFAULT_EMBEDDING_KEY.
+doc_id_field (str, optional): The name of the doc_id field for the collection, defaults to DEFAULT_DOC_ID_KEY.
+similarity_metric (str, optional): The similarity metric to use, currently supports IP and L2. Defaults to “IP”.
+consistency_level (str, optional): Which consistency level to use for a newly created collection. Defaults to “Strong”.
+overwrite (bool, optional): Whether to overwrite existing collection with same name. Defaults to False.
+text_key (str, optional): What key text is stored in in the passed collection. Used when bringing your own collection. Defaults to None.
+index_config (dict, optional): The configuration used for building the Milvus index. Defaults to None.
+search_config (dict, optional): The configuration used for searching the Milvus index. Note that this must be compatible with the index type specified by index_config. Defaults to None.
+# Create an index over the documnts
+from llama_index.core import StorageContext
+vector_store = MilvusVectorStore(dim=1536, overwrite=True)
+storage_context = StorageContext.from_defaults(vector_store=vector_store)
+index = VectorStoreIndex.from_documents(
+documents, storage_context=storage_context
+)
+Query the data#
+Now that we have our document stored in the index, we can ask questions against the index. The index will use the data stored in itself as the knowledge base for chatgpt.
+query_engine = index.as_query_engine()
+response = query_engine.query("What did the author learn?")
+print(textwrap.fill(str(response), 100))
+The author learned several things during their time at Interleaf. They learned that it's better for
+technology companies to be run by product people than sales people, that code edited by too many
+people leads to bugs, that cheap office space is not worth it if it's depressing, that planned
+meetings are inferior to corridor conversations, that big bureaucratic customers can be a dangerous
+source of money, and that there's not much overlap between conventional office hours and the optimal
+time for hacking. However, the most important thing the author learned is that the low end eats the
+high end, meaning that it's advantageous to be the "entry level" option because if you're not,
+someone else will be and will surpass you.
+response = query_engine.query("What was a hard moment for the author?")
+print(textwrap.fill(str(response), 100))
+The author experienced a difficult moment when their mother had a stroke and was put in a nursing
+home. The stroke destroyed her balance, and the author and their sister were determined to help her
+get out of the nursing home and back to her house.
+This next test shows that overwriting removes the previous data.
+vector_store = MilvusVectorStore(dim=1536, overwrite=True)
+storage_context = StorageContext.from_defaults(vector_store=vector_store)
+index = VectorStoreIndex.from_documents(
+[Document(text="The number that is being searched for is ten.")],
+storage_context,
+)
+query_engine = index.as_query_engine()
+res = query_engine.query("Who is the author?")
+print("Res:", res)
+Res: I'm sorry, but based on the given context information, there is no information provided about the author.
+The next test shows adding additional data to an already existing index.
+del index, vector_store, storage_context, query_engine
+vector_store = MilvusVectorStore(overwrite=False)
+storage_context = StorageContext.from_defaults(vector_store=vector_store)
+index = VectorStoreIndex.from_documents(
+documents, storage_context=storage_context
+)
+query_engine = index.as_query_engine()
+res = query_engine.query("What is the number?")
+print("Res:", res)
+Res: The number is ten.
+res = query_engine.query("Who is the author?")
+print("Res:", res)
+Res: The author of the given context is Paul Graham.

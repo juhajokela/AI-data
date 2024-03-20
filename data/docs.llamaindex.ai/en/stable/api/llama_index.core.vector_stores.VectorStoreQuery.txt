@@ -1,0 +1,20 @@
+VectorStoreQuery#
+- class llama_index.core.vector_stores.VectorStoreQuery(query_embedding: Optional[List[float]] = None, similarity_top_k: int = 1, doc_ids: Optional[List[str]] = None, node_ids: Optional[List[str]] = None, query_str: Optional[str] = None, output_fields: Optional[List[str]] = None, embedding_field: Optional[str] = None, mode: VectorStoreQueryMode = VectorStoreQueryMode.DEFAULT, alpha: Optional[float] = None, filters: Optional[MetadataFilters] = None, mmr_threshold: Optional[float] = None, sparse_top_k: Optional[int] = None, hybrid_top_k: Optional[int] = None)#
+Bases:
+object
+Vector store query.
+Attributes Summary
+Attributes Documentation
+- alpha: Optional[float] = None#
+- doc_ids: Optional[List[str]] = None#
+- embedding_field: Optional[str] = None#
+- filters: Optional[MetadataFilters] = None#
+- hybrid_top_k: Optional[int] = None#
+- mmr_threshold: Optional[float] = None#
+- mode: VectorStoreQueryMode = 'default'#
+- node_ids: Optional[List[str]] = None#
+- output_fields: Optional[List[str]] = None#
+- query_embedding: Optional[List[float]] = None#
+- query_str: Optional[str] = None#
+- similarity_top_k: int = 1#
+- sparse_top_k: Optional[int] = None#

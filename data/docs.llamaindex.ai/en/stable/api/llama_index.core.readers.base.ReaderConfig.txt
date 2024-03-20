@@ -1,0 +1,19 @@
+ReaderConfig#
+- pydantic model llama_index.core.readers.base.ReaderConfig#
+Represents a reader and it’s input arguments.
+Show JSON schema
+{ "title": "ReaderConfig", "description": "Represents a reader and it's input arguments.", "type": "object", "properties": { "reader": { "title": "Reader", "description": "Reader to use.", "allOf": [ { "$ref": "#/definitions/BasePydanticReader" } ] }, "reader_args": { "title": "Reader Args", "description": "Reader args.", "type": "array", "items": {} }, "reader_kwargs": { "title": "Reader Kwargs", "description": "Reader kwargs.", "type": "object" }, "class_name": { "title": "Class Name", "type": "string", "default": "ReaderConfig" } }, "required": [ "reader" ], "definitions": { "BasePydanticReader": { "title": "BasePydanticReader", "description": "Serialiable Data Loader with Pydantic.", "type": "object", "properties": { "is_remote": { "title": "Is Remote", "description": "Whether the data is loaded from a remote API or a local file.", "default": false, "type": "boolean" }, "class_name": { "title": "Class Name", "type": "string", "default": "base_component" } } } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- field reader: BasePydanticReader [Required]#
+Reader to use.
+- field reader_args: List[Any] [Optional]#
+Reader args.
+- field reader_kwargs: Dict[str, Any] [Optional]#
+Reader kwargs.
+- classmethod class_name() str #
+Get the name identifier of the class.
+- to_dict(**kwargs: Any) Dict[str, Any] #
+Convert the class to a dictionary.

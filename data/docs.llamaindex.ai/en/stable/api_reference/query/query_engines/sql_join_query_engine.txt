@@ -1,0 +1,41 @@
+SQL Join Query Engine#
+SQL Join query engine.
+- class llama_index.core.query_engine.sql_join_query_engine.SQLAugmentQueryTransform(llm: Optional[Union[LLMPredictor, LLM]] = None, sql_augment_transform_prompt: Optional[BasePromptTemplate] = None, check_stop_parser: Optional[Callable[[QueryBundle], bool]] = None)#
+SQL Augment Query Transform.
+This query transform will transform the query into a more specific query after augmenting with SQL results.
+- Parameters
+llm (LLM) – LLM to use for query transformation.
+sql_augment_transform_prompt (BasePromptTemplate) – PromptTemplate to use for query transformation.
+check_stop_parser (Optional[Callable[[str], bool]]) – Check stop function.
+-
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- check_stop(query_bundle: QueryBundle) bool #
+Check if query indicates stop.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- run(query_bundle_or_str: Union[str, QueryBundle], metadata: Optional[Dict] = None) QueryBundle #
+Run query transform.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- class llama_index.core.query_engine.sql_join_query_engine.SQLJoinQueryEngine(sql_query_tool: QueryEngineTool, other_query_tool: QueryEngineTool, selector: Optional[Union[LLMSingleSelector, PydanticSingleSelector]] = None, llm: Optional[Union[LLMPredictor, LLM]] = None, sql_join_synthesis_prompt: Optional[BasePromptTemplate] = None, sql_augment_query_transform: Optional[SQLAugmentQueryTransform] = None, use_sql_join_synthesis: bool = True, callback_manager: Optional[CallbackManager] = None, verbose: bool = True, service_context: Optional[ServiceContext] = None)#
+SQL Join Query Engine.
+This query engine can “Join” a SQL database results with another query engine. It can decide it needs to query the SQL database or the other query engine. If it decides to query the SQL database, it will first query the SQL database, whether to augment information with retrieved results from the other query engine.
+- Parameters
+sql_query_tool (QueryEngineTool) – Query engine tool for SQL database. other_query_tool (QueryEngineTool): Other query engine tool.
+selector (Optional[Union[LLMSingleSelector, PydanticSingleSelector]]) – Selector to use.
+service_context (Optional[ServiceContext]) – Service context to use.
+sql_join_synthesis_prompt (Optional[BasePromptTemplate]) – PromptTemplate to use for SQL join synthesis.
+sql_augment_query_transform (Optional[SQLAugmentQueryTransform]) – Query transform to use for SQL augmentation.
+use_sql_join_synthesis (bool) – Whether to use SQL join synthesis.
+callback_manager (Optional[CallbackManager]) – Callback manager to use.
+verbose (bool) – Whether to print intermediate results.
+-
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.

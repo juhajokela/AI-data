@@ -1,0 +1,100 @@
+AI21#
+Basic Usage#
+Call
+complete with a prompt#
+If you’re opening this Notebook on colab, you will probably need to install LlamaIndex 🦙.
+%pip install llama-index-llms-ai21
+!pip install llama-index
+from llama_index.llms.ai21 import AI21
+api_key = "Your api key"
+resp = AI21(api_key=api_key).complete("Paul Graham is ")
+print(resp)
+an American computer scientist, essayist, and venture capitalist. He is best known for his work on Lisp, programming language design, and entrepreneurship. Graham has written several books on these topics, including " ANSI Common Lisp" and " Hackers and Painters." He is also the co-founder of Y Combinator, a venture capital firm that invests in early-stage technology companies.
+Call
+chat with a list of messages#
+from llama_index.core.llms import ChatMessage
+from llama_index.llms.ai21 import AI21
+messages = [
+ChatMessage(role="user", content="hello there"),
+ChatMessage(
+role="assistant", content="Arrrr, matey! How can I help ye today?"
+),
+ChatMessage(role="user", content="What is your name"),
+]
+resp = AI21(api_key=api_key).chat(
+messages, preamble_override="You are a pirate with a colorful personality"
+)
+print(resp)
+assistant: yer talkin' to Captain Jack Sparrow
+Configure Model#
+from llama_index.llms.ai21 import AI21
+llm = AI21(model="j2-mid", api_key=api_key)
+resp = llm.complete("Paul Graham is ")
+print(resp)
+an American computer scientist, essayist, and venture capitalist. He is best known for his work on Lisp, programming language design, and entrepreneurship. Graham has written several books on these topics, including " ANSI Common Lisp" and " Hackers and Painters." He is also the co-founder of Y Combinator, a venture capital firm that invests in early-stage technology companies.
+Set API Key at a per-instance level#
+If desired, you can have separate LLM instances use separate API keys.
+from llama_index.llms.ai21 import AI21
+llm_good = AI21(api_key=api_key)
+llm_bad = AI21(model="j2-mid", api_key="BAD_KEY")
+resp = llm_good.complete("Paul Graham is ")
+print(resp)
+resp = llm_bad.complete("Paul Graham is ")
+print(resp)
+an American computer scientist, essayist, and venture capitalist. He is best known for his work on Lisp, programming language design, and entrepreneurship. Graham has written several books on these topics, including "Hackers and Painters" and "On Lisp." He is also the co-founder of Y Combinator, a venture capital firm that invests in early-stage technology companies.
+Calling POST https://api.ai21.com/studio/v1/j2-mid/complete failed with a non-200 response code: 401
+---------------------------------------------------------------------------
+Unauthorized Traceback (most recent call last)
+/home/amit/Desktop/projects/lindex/llama_index/docs/examples/llm/ai21.ipynb Cell 14 line 9
+<a href='vscode-notebook-cell:/home/amit/Desktop/projects/lindex/llama_index/docs/examples/llm/ai21.ipynb#X42sZmlsZQ%3D%3D?line=5'>6</a> resp = llm_good.complete("Paul Graham is ")
+<a href='vscode-notebook-cell:/home/amit/Desktop/projects/lindex/llama_index/docs/examples/llm/ai21.ipynb#X42sZmlsZQ%3D%3D?line=6'>7</a> print(resp)
+----> <a href='vscode-notebook-cell:/home/amit/Desktop/projects/lindex/llama_index/docs/examples/llm/ai21.ipynb#X42sZmlsZQ%3D%3D?line=8'>9</a> resp = llm_bad.complete("Paul Graham is ")
+<a href='vscode-notebook-cell:/home/amit/Desktop/projects/lindex/llama_index/docs/examples/llm/ai21.ipynb#X42sZmlsZQ%3D%3D?line=9'>10</a> print(resp)
+File ~/Desktop/projects/lindex/llama_index/llama_index/llms/base.py:312, in llm_completion_callback.<locals>.wrap.<locals>.wrapped_llm_predict(_self, *args, **kwargs)
+302 with wrapper_logic(_self) as callback_manager:
+303 event_id = callback_manager.on_event_start(
+304 CBEventType.LLM,
+305 payload={
+(...)
+309 },
+310 )
+--> 312 f_return_val = f(_self, *args, **kwargs)
+313 if isinstance(f_return_val, Generator):
+314 # intercept the generator and add a callback to the end
+315 def wrapped_gen() -> CompletionResponseGen:
+File ~/Desktop/projects/lindex/llama_index/llama_index/llms/ai21.py:104, in AI21.complete(self, prompt, **kwargs)
+100 import ai21
+102 ai21.api_key = self._api_key
+--> 104 response = ai21.Completion.execute(**all_kwargs, prompt=prompt)
+106 return CompletionResponse(
+107 text=response["completions"][0]["data"]["text"], raw=response.__dict__
+108 )
+File ~/.cache/pypoetry/virtualenvs/llama-index-2x1vjWb5-py3.10/lib/python3.10/site-packages/ai21/modules/resources/nlp_task.py:22, in NLPTask.execute(cls, **params)
+20 return cls._execute_sm(destination=destination, params=params)
+21 if isinstance(destination, AI21Destination):
+---> 22 return cls._execute_studio_api(params)
+24 raise WrongInputTypeException(key=DESTINATION_KEY, expected_type=Destination, given_type=type(destination))
+File ~/.cache/pypoetry/virtualenvs/llama-index-2x1vjWb5-py3.10/lib/python3.10/site-packages/ai21/modules/completion.py:69, in Completion._execute_studio_api(cls, params)
+65 url = f'{url}/{custom_model}'
+67 url = f'{url}/{cls.MODULE_NAME}'
+---> 69 return execute_studio_request(task_url=url, params=params)
+File ~/.cache/pypoetry/virtualenvs/llama-index-2x1vjWb5-py3.10/lib/python3.10/site-packages/ai21/modules/resources/execution_utils.py:11, in execute_studio_request(task_url, params, method)
+9 def execute_studio_request(task_url: str, params, method: str = 'POST'):
+10 client = AI21StudioClient(**params)
+---> 11 return client.execute_http_request(method=method, url=task_url, params=params)
+File ~/.cache/pypoetry/virtualenvs/llama-index-2x1vjWb5-py3.10/lib/python3.10/site-packages/ai21/ai21_studio_client.py:52, in AI21StudioClient.execute_http_request(self, method, url, params, files)
+51 def execute_http_request(self, method: str, url: str, params: Optional[Dict] = None, files=None):
+---> 52 response = self.http_client.execute_http_request(method=method, url=url, params=params, files=files)
+53 return convert_to_ai21_object(response)
+File ~/.cache/pypoetry/virtualenvs/llama-index-2x1vjWb5-py3.10/lib/python3.10/site-packages/ai21/http_client.py:84, in HttpClient.execute_http_request(self, method, url, params, files, auth)
+82 if response.status_code != 200:
+83 log_error(f'Calling {method} {url} failed with a non-200 response code: {response.status_code}')
+---> 84 handle_non_success_response(response.status_code, response.text)
+86 return response.json()
+File ~/.cache/pypoetry/virtualenvs/llama-index-2x1vjWb5-py3.10/lib/python3.10/site-packages/ai21/http_client.py:23, in handle_non_success_response(status_code, response_text)
+21 raise BadRequest(details=response_text)
+22 if status_code == 401:
+---> 23 raise Unauthorized(details=response_text)
+24 if status_code == 422:
+25 raise UnprocessableEntity(details=response_text)
+Unauthorized: Failed with http status code: 401 (Unauthorized). Details: {"detail":"Forbidden: Bad or missing API token."}

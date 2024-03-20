@@ -1,0 +1,17 @@
+Transform Retriever#
+- class llama_index.core.retrievers.transform_retriever.TransformRetriever(retriever: BaseRetriever, query_transform: BaseQueryTransform, transform_metadata: Optional[dict] = None, callback_manager: Optional[CallbackManager] = None, object_map: Optional[dict] = None, verbose: bool = False)#
+Transform Retriever.
+Takes in an existing retriever and a query transform and runs the query transform before running the retriever.
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- get_service_context() Optional[ServiceContext] #
+Attempts to resolve a service context. Short-circuits at self.service_context, self._service_context, or self._index.service_context.
+- retrieve(str_or_query_bundle: Union[str, QueryBundle]) List[NodeWithScore] #
+Retrieve nodes given query.
+- Parameters
+str_or_query_bundle (QueryType) – Either a query string or a QueryBundle object.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.

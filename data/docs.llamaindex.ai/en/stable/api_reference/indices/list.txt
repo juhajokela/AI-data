@@ -1,0 +1,127 @@
+Summary Index#
+Building the Summary Index
+List-based data structures.
+- llama_index.core.indices.list.GPTListIndex#
+alias of
+SummaryIndex
+- llama_index.core.indices.list.ListIndex#
+alias of
+SummaryIndex
+- llama_index.core.indices.list.ListIndexEmbeddingRetriever#
+alias of
+SummaryIndexEmbeddingRetriever
+- llama_index.core.indices.list.ListIndexLLMRetriever#
+alias of
+SummaryIndexLLMRetriever
+- llama_index.core.indices.list.ListIndexRetriever#
+alias of
+SummaryIndexRetriever
+- class llama_index.core.indices.list.SummaryIndex(nodes: Optional[Sequence[BaseNode]] = None, objects: Optional[Sequence[IndexNode]] = None, index_struct: Optional[IndexList] = None, show_progress: bool = False, service_context: Optional[ServiceContext] = None, **kwargs: Any)#
+Summary Index.
+The summary index is a simple data structure where nodes are stored in a sequence. During index construction, the document texts are chunked up, converted to nodes, and stored in a list.
+During query time, the summary index iterates through the nodes with some optional filter parameters, and synthesizes an answer from all the nodes.
+- Parameters
+text_qa_template (Optional[BasePromptTemplate]) – A Question-Answer Prompt (see Prompt Templates). NOTE: this is a deprecated field.
+show_progress (bool) – Whether to show tqdm progress bars. Defaults to False.
+-
+- delete_nodes(node_ids: List[str], delete_from_docstore: bool = False, **delete_kwargs: Any) None #
+Delete a list of nodes from the index.
+- Parameters
+doc_ids (List[str]) – A list of doc_ids from the nodes to delete
+- delete_ref_doc(ref_doc_id: str, delete_from_docstore: bool = False, **delete_kwargs: Any) None #
+Delete a document and it’s nodes by using ref_doc_id.
+- classmethod from_documents(documents: Sequence[Document], storage_context: Optional[StorageContext] = None, show_progress: bool = False, callback_manager: Optional[CallbackManager] = None, transformations: Optional[List[TransformComponent]] = None, service_context: Optional[ServiceContext] = None, **kwargs: Any) IndexType #
+Create index from documents.
+- Parameters
+documents (Optional[Sequence[BaseDocument]]) – List of documents to build the index from.
+- property index_id: str#
+Get the index struct.
+- property ref_doc_info: Dict[str, RefDocInfo]#
+Retrieve a dict mapping of ingested documents and their nodes+metadata.
+- refresh(documents: Sequence[Document], **update_kwargs: Any) List[bool] #
+Refresh an index with documents that have changed.
+This allows users to save LLM and Embedding model calls, while only updating documents that have any changes in text or metadata. It will also insert any documents that previously were not stored.
+- refresh_ref_docs(documents: Sequence[Document], **update_kwargs: Any) List[bool] #
+Refresh an index with documents that have changed.
+This allows users to save LLM and Embedding model calls, while only updating documents that have any changes in text or metadata. It will also insert any documents that previously were not stored.
+- set_index_id(index_id: str) None #
+Set the index id.
+NOTE: if you decide to set the index_id on the index_struct manually, you will need to explicitly call add_index_struct on the index_store to update the index store.
+- Parameters
+index_id (str) – Index id to set.
+- update(document: Document, **update_kwargs: Any) None #
+Update a document and it’s corresponding nodes.
+This is equivalent to deleting the document and then inserting it again.
+- Parameters
+document (Union[BaseDocument, BaseIndex]) – document to update
+insert_kwargs (Dict) – kwargs to pass to insert
+delete_kwargs (Dict) – kwargs to pass to delete
+-
+- update_ref_doc(document: Document, **update_kwargs: Any) None #
+Update a document and it’s corresponding nodes.
+This is equivalent to deleting the document and then inserting it again.
+- Parameters
+document (Union[BaseDocument, BaseIndex]) – document to update
+insert_kwargs (Dict) – kwargs to pass to insert
+delete_kwargs (Dict) – kwargs to pass to delete
+-
+- class llama_index.core.indices.list.SummaryIndexEmbeddingRetriever(index: SummaryIndex, embed_model: Optional[BaseEmbedding] = None, similarity_top_k: Optional[int] = 1, callback_manager: Optional[CallbackManager] = None, object_map: Optional[dict] = None, verbose: bool = False, **kwargs: Any)#
+Embedding based retriever for SummaryIndex.
+Generates embeddings in a lazy fashion for all nodes that are traversed.
+- Parameters
+index (SummaryIndex) – The index to retrieve from.
+similarity_top_k (Optional[int]) – The number of top nodes to return.
+-
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- get_service_context() Optional[ServiceContext] #
+Attempts to resolve a service context. Short-circuits at self.service_context, self._service_context, or self._index.service_context.
+- retrieve(str_or_query_bundle: Union[str, QueryBundle]) List[NodeWithScore] #
+Retrieve nodes given query.
+- Parameters
+str_or_query_bundle (QueryType) – Either a query string or a QueryBundle object.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- class llama_index.core.indices.list.SummaryIndexLLMRetriever(index: SummaryIndex, llm: Optional[LLM] = None, choice_select_prompt: Optional[PromptTemplate] = None, choice_batch_size: int = 10, format_node_batch_fn: Optional[Callable] = None, parse_choice_select_answer_fn: Optional[Callable] = None, service_context: Optional[ServiceContext] = None, callback_manager: Optional[CallbackManager] = None, object_map: Optional[dict] = None, verbose: bool = False, **kwargs: Any)#
+LLM retriever for SummaryIndex.
+- Parameters
+index (SummaryIndex) – The index to retrieve from.
+choice_select_prompt (Optional[PromptTemplate]) – A Choice-Select Prompt (see Prompt Templates).)
+choice_batch_size (int) – The number of nodes to query at a time.
+format_node_batch_fn (Optional[Callable]) – A function that formats a batch of nodes.
+parse_choice_select_answer_fn (Optional[Callable]) – A function that parses the choice select answer.
+service_context (Optional[ServiceContext]) – A service context.
+-
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- get_service_context() Optional[ServiceContext] #
+Attempts to resolve a service context. Short-circuits at self.service_context, self._service_context, or self._index.service_context.
+- retrieve(str_or_query_bundle: Union[str, QueryBundle]) List[NodeWithScore] #
+Retrieve nodes given query.
+- Parameters
+str_or_query_bundle (QueryType) – Either a query string or a QueryBundle object.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- class llama_index.core.indices.list.SummaryIndexRetriever(index: SummaryIndex, callback_manager: Optional[CallbackManager] = None, object_map: Optional[dict] = None, verbose: bool = False, **kwargs: Any)#
+Simple retriever for SummaryIndex that returns all nodes.
+- Parameters
+index (SummaryIndex) – The index to retrieve from.
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- get_service_context() Optional[ServiceContext] #
+Attempts to resolve a service context. Short-circuits at self.service_context, self._service_context, or self._index.service_context.
+- retrieve(str_or_query_bundle: Union[str, QueryBundle]) List[NodeWithScore] #
+Retrieve nodes given query.
+- Parameters
+str_or_query_bundle (QueryType) – Either a query string or a QueryBundle object.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.

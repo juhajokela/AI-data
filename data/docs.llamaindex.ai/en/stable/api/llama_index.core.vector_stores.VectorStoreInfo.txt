@@ -1,0 +1,8 @@
+VectorStoreInfo#
+- pydantic model llama_index.core.vector_stores.VectorStoreInfo#
+Information about a vector store (content and supported metadata filters).
+Currently only used by VectorIndexAutoRetriever.
+Show JSON schema
+{ "title": "VectorStoreInfo", "description": "Information about a vector store (content and supported metadata filters).\n\nCurrently only used by VectorIndexAutoRetriever.", "type": "object", "properties": { "metadata_info": { "title": "Metadata Info", "type": "array", "items": { "$ref": "#/definitions/MetadataInfo" } }, "content_info": { "title": "Content Info", "type": "string" } }, "required": [ "metadata_info", "content_info" ], "definitions": { "MetadataInfo": { "title": "MetadataInfo", "description": "Information about a metadata filter supported by a vector store.\n\nCurrently only used by VectorIndexAutoRetriever.", "type": "object", "properties": { "name": { "title": "Name", "type": "string" }, "type": { "title": "Type", "type": "string" }, "description": { "title": "Description", "type": "string" } }, "required": [ "name", "type", "description" ] } } }
+- field content_info: str [Required]#
+- field metadata_info: List[MetadataInfo] [Required]#

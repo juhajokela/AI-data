@@ -1,0 +1,123 @@
+Managed Index with Zilliz Cloud Pipelines#
+Zilliz Cloud Pipelines is a scalable API service for retrieval. You can use Zilliz Cloud Pipelines as managed index in
+llama-index. This service can transform documents into vector embeddings and store them in Zilliz Cloud for effective semantic search.
+Setup#
+Install llama-index
+%pip install llama-index-indices-managed-zilliz
+# ! pip install llama-index
+Configure credentials of your OpenAI & Zilliz Cloud accounts.
+from getpass import getpass
+import os
+os.environ["OPENAI_API_KEY"] = getpass("Enter your OpenAI API Key:")
+ZILLIZ_PROJECT_ID = getpass("Enter your Zilliz Project ID:")
+ZILLIZ_CLUSTER_ID = getpass("Enter your Zilliz Cluster ID:")
+ZILLIZ_TOKEN = getpass("Enter your Zilliz API Key:")
+Indexing documents#
+From Signed URL#
+Zilliz Cloud Pipelines accepts files from AWS S3 and Google Cloud Storage. You can generate a presigned url from the Object Storage and use
+from_document_url() or
+insert_doc_url() to ingest the file. It can automatically index the document and store the doc chunks as vectors on Zilliz Cloud.
+from llama_index.indices.managed.zilliz import ZillizCloudPipelineIndex
+zcp_index = ZillizCloudPipelineIndex.from_document_url(
+# a public or pre-signed url of a file stored on AWS S3 or Google Cloud Storage
+url="https://publicdataset.zillizcloud.com/milvus_doc.md",
+project_id=ZILLIZ_PROJECT_ID,
+cluster_id=ZILLIZ_CLUSTER_ID,
+token=ZILLIZ_TOKEN,
+# optional
+metadata={"version": "2.3"}, # used for filtering
+collection_name="zcp_llamalection", # change this value will specify customized collection name
+)
+# Insert more docs, eg. a Milvus v2.2 document
+zcp_index.insert_doc_url(
+url="https://publicdataset.zillizcloud.com/milvus_doc_22.md",
+metadata={"version": "2.2"},
+)
+# # Delete docs by doc name
+# zcp_index.delete_by_doc_name(doc_name="milvus_doc_22.md")
+No available pipelines. Please create pipelines first.
+Pipelines are automatically created.
+{'token_usage': 984, 'doc_name': 'milvus_doc_22.md', 'num_chunks': 7}
+It is optional to add metadata for each document. The metadata can be used to filter doc chunks during retrieval.
+From Local File#
+Coming soon.
+From Raw Text#
+Coming soon.
+Working as Query Engine#
+To conduct semantic search with
+ZillizCloudPipelineIndex, you can use it
+as_query_engine() by specifying a few parameters:
+search_top_k: How many text nodes/chunks to retrieve. Optional, defaults to
+DEFAULT_SIMILARITY_TOP_K(2).
+filters: Metadata filters. Optional, defaults to None.
+output_metadata: What metadata fields to return with the retrieved text node. Optional, defaults to [].
+from llama_index.core.vector_stores import ExactMatchFilter, MetadataFilters
+query_engine_milvus23 = zcp_index.as_query_engine(
+search_top_k=3,
+filters=MetadataFilters(
+filters=[
+ExactMatchFilter(key="version", value="2.3")
+] # version == "2.3"
+),
+output_metadata=["version"],
+)
+Then the query engine is ready for Semantic Search or Retrieval Augmented Generation with Milvus 2.3 documents:
+Retrieve (Semantic search powered by Zilliz Cloud Pipelines):
+question = "Can users delete entities by filtering non-primary fields?"
+retrieved_nodes = query_engine_milvus23.retrieve(question)
+print(retrieved_nodes)
+[NodeWithScore(node=TextNode(id_='447198459513870883', embedding=None, metadata={'version': '2.3'}, excluded_embed_metadata_keys=[], excluded_llm_metadata_keys=[], relationships={}, text='# Delete Entities\nThis topic describes how to delete entities in Milvus. \nMilvus supports deleting entities by primary key or complex boolean expressions. Deleting entities by primary key is much faster and lighter than deleting them by complex boolean expressions. This is because Milvus executes queries first when deleting data by complex boolean expressions. \nDeleted entities can still be retrieved immediately after the deletion if the consistency level is set lower than Strong.\nEntities deleted beyond the pre-specified span of time for Time Travel cannot be retrieved again.\nFrequent deletion operations will impact the system performance. \nBefore deleting entities by comlpex boolean expressions, make sure the collection has been loaded.\nDeleting entities by complex boolean expressions is not an atomic operation. Therefore, if it fails halfway through, some data may still be deleted.\nDeleting entities by complex boolean expressions is supported only when the consistency is set to Bounded. For details, see Consistency.', start_char_idx=None, end_char_idx=None, text_template='{metadata_str}\n\n{content}', metadata_template='{key}: {value}', metadata_seperator='\n'), score=0.728226900100708), NodeWithScore(node=TextNode(id_='447198459513870886', embedding=None, metadata={'version': '2.3'}, excluded_embed_metadata_keys=[], excluded_llm_metadata_keys=[], relationships={}, text='# Delete Entities\n## Prepare boolean expression\n### Complex boolean expression\nTo filter entities that meet specific conditions, define complex boolean expressions. \nFilter entities whose word_count is greater than or equal to 11000: \n```python\nexpr = "word_count >= 11000"\n``` \nFilter entities whose book_name is not Unknown: \n```python\nexpr = "book_name != Unknown"\n``` \nFilter entities whose primary key values are greater than 5 and word_count is smaller than or equal to 9999: \n```python\nexpr = "book_id > 5 && word_count <= 9999"\n```', start_char_idx=None, end_char_idx=None, text_template='{metadata_str}\n\n{content}', metadata_template='{key}: {value}', metadata_seperator='\n'), score=0.687866747379303), NodeWithScore(node=TextNode(id_='447198459513870884', embedding=None, metadata={'version': '2.3'}, excluded_embed_metadata_keys=[], excluded_llm_metadata_keys=[], relationships={}, text='# Delete Entities\n## Prepare boolean expression\nPrepare the boolean expression that filters the entities to delete. \nMilvus supports deleting entities by primary key or complex boolean expressions. For more information on expression rules and supported operators, see Boolean Expression Rules.', start_char_idx=None, end_char_idx=None, text_template='{metadata_str}\n\n{content}', metadata_template='{key}: {value}', metadata_seperator='\n'), score=0.6814976334571838)]
+The query engine with filters retrieves only text nodes with “version 2.3” tag.
+Query (RAG powered by Zilliz Cloud Pipelines as retriever and OpenAI’s LLM):
+response = query_engine_milvus23.query(question)
+print(response.response)
+Yes, users can delete entities by filtering non-primary fields using complex boolean expressions in Milvus. The complex boolean expressions allow users to define specific conditions to filter entities based on non-primary fields, such as word_count or book_name. By specifying the desired conditions in the boolean expression, users can delete entities that meet those conditions. However, it is important to note that deleting entities by complex boolean expressions is not an atomic operation, and if it fails halfway through, some data may still be deleted.
+Advanced#
+You are able to get the managed index without running data ingestion. In order to get ready with Zilliz Cloud Pipelines, you need to provide either pipeline ids or collection name:
+pipeline_ids: The dictionary of pipeline ids for INGESTION, SEARCH, DELETION. Defaults to None. For example: {“INGESTION”: “pipe-xx1”, “SEARCH”: “pipe-xx2”, “DELETION”: “pipe-xx3”}.
+collection_name: The collection name, defaults to ‘zcp_llamalection’. If no pipeline_ids is given, the index will try to get pipelines with collection_name.
+from llama_index.indices.managed.zilliz import ZillizCloudPipelineIndex
+advanced_zcp_index = ZillizCloudPipelineIndex(
+project_id=ZILLIZ_PROJECT_ID,
+cluster_id=ZILLIZ_CLUSTER_ID,
+token=ZILLIZ_TOKEN,
+collection_name="zcp_llamalection_advanced",
+)
+No available pipelines. Please create pipelines first.
+Customize Pipelines#
+If no pipelines are provided or found, then you can manually create and customize pipelines with the following optional parameters:
+metadata_schema: A dictionary of metadata schema with field name as key and data type as value. For example, {“user_id”: “VarChar”}.
+chunkSize: An integer of chunk size using token as unit. If no chunk size is specified, then Zilliz Cloud Pipeline will use a built-in default chunk size (500 tokens) to split documents.
+(others): Refer to Zilliz Cloud Pipelines for more available pipeline parameters.
+advanced_zcp_index.create_pipelines(
+metadata_schema={"user_id": "VarChar"},
+chunkSize=350,
+# other pipeline params
+)
+{'INGESTION': 'pipe-220572b2597efba9a91ed5',
+'SEARCH': 'pipe-8de59599229631c72d4d2c',
+'DELETION': 'pipe-2813fbf9eb09b352e81efa'}
+Multi-Tenancy#
+With the tenant-specific value (eg. user id) as metadata, the managed index is able to achieve multi-tenancy by applying metadata filters.
+By specifying metadata value, each document is tagged with the tenant-specific field at ingestion.
+advanced_zcp_index.insert_doc_url(
+url="https://publicdataset.zillizcloud.com/milvus_doc.md",
+metadata={"user_id": "user_001"},
+)
+{'token_usage': 1247, 'doc_name': 'milvus_doc.md', 'num_chunks': 10}
+Then the managed index is able to build a query engine for each tenant by filtering the tenant-specific field.
+from llama_index.core.vector_stores import ExactMatchFilter, MetadataFilters
+query_engine_for_user_001 = advanced_zcp_index.as_query_engine(
+search_top_k=3,
+filters=MetadataFilters(
+filters=[ExactMatchFilter(key="user_id", value="user_001")]
+),
+output_metadata=["user_id"], # optional, display user_id in outputs
+)
+Change
+filtersto build query engines with different conditions.
+question = "Can I delete entities by filtering non-primary fields?"
+# search_results = query_engine_for_user_001.retrieve(question)
+response = query_engine_for_user_001.query(question)
+print(response.response)
+Yes, you can delete entities by filtering non-primary fields. Milvus supports deleting entities by complex boolean expressions, which allows you to filter entities based on specific conditions on non-primary fields. You can define complex boolean expressions using operators such as greater than or equal to, not equal to, and logical operators like AND and OR. By using these expressions, you can filter entities based on the values of non-primary fields and delete them accordingly.

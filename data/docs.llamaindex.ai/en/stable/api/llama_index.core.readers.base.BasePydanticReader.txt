@@ -1,0 +1,11 @@
+BasePydanticReader#
+- pydantic model llama_index.core.readers.base.BasePydanticReader#
+Serialiable Data Loader with Pydantic.
+Show JSON schema
+{ "title": "BasePydanticReader", "description": "Serialiable Data Loader with Pydantic.", "type": "object", "properties": { "is_remote": { "title": "Is Remote", "description": "Whether the data is loaded from a remote API or a local file.", "default": false, "type": "boolean" }, "class_name": { "title": "Class Name", "type": "string", "default": "base_component" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- field is_remote: bool = False#
+Whether the data is loaded from a remote API or a local file.

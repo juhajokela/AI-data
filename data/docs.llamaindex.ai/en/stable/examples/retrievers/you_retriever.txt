@@ -1,0 +1,19 @@
+You.com Retriever#
+This notebook walks you through how to setup a Retriever that can fetch from You.com
+%pip install llama-index-retrievers-you
+from llama_index.retrievers.you import YouRetriever
+you_api_key = "" or os.environ["YOU_API_KEY"]
+retriever = YouRetriever(api_key=you_api_key)
+retrieved_results = retriever.retrieve("national parks in the US")
+print(retrieved_results[0].get_content())
+from llama_index.core.response.notebook_utils import display_source_node
+# for n in retrieved_results:
+# display_source_node(n)
+Use in Query Engine#
+from llama_index.core.query_engine import RetrieverQueryEngine
+query_engine = RetrieverQueryEngine.from_args(
+retriever,
+)
+response = query_engine.query("Tell me about national parks in the US")
+print(str(response))
+The United States has 63 national parks, which are protected areas operated by the National Park Service. These parks are designated for their natural beauty, unique geological features, diverse ecosystems, and recreational opportunities. They are typically larger and more popular destinations compared to other units of the National Park System. National monuments, on the other hand, are also protected for their historical or archaeological significance. Some national parks are paired with national preserves, which have different levels of protection but are administered together. The national parks in the United States cover a total area of approximately 52.4 million acres.

@@ -1,0 +1,16 @@
+LangchainNodeParser#
+- pydantic model llama_index.core.node_parser.LangchainNodeParser#
+Basic wrapper around langchain’s text splitter.
+TODO: Figure out how to make this metadata aware.
+Show JSON schema
+{ "title": "LangchainNodeParser", "description": "Basic wrapper around langchain's text splitter.\n\nTODO: Figure out how to make this metadata aware.", "type": "object", "properties": { "include_metadata": { "title": "Include Metadata", "description": "Whether or not to consider metadata when splitting.", "default": true, "type": "boolean" }, "include_prev_next_rel": { "title": "Include Prev Next Rel", "description": "Include prev/next node relationships.", "default": true, "type": "boolean" }, "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "class_name": { "title": "Class Name", "type": "string", "default": "base_component" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- Validators
+_validate_id_func»
+id_func
+-
+- split_text(text: str) List[str] #
+Split text into sentences.

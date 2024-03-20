@@ -1,0 +1,64 @@
+Vector Store Index#
+Below we show the vector store index classes.
+Each vector store index class is a combination of a base vector store index class and a vector store, shown below.
+Base vector store index.
+An index that is built on top of an existing vector store.
+- llama_index.core.indices.vector_store.base.GPTVectorStoreIndex#
+alias of
+VectorStoreIndex
+- class llama_index.core.indices.vector_store.base.VectorStoreIndex(nodes: Optional[Sequence[BaseNode]] = None, use_async: bool = False, store_nodes_override: bool = False, embed_model: Optional[Union[BaseEmbedding, LCEmbeddings, str]] = None, insert_batch_size: int = 2048, objects: Optional[Sequence[IndexNode]] = None, index_struct: Optional[IndexDict] = None, storage_context: Optional[StorageContext] = None, callback_manager: Optional[CallbackManager] = None, transformations: Optional[List[TransformComponent]] = None, show_progress: bool = False, service_context: Optional[ServiceContext] = None, **kwargs: Any)#
+Vector Store Index.
+- Parameters
+use_async (bool) – Whether to use asynchronous calls. Defaults to False.
+show_progress (bool) – Whether to show tqdm progress bars. Defaults to False.
+store_nodes_override (bool) – set to True to always store Node objects in index store and document store even if vector store keeps text. Defaults to False
+-
+- build_index_from_nodes(nodes: Sequence[BaseNode], **insert_kwargs: Any) IndexDict #
+Build the index from nodes.
+- NOTE: Overrides BaseIndex.build_index_from_nodes.
+VectorStoreIndex only stores nodes in document store if vector store does not store text
+- delete_nodes(node_ids: List[str], delete_from_docstore: bool = False, **delete_kwargs: Any) None #
+Delete a list of nodes from the index.
+- Parameters
+node_ids (List[str]) – A list of node_ids from the nodes to delete
+- delete_ref_doc(ref_doc_id: str, delete_from_docstore: bool = False, **delete_kwargs: Any) None #
+Delete a document and it’s nodes by using ref_doc_id.
+- classmethod from_documents(documents: Sequence[Document], storage_context: Optional[StorageContext] = None, show_progress: bool = False, callback_manager: Optional[CallbackManager] = None, transformations: Optional[List[TransformComponent]] = None, service_context: Optional[ServiceContext] = None, **kwargs: Any) IndexType #
+Create index from documents.
+- Parameters
+documents (Optional[Sequence[BaseDocument]]) – List of documents to build the index from.
+- property index_id: str#
+Get the index struct.
+- insert_nodes(nodes: Sequence[BaseNode], **insert_kwargs: Any) None #
+Insert nodes.
+- NOTE: overrides BaseIndex.insert_nodes.
+VectorStoreIndex only stores nodes in document store if vector store does not store text
+- property ref_doc_info: Dict[str, RefDocInfo]#
+Retrieve a dict mapping of ingested documents and their nodes+metadata.
+- refresh(documents: Sequence[Document], **update_kwargs: Any) List[bool] #
+Refresh an index with documents that have changed.
+This allows users to save LLM and Embedding model calls, while only updating documents that have any changes in text or metadata. It will also insert any documents that previously were not stored.
+- refresh_ref_docs(documents: Sequence[Document], **update_kwargs: Any) List[bool] #
+Refresh an index with documents that have changed.
+This allows users to save LLM and Embedding model calls, while only updating documents that have any changes in text or metadata. It will also insert any documents that previously were not stored.
+- set_index_id(index_id: str) None #
+Set the index id.
+NOTE: if you decide to set the index_id on the index_struct manually, you will need to explicitly call add_index_struct on the index_store to update the index store.
+- Parameters
+index_id (str) – Index id to set.
+- update(document: Document, **update_kwargs: Any) None #
+Update a document and it’s corresponding nodes.
+This is equivalent to deleting the document and then inserting it again.
+- Parameters
+document (Union[BaseDocument, BaseIndex]) – document to update
+insert_kwargs (Dict) – kwargs to pass to insert
+delete_kwargs (Dict) – kwargs to pass to delete
+-
+- update_ref_doc(document: Document, **update_kwargs: Any) None #
+Update a document and it’s corresponding nodes.
+This is equivalent to deleting the document and then inserting it again.
+- Parameters
+document (Union[BaseDocument, BaseIndex]) – document to update
+insert_kwargs (Dict) – kwargs to pass to insert
+delete_kwargs (Dict) – kwargs to pass to delete
+-

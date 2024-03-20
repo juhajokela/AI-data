@@ -1,0 +1,139 @@
+Vectara Managed Index#
+In this notebook we are going to show how to use Vectara with LlamaIndex. Vectara is the first example of a “Managed” Index, a new type of index in Llama-index which is managed via an API.
+If you’re opening this Notebook on colab, you will probably need to install LlamaIndex 🦙.
+%pip install llama-index-indices-managed-vectara
+!pip install llama-index
+from llama_index.indices.managed.vectara import VectaraIndex
+from llama_index.core import SimpleDirectoryReader
+Loading documents#
+Load the documents stored in the
+Uber 10q using the SimpleDirectoryReader
+import os
+documents = SimpleDirectoryReader(os.path.abspath("../data/10q/")).load_data()
+print(f"documents loaded into {len(documents)} document objects")
+print(f"Document ID of first doc is {documents[0].doc_id}")
+documents loaded into 3 document objects
+Document ID of first doc is ec2e38f2-c333-4f46-b2a1-0b3f08b9be6e
+Add the content of the documents into a pre-created Vectara corpus#
+Here we assume an empty corpus is created and the details are available as environment variables:
+VECTARA_CORPUS_ID
+VECTARA_CUSTOMER_ID
+VECTARA_API_KEY
+index = VectaraIndex.from_documents(documents)
+Query the Vectara Index#
+We can now ask questions using the VectaraIndex retriever.
+query = "Is Uber still losing money or have they achieved profitability?"
+First we use the retriever to list the returned documents:
+query_engine = index.as_query_engine(similarity_top_k=5)
+response = query_engine.retrieve(query)
+texts = [t.node.text for t in response]
+print("\n--\n".join(texts))
+Most jurisdictions in which we operate have laws that govern payment and financial services activities. Regulators in certain jurisdictions may determine that
+certain aspects of our business are subject to these laws and could require us to obtain licenses to continue to operate in such jurisdictions. For example, our
+subsidiary in the Netherlands, Uber Payments B.V., is registered and authorized by its competent authority, De Nederlandsche Bank, as an electronic money
+institution. This authorization permits Uber Payments B.V. to provide payment services (including acquiring and executing payment transactions and money
+remittances, as referred to in the Revised Payment Services Directive (2015/2366/EU)) and to issue electronic money in the Netherlands. In addition, Uber
+Payments B.V. has notified De Nederlandsche Bank that it will provide such services on a cross-border passport basis into other countries within the EEA.
+--
+Most jurisdictions in which we operate have laws that govern payment and financial services activities. Regulators in certain jurisdictions may determine that
+certain aspects of our business are subject to these laws and could require us to obtain licenses to continue to operate in such jurisdictions. For example, our
+subsidiary in the Netherlands, Uber Payments B.V., is registered and authorized by its competent authority, De Nederlandsche Bank, as an electronic money
+institution. This authorization permits Uber Payments B.V. to provide payment services (including acquiring and executing payment transactions and money
+remittances, as referred to in the Revised Payment Services Directive (2015/2366/EU)) and to issue electronic money in the Netherlands. In addition, Uber
+Payments B.V. has notified De Nederlandsche Bank that it will provide such services on a cross-border passport basis into other countries within the EEA.
+--
+The court granted our motion to defer the summary judgment motion on January 12, 2022. Our chances of success on
+the merits are still uncertain and any reasonably possible loss or range of loss cannot be estimated. Swiss Social Security Reclassification
+Several Swiss administrative bodies have issued decisions in which they classify Drivers as employees of Uber Switzerland, Rasier Operations B.V. or of Uber
+B.V. for social security or labor purposes. We are challenging each of them before the Social Security and Administrative Tribunals. In April 2021, a ruling was made that Uber Switzerland could not be held liable for social security contributions.
+--
+The court granted our motion to defer the summary judgment motion on January 12, 2022. Our chances of success on
+the merits are still uncertain and any reasonably possible loss or range of loss cannot be estimated. Swiss Social Security Reclassification
+Several Swiss administrative bodies have issued decisions in which they classify Drivers as employees of Uber Switzerland, Rasier Operations B.V. or of Uber
+B.V. for social security or regulatory purposes. We are challenging each of them before the Social Security and Administrative Tribunals. In April 2021, a ruling
+was made that Uber Switzerland could not be held liable for social security contributions.
+--
+The court granted our motion to defer the summary judgment motion on January 12, 2022 and summary judgment
+papers will be fully briefed by May 31, 2023. Our chances of success on the merits are still uncertain and any reasonably possible loss or range of loss cannot be
+estimated. Swiss Social Security Rulings
+Several Swiss administrative bodies have issued decisions in which they classify Drivers as employees of Uber Switzerland, Rasier Operations B.V. or of Uber
+B.V. for social security or labor purposes. We are challenging each of them before the Social Security and Administrative Tribunals. In April 2021, a ruling was made that Uber Switzerland could not be held liable for social security contributions.
+with the as_query_engine(), we can ask questions and get the responses based on Vectara’s full RAG pipeline:
+query_engine = index.as_query_engine(similarity_top_k=5)
+response = query_engine.query(query)
+print(response)
+As of the provided search results, there is no direct information about Uber's current financial state or whether they have achieved profitability. However, the search results mention that Uber is facing regulatory challenges in different jurisdictions [1][3]. These challenges involve the classification of drivers as employees and social security contributions [3]. The outcome of these cases could affect Uber's financial situation. It is important to note that the search results did not provide a clear answer regarding whether Uber is still losing money or if they have achieved profitability.
+Note that the “response” object above includes both the summary text but also the source documents used to provide this response (citations)
+Vectara supports max-marginal-relevance natively in the backend, and this is available as a query mode. Let’s see an example of how to use MMR: We will run the same query “Is Uber still losing money or have they achieved profitability?” but this time we will use MMR where mmr_diversity_bias=1.0 which maximizes the focus on maximum diversity:
+query_engine = index.as_query_engine(
+similarity_top_k=5,
+n_sentences_before=2,
+n_sentences_after=2,
+vectara_query_mode="mmr",
+mmr_k=50,
+mmr_diversity_bias=1.0,
+)
+response = query_engine.retrieve(query)
+texts = [t.node.text for t in response]
+print("\n--\n".join(texts))
+We are challenging each of them before the Social Security and Administrative Tribunals. In April 2021, a ruling was made that Uber Switzerland could not be held liable for social security contributions. The litigations with regards to Uber B.V. and
+Rasier Operations B.V. are still pending for years 2014 to 2019. In January 2022, the Social Security Tribunal of Zurich reclassified drivers who have used the App
+in 2014 as dependent workers of Uber B.V. and Rasier Operations B.V. from a social security standpoint, but this ruling has been appealed before the Federal
+Tribunal and has no impact on our current operations. On June 3, 2022, the Federal Tribunal issued two rulings by which both Drivers and Couriers in the canton of
+Geneva are classified as employees of Uber B.V. and Uber Switzerland GmbH.
+--
+If the requirement is not repealed or modified, our financial condition, operating results, and cash flows may be adversely impacted
+by this legislation. In August 2022, the Inflation Reduction Act, or the IRA, was enacted, the provisions of which include a minimum tax equal to 15% of the
+adjusted financial statement income of certain large corporations, as well as a 1% excise tax on certain share buybacks by public corporations that would be
+imposed on such corporations. Pending further guidance, it is possible that the IRA could increase our future tax liability, which could in turn adversely impact our
+business and future profitability. We are unable to predict what global or U.S. tax reforms may be proposed or enacted in the future or what effects such future changes would have on our
+business. Any such changes in tax legislation, regulations, policies or practices in the jurisdictions in which we operate could increase the estimated tax liability that
+we have expensed to date and paid or accrued on our balance sheet; affect our financial position, future operating results, cash flows, and effective tax rates where
+we have operations; reduce post-tax returns to our stockholders; and increase the complexity, burden, and cost of tax compliance.
+--
+Most jurisdictions in which we operate have laws that govern payment and financial services activities. Regulators in certain jurisdictions may determine that
+certain aspects of our business are subject to these laws and could require us to obtain licenses to continue to operate in such jurisdictions. For example, our
+subsidiary in the Netherlands, Uber Payments B.V., is registered and authorized by its competent authority, De Nederlandsche Bank, as an electronic money
+institution. This authorization permits Uber Payments B.V. to provide payment services (including acquiring and executing payment transactions and money
+remittances, as referred to in the Revised Payment Services Directive (2015/2366/EU)) and to issue electronic money in the Netherlands. In addition, Uber
+Payments B.V. has notified De Nederlandsche Bank that it will provide such services on a cross-border passport basis into other countries within the EEA.
+--
+Taxing authorities have appealed the orders related to tax issues and plan confirmation but did not
+appeal the settlement approval. Uber is not a party to those appeals. The taxing authorities’ chances of success on the merits are still uncertain and any reasonably
+possible loss or range of loss is immaterial. Non-Income Tax Matters
+We recorded an estimated liability for contingencies related to non-income tax matters and are under audit by various domestic and foreign tax authorities with
+regard to such matters. The subject matter of these contingent liabilities and non-income tax audits primarily arises from our transactions with Drivers, as well as
+the tax treatment of certain employee benefits and related employment taxes.
+--
+Revenue growth outpaced Gross Bookings growth primarily due to a $1.3 billion increase in our Freight
+business, primarily due to the acquisition of Transplace during the fourth quarter of 2021, and the net favorable impact to Mobility revenue of $1.1 billion as a
+result of business model changes in the UK. Net loss attributable to Uber Technologies, Inc. was $1.2 billion, which includes the unfavorable impact of a pre-tax unrealized loss on debt and equity
+securities, net of $550 million primarily related to changes in the fair value of our marketable equity securities, including: a $641 million loss on our Didi
+investments, partially offset by a $90 million gain on our Aurora investment. Net loss attributable to Uber Technologies, Inc. also includes $482 million of stock-
+based compensation expense. Adjusted EBITDA was $516 million, up $508 million compared to the same period in 2021. Mobility Adjusted EBITDA profit was $898 million, up $354
+million compared to the same period in 2021.
+As you can see, the results in this case are much more diverse, and for example do not contain the same text more than once. The response is also better since the LLM had a more diverse set of facts to ground its response on:
+query_engine = index.as_query_engine(
+similarity_top_k=5,
+n_sentences_before=2,
+n_sentences_after=2,
+summary_enabled=True,
+vectara_query_mode="mmr",
+mmr_k=50,
+mmr_diversity_bias=1.0,
+)
+response = query_engine.query(query)
+print(response)
+Based on the search results, the profitability of Uber is still uncertain. There are ongoing litigations and regulatory challenges in various jurisdictions regarding labor classification, social security contributions, and tax matters [1][3][4][6]. While Uber has reported revenue growth and improved adjusted EBITDA, it also incurred net losses due to factors such as unrealized losses on investments and stock-based compensation expenses [5]. The outcome of these legal and regulatory issues may impact Uber's financial condition and future profitability [1][3]. Therefore, it cannot be definitively stated whether Uber has achieved profitability or is still losing money.
+So far we’ve used Vectara’s internal summarization capability, which is the best way for most users.
+You can still use Llama-Index’s standard VectorStore as_query_engine() method, in which case Vectara’s summarization won’t be used, and you would be using an external LLM (like OpenAI’s GPT-4 or similar) and a cutom prompt from LlamaIndex to generate the summart. For this option just set summary_enabled=False
+query_engine = index.as_query_engine(
+similarity_top_k=5,
+summary_enabled=False,
+vectara_query_mode="mmr",
+mmr_k=50,
+mmr_diversity_bias=0.5,
+)
+response = query_engine.query(query)
+print(response)
+Uber is still losing money and has not achieved profitability.

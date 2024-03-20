@@ -1,0 +1,159 @@
+MistralAI Cookbook#
+MistralAI released mistral-large model with enhancing capabilities of Function calling, reasoning, precise instruction-following, JSON mode and many more.
+This is a cook-book in showcasing the usage of
+mistral-large model with llama-index.
+Setup LLM and Embedding Model#
+import nest_asyncio
+nest_asyncio.apply()
+import os
+os.environ["MISTRAL_API_KEY"] = "YOUR MISTRALAI API KEY"
+from llama_index.llms.mistralai import MistralAI
+from llama_index.embeddings.mistralai import MistralAIEmbedding
+from llama_index.core import Settings
+llm = MistralAI(model="mistral-large", temperature=0.1)
+embed_model = MistralAIEmbedding(model_name="mistral-embed")
+Settings.llm = llm
+Settings.embed_model = embed_model
+Download Data#
+We will use
+Uber-2021 and
+Lyft-2021 10K SEC filings.
+!wget 'https://raw.githubusercontent.com/run-llama/llama_index/main/docs/examples/data/10k/uber_2021.pdf' -O './uber_2021.pdf'
+!wget 'https://raw.githubusercontent.com/run-llama/llama_index/main/docs/examples/data/10k/lyft_2021.pdf' -O './lyft_2021.pdf'
+--2024-02-27 01:17:30-- https://raw.githubusercontent.com/run-llama/llama_index/main/docs/examples/data/10k/uber_2021.pdf
+Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 2606:50c0:8000::154, 2606:50c0:8001::154, 2606:50c0:8002::154, ...
+Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|2606:50c0:8000::154|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 1880483 (1.8M) [application/octet-stream]
+Saving to: './uber_2021.pdf'
+./uber_2021.pdf 100%[===================>] 1.79M 7.16MB/s in 0.3s
+2024-02-27 01:17:31 (7.16 MB/s) - './uber_2021.pdf' saved [1880483/1880483]
+--2024-02-27 01:17:31-- https://raw.githubusercontent.com/run-llama/llama_index/main/docs/examples/data/10k/lyft_2021.pdf
+Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 2606:50c0:8000::154, 2606:50c0:8001::154, 2606:50c0:8002::154, ...
+Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|2606:50c0:8000::154|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 1440303 (1.4M) [application/octet-stream]
+Saving to: './lyft_2021.pdf'
+./lyft_2021.pdf 100%[===================>] 1.37M 2.34MB/s in 0.6s
+2024-02-27 01:17:32 (2.34 MB/s) - './lyft_2021.pdf' saved [1440303/1440303]
+Load Data#
+from llama_index.core import SimpleDirectoryReader
+uber_docs = SimpleDirectoryReader(input_files=["./uber_2021.pdf"]).load_data()
+lyft_docs = SimpleDirectoryReader(input_files=["./lyft_2021.pdf"]).load_data()
+Build RAG on uber docs#
+from llama_index.core import VectorStoreIndex
+uber_index = VectorStoreIndex.from_documents(uber_docs)
+uber_query_engine = uber_index.as_query_engine(similarity_top_k=5)
+response = uber_query_engine.query("What is the revenue of uber in 2021?")
+print(response)
+The revenue of Uber in 2021 was $17,455 million.
+Compare
+Uber and
+Lyft revenue#
+We will use
+SubQuestionQueryEngine
+lyft_index = VectorStoreIndex.from_documents(lyft_docs)
+lyft_query_engine = lyft_index.as_query_engine(similarity_top_k=5)
+from llama_index.core.tools import QueryEngineTool, ToolMetadata
+from llama_index.core.query_engine import SubQuestionQueryEngine
+query_engine_tools = [
+QueryEngineTool(
+query_engine=lyft_query_engine,
+metadata=ToolMetadata(
+name="lyft_10k",
+description="Provides information about Lyft financials for year 2021",
+),
+),
+QueryEngineTool(
+query_engine=uber_query_engine,
+metadata=ToolMetadata(
+name="uber_10k",
+description="Provides information about Uber financials for year 2021",
+),
+),
+]
+sub_question_query_engine = SubQuestionQueryEngine.from_defaults(
+query_engine_tools=query_engine_tools
+)
+response = await sub_question_query_engine.aquery(
+"Compare revenue growth of Uber and Lyft from 2020 to 2021"
+)
+print(response)
+Generated 4 sub questions.
+[uber_10k] Q: What was the revenue of Uber in 2020
+[uber_10k] Q: What was the revenue of Uber in 2021
+[lyft_10k] Q: What was the revenue of Lyft in 2020
+[lyft_10k] Q: What was the revenue of Lyft in 2021
+[lyft_10k] A: The revenue of Lyft in 2021 was $3,208,323.
+[uber_10k] A: The revenue of Uber in 2021 was $17,455 million.
+[lyft_10k] A: The revenue of Lyft in 2020 was $2,364,681 (in thousands).
+[uber_10k] A: The revenue of Uber in 2020 was $11,139 million.
+From 2020 to 2021, both Uber and Lyft experienced revenue growth. Uber's revenue increased from $11,139 million in 2020 to $17,455 million in 2021. On the other hand, Lyft's revenue grew from $2,364,681 (in thousands) in 2020 to $3,208,323 in 2021. This indicates that both companies had a positive growth trajectory in their revenues during this period.
+Route queries between
+Uber and
+Lyft#
+from llama_index.core import SummaryIndex
+summary_index = SummaryIndex.from_documents(uber_docs)
+summary_query_engine = summary_index.as_query_engine(
+response_mode="tree_summarize",
+use_async=True,
+)
+from llama_index.core.tools import QueryEngineTool
+lyft_vector_tool = QueryEngineTool.from_defaults(
+query_engine=lyft_query_engine,
+description=(
+"Useful for retrieving specific context from lyft 10k SEC filings of 2021"
+),
+)
+uber_vector_tool = QueryEngineTool.from_defaults(
+query_engine=uber_query_engine,
+description=(
+"Useful for retrieving specific context from uber 10k SEC filings of 2021"
+),
+)
+from llama_index.core.query_engine import RouterQueryEngine
+from llama_index.core.selectors import LLMSingleSelector
+router_query_engine = RouterQueryEngine(
+selector=LLMSingleSelector.from_defaults(),
+query_engine_tools=[
+lyft_vector_tool,
+uber_vector_tool,
+],
+verbose=True,
+)
+response = router_query_engine.query("What is the revenue of uber in 2021?")
+print(str(response))
+Selecting query engine 1: This choice is relevant because it pertains to Uber's 10k SEC filings of 2021, where the revenue information for the year is likely to be found..
+The revenue of Uber in 2021 was $17,455 million.
+response = router_query_engine.query(
+"What are the investments made by lyft in 2021?"
+)
+print(str(response))
+Selecting query engine 0: This choice is most relevant to the question as it pertains to retrieving specific context from Lyft's 10k SEC filings of 2021, where information about Lyft's investments made in 2021 would likely be found..
+In 2021, Lyft made several investments to improve and expand their services. They continued to invest in the expansion of their network of Light Vehicles and Lyft Autonomous, which focuses on the deployment and scaling of third-party self-driving technology on the Lyft network. They also invested in their Express Drive program, which provides drivers access to rental cars they can use for ridesharing. Additionally, they made investments in their Driver Centers, Mobile Services, and related partnerships that offer drivers affordable and convenient vehicle maintenance services. Furthermore, they invested in their proprietary technology, including mapping, routing, payments, in-app navigation, matching technologies, and data science to make their network more efficient and seamless to use. They also acquired certain money market deposit accounts and cash in transit from payment processors for credit and debit card transactions. Short-term investments consisted of commercial paper, certificates of deposit, corporate bonds, and term deposits, which mature in 12 months or less. Restricted cash, cash equivalents, and investments consisted primarily of amounts held in separate trust accounts and restricted bank accounts as collateral for insurance purposes and amounts pledged to secure certain letters of credit.
+Tools usage#
+from llama_index.core.agent import ReActAgent
+from llama_index.core.tools import FunctionTool
+def multiply(a: int, b: int) -> int:
+"""Multiple two integers and returns the result integer"""
+return a * b
+multiply_tool = FunctionTool.from_defaults(fn=multiply)
+def add(a: int, b: int) -> int:
+"""Add two integers and returns the result integer"""
+return a + b
+add_tool = FunctionTool.from_defaults(fn=add)
+tools = [multiply_tool, add_tool]
+agent = ReActAgent.from_tools(tools, llm=llm, verbose=True)
+response = agent.chat("What is (26 * 2) + 2024?")
+print(response)
+Thought: I need to use a tool to multiply 26 and 2.
+Action: multiply
+Action Input: {'a': 26, 'b': 2}
+Observation: 52
+Thought: I need to use a tool to add the result of the multiplication to 2024.
+Action: add
+Action Input: {'a': 52, 'b': 2024}
+Observation: 2076
+Thought: I can answer without using any more tools.
+Answer: The result of (26 * 2) + 2024 is 2076.
+The result of (26 * 2) + 2024 is 2076.

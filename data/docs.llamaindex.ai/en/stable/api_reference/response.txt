@@ -1,0 +1,44 @@
+Response#
+Response schema.
+- class llama_index.core.base.response.schema.AsyncStreamingResponse(async_response_gen: ~typing.AsyncGenerator[str, None] = <function AsyncStreamingResponse.async_response_gen>, source_nodes: ~typing.List[~llama_index.core.schema.NodeWithScore] = <factory>, metadata: ~typing.Optional[~typing.Dict[str, ~typing.Any]] = None, response_txt: ~typing.Optional[str] = None)#
+AsyncStreamingResponse object.
+Returned if streaming=True while using async.
+- async_response_gen#
+The response async generator.
+- Type
+AsyncGenerator[str, None]
+- async async_response_gen() AsyncGenerator[str, None] #
+Yield the string response.
+- get_formatted_sources(length: int = 100, trim_text: int = True) str #
+Get formatted sources text.
+- async print_response_stream() None #
+Print the response stream.
+- class llama_index.core.base.response.schema.PydanticResponse(response: ~typing.Optional[~pydantic.main.BaseModel], source_nodes: ~typing.List[~llama_index.core.schema.NodeWithScore] = <factory>, metadata: ~typing.Optional[~typing.Dict[str, ~typing.Any]] = None)#
+PydanticResponse object.
+Returned if streaming=False.
+- response#
+The response text.
+- Type
+Optional[pydantic.main.BaseModel]
+- get_formatted_sources(length: int = 100) str #
+Get formatted sources text.
+- class llama_index.core.base.response.schema.Response(response: ~typing.Optional[str], source_nodes: ~typing.List[~llama_index.core.schema.NodeWithScore] = <factory>, metadata: ~typing.Optional[~typing.Dict[str, ~typing.Any]] = None)#
+Response object.
+Returned if streaming=False.
+- response#
+The response text.
+- Type
+Optional[str]
+- get_formatted_sources(length: int = 100) str #
+Get formatted sources text.
+- class llama_index.core.base.response.schema.StreamingResponse(response_gen: ~typing.Generator[str, None, None], source_nodes: ~typing.List[~llama_index.core.schema.NodeWithScore] = <factory>, metadata: ~typing.Optional[~typing.Dict[str, ~typing.Any]] = None, response_txt: ~typing.Optional[str] = None)#
+StreamingResponse object.
+Returned if streaming=True.
+- response_gen#
+The response generator.
+- Type
+Generator[str, None, None]
+- get_formatted_sources(length: int = 100, trim_text: int = True) str #
+Get formatted sources text.
+- print_response_stream() None #
+Print the response stream.

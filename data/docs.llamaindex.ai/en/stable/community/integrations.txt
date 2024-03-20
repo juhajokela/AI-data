@@ -1,0 +1,24 @@
+Integrations#
+LlamaIndex has a number of community integrations, from vector stores, to prompt trackers, tracers, and more!
+LlamaPacks – Code Templates#
+LlamaHub hosts a full suite of LlamaPacks – templates for features that you can download, edit, and try out! This offers a quick way to learn about new features and try new techniques.
+The full set of LlamaPacks is available on LlamaHub. Check out our dedicated page below.
+LLMs#
+We support a huge number of LLMs.
+Observability/Tracing/Evaluation#
+Check out our one-click observability page for full tracing integrations.
+- Observability (Legacy)
+- Perform Evaluations on LlamaIndex with UpTrain
+- How to go about it?
+- 1. Using the UpTrain Callback Handler
+- 1. RAG Query Engine Evaluation
+- 2. Sub-Question Query Engine Evaluation
+- 3. Re-ranking
+- 3b. Re-ranking (With different number of nodes)
+- UpTrain’s Managed Service Dashboard and Insights
+- 2. Using EvalLlamaIndex
+- Alternative 1: Evaluate using UpTrain’s Open-Source Software (OSS)
+- Alternative 2: Evaluate using UpTrain’s Managed Service and Dashboards
+- Unit Testing LLMs/RAG With DeepEval
+- Tracing with Graphsignal
+- Evaluating and Tracking with TruLens

@@ -1,0 +1,22 @@
+Simple Chat Engine#
+- class llama_index.core.chat_engine.simple.SimpleChatEngine(llm: LLM, memory: BaseMemory, prefix_messages: List[ChatMessage], callback_manager: Optional[CallbackManager] = None)#
+Simple Chat Engine.
+Have a conversation with the LLM. This does not make use of a knowledge base.
+- async achat(message: str, chat_history: Optional[List[ChatMessage]] = None) AgentChatResponse #
+Async version of main chat interface.
+- async astream_chat(message: str, chat_history: Optional[List[ChatMessage]] = None) StreamingAgentChatResponse #
+Async version of main chat interface.
+- chat(message: str, chat_history: Optional[List[ChatMessage]] = None) AgentChatResponse #
+Main chat interface.
+- property chat_history: List[ChatMessage]#
+Get chat history.
+- chat_repl() None #
+Enter interactive chat REPL.
+- classmethod from_defaults(chat_history: ~typing.Optional[~typing.List[~llama_index.core.base.llms.types.ChatMessage]] = None, memory: ~typing.Optional[~llama_index.core.memory.types.BaseMemory] = None, memory_cls: ~typing.Type[~llama_index.core.memory.types.BaseMemory] = <class 'llama_index.core.memory.chat_memory_buffer.ChatMemoryBuffer'>, system_prompt: ~typing.Optional[str] = None, prefix_messages: ~typing.Optional[~typing.List[~llama_index.core.base.llms.types.ChatMessage]] = None, llm: ~typing.Optional[~llama_index.core.llms.llm.LLM] = None, service_context: ~typing.Optional[~llama_index.core.service_context.ServiceContext] = None, **kwargs: ~typing.Any) SimpleChatEngine #
+Initialize a SimpleChatEngine from default parameters.
+- reset() None #
+Reset conversation state.
+- stream_chat(message: str, chat_history: Optional[List[ChatMessage]] = None) StreamingAgentChatResponse #
+Stream chat interface.
+- streaming_chat_repl() None #
+Enter interactive chat REPL with streaming responses.

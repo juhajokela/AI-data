@@ -1,0 +1,37 @@
+Query Engine#
+Concept#
+Query engine is a generic interface that allows you to ask question over your data.
+A query engine takes in a natural language query, and returns a rich response. It is most often (but not always) built on one or many indexes via retrievers. You can compose multiple query engines to achieve more advanced capability.
+Tip
+If you want to have a conversation with your data (multiple back-and-forth instead of a single question & answer), take a look at chat Engine
+Usage Pattern#
+Get started with:
+query_engine = index.as_query_engine()
+response = query_engine.query("Who is Paul Graham.")
+To stream response:
+query_engine = index.as_query_engine(streaming=True)
+streaming_response = query_engine.query("Who is Paul Graham.")
+streaming_response.print_response_stream()
+Modules#
+- Module Guides
+- Basic
+- Structured & Semi-Structured Data
+- Advanced
+- Router Query Engine
+- Retriever Router Query Engine
+- Joint QA Summary Query Engine
+- Sub Question Query Engine
+- Multi-Step Query Engine
+- SQL Router Query Engine
+- SQL Auto Vector Query Engine
+- SQL Join Query Engine
+- [Beta] Text-to-SQL with PGVector
+- SQL Query Engine with LlamaIndex + DuckDB
+- Retry Query Engine
+- CitationQueryEngine
+- Recursive Retriever + Query Engine Demo
+- Joint Tabular/Semantic QA over Tesla 10K
+- Recursive Retriever + Document Agents
+- Ensemble Query Engine Guide
+- Advanced: Towards Multi-Document Querying/Analysis
+- Experimental

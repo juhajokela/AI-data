@@ -1,0 +1,18 @@
+Transform Query Engine#
+- class llama_index.core.query_engine.transform_query_engine.TransformQueryEngine(query_engine: BaseQueryEngine, query_transform: BaseQueryTransform, transform_metadata: Optional[dict] = None, callback_manager: Optional[CallbackManager] = None)#
+Transform query engine.
+- Applies a query transform to a query bundle before passing
+it to a query engine.
+- Parameters
+query_engine (BaseQueryEngine) – A query engine object.
+query_transform (BaseQueryTransform) – A query transform object.
+transform_metadata (Optional[dict]) – metadata to pass to the query transform.
+callback_manager (Optional[CallbackManager]) – A callback manager.
+-
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.

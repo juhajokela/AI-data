@@ -1,0 +1,33 @@
+SimpleVectorStore#
+- class llama_index.core.vector_stores.SimpleVectorStore(data: Optional[SimpleVectorStoreData] = None, fs: Optional[AbstractFileSystem] = None, **kwargs: Any)#
+Bases:
+VectorStore
+Simple Vector Store.
+In this vector store, embeddings are stored within a simple, in-memory dictionary.
+- Parameters
+simple_vector_store_data_dict (Optional[dict]) – data dict containing the embeddings and doc_ids. See SimpleVectorStoreData for more details.
+Attributes Summary
+Methods Summary
+Attributes Documentation
+- client#
+Get client.
+- stores_text: bool = False#
+Methods Documentation
+- delete(ref_doc_id: str, **delete_kwargs: Any) None #
+Delete nodes using with ref_doc_id.
+- Parameters
+ref_doc_id (str) – The doc_id of the document to delete.
+- classmethod from_dict(save_dict: dict) SimpleVectorStore #
+- classmethod from_namespaced_persist_dir(persist_dir: str = './storage', fs: Optional[AbstractFileSystem] = None) Dict[str, VectorStore] #
+Load from namespaced persist dir.
+- classmethod from_persist_dir(persist_dir: str = './storage', namespace: Optional[str] = None, fs: Optional[AbstractFileSystem] = None) SimpleVectorStore #
+Load from persist dir.
+- classmethod from_persist_path(persist_path: str, fs: Optional[AbstractFileSystem] = None) SimpleVectorStore #
+Create a SimpleKVStore from a persist directory.
+- get(text_id: str) List[float] #
+Get embedding.
+- persist(persist_path: str = './storage/vector_store.json', fs: Optional[AbstractFileSystem] = None) None #
+Persist the SimpleVectorStore to a directory.
+- query(query: VectorStoreQuery, **kwargs: Any) VectorStoreQueryResult #
+Get nodes for response.
+- to_dict() dict #

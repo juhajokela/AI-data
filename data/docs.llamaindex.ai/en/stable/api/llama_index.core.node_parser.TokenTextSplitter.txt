@@ -1,0 +1,38 @@
+TokenTextSplitter#
+- pydantic model llama_index.core.node_parser.TokenTextSplitter#
+Implementation of splitting text that looks at word tokens.
+Show JSON schema
+{ "title": "TokenTextSplitter", "description": "Implementation of splitting text that looks at word tokens.", "type": "object", "properties": { "include_metadata": { "title": "Include Metadata", "description": "Whether or not to consider metadata when splitting.", "default": true, "type": "boolean" }, "include_prev_next_rel": { "title": "Include Prev Next Rel", "description": "Include prev/next node relationships.", "default": true, "type": "boolean" }, "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "chunk_size": { "title": "Chunk Size", "description": "The token chunk size for each chunk.", "default": 1024, "exclusiveMinimum": 0, "type": "integer" }, "chunk_overlap": { "title": "Chunk Overlap", "description": "The token overlap of each chunk when splitting.", "default": 20, "gte": 0, "type": "integer" }, "separator": { "title": "Separator", "description": "Default separator for splitting into words", "default": " ", "type": "string" }, "backup_separators": { "title": "Backup Separators", "description": "Additional separators for splitting.", "type": "array", "items": {} }, "class_name": { "title": "Class Name", "type": "string", "default": "TokenTextSplitter" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+backup_separators (List)
+chunk_overlap (int)
+chunk_size (int)
+separator (str)
+-
+- Validators
+_validate_id_func»
+id_func
+-
+- field backup_separators: List [Optional]#
+Additional separators for splitting.
+- field chunk_overlap: int = 20#
+The token overlap of each chunk when splitting.
+- field chunk_size: int = 1024#
+The token chunk size for each chunk.
+- Constraints
+exclusiveMinimum = 0
+-
+- field separator: str = ' '#
+Default separator for splitting into words
+- classmethod class_name() str #
+Get the class name, used as a unique ID in serialization.
+This provides a key that makes serialization robust against actual class name changes.
+- classmethod from_defaults(chunk_size: int = 1024, chunk_overlap: int = 20, separator: str = ' ', backup_separators: Optional[List[str]] = ['\n'], callback_manager: Optional[CallbackManager] = None, include_metadata: bool = True, include_prev_next_rel: bool = True, id_func: Optional[Callable[[int, Document], str]] = None) TokenTextSplitter #
+Initialize with default parameters.
+- split_text(text: str) List[str] #
+Split text into chunks.
+- split_text_metadata_aware(text: str, metadata_str: str) List[str] #
+Split text into chunks, reserving space required for metadata str.

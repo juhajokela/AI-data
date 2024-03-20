@@ -1,0 +1,22 @@
+NodeWithScore#
+- pydantic model llama_index.core.schema.NodeWithScore#
+Show JSON schema
+{ "title": "NodeWithScore", "description": "Base component object to capture class names.", "type": "object", "properties": { "node": { "$ref": "#/definitions/BaseNode" }, "score": { "title": "Score", "type": "number" }, "class_name": { "title": "Class Name", "type": "string", "default": "NodeWithScore" } }, "required": [ "node" ], "definitions": { "ObjectType": { "title": "ObjectType", "description": "An enumeration.", "enum": [ "1", "2", "3", "4" ], "type": "string" }, "RelatedNodeInfo": { "title": "RelatedNodeInfo", "description": "Base component object to capture class names.", "type": "object", "properties": { "node_id": { "title": "Node Id", "type": "string" }, "node_type": { "$ref": "#/definitions/ObjectType" }, "metadata": { "title": "Metadata", "type": "object" }, "hash": { "title": "Hash", "type": "string" }, "class_name": { "title": "Class Name", "type": "string", "default": "RelatedNodeInfo" } }, "required": [ "node_id" ] }, "BaseNode": { "title": "BaseNode", "description": "Base node Object.\n\nGeneric abstract interface for retrievable nodes", "type": "object", "properties": { "id_": { "title": "Id ", "description": "Unique ID of the node.", "type": "string" }, "embedding": { "title": "Embedding", "description": "Embedding of the node.", "type": "array", "items": { "type": "number" } }, "extra_info": { "title": "Extra Info", "description": "A flat dictionary of metadata fields", "type": "object" }, "excluded_embed_metadata_keys": { "title": "Excluded Embed Metadata Keys", "description": "Metadata keys that are excluded from text for the embed model.", "type": "array", "items": { "type": "string" } }, "excluded_llm_metadata_keys": { "title": "Excluded Llm Metadata Keys", "description": "Metadata keys that are excluded from text for the LLM.", "type": "array", "items": { "type": "string" } }, "relationships": { "title": "Relationships", "description": "A mapping of relationships to other node information.", "type": "object", "additionalProperties": { "anyOf": [ { "$ref": "#/definitions/RelatedNodeInfo" }, { "type": "array", "items": { "$ref": "#/definitions/RelatedNodeInfo" } } ] } }, "class_name": { "title": "Class Name", "type": "string", "default": "base_component" } } } } }
+- Config
+schema_extra: function = <function BaseComponent.Config.schema_extra at 0x7ff4abe98860>
+-
+- Fields
+- field score: Optional[float] = None#
+- classmethod class_name() str #
+Get the class name, used as a unique ID in serialization.
+This provides a key that makes serialization robust against actual class name changes.
+- get_content(metadata_mode: MetadataMode = MetadataMode.NONE) str #
+- get_embedding() List[float] #
+- get_score(raise_error: bool = False) float #
+Get score.
+- get_text() str #
+- property embedding: Optional[List[float]]#
+- property id_: str#
+- property metadata: Dict[str, Any]#
+- property node_id: str#
+- property text: str#

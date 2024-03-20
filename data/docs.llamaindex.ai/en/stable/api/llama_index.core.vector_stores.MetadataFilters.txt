@@ -1,0 +1,19 @@
+MetadataFilters#
+- pydantic model llama_index.core.vector_stores.MetadataFilters#
+Metadata filters for vector stores.
+Show JSON schema
+{ "$ref": "#/definitions/MetadataFilters", "definitions": { "FilterOperator": { "title": "FilterOperator", "description": "Vector store filter operator.", "enum": [ "==", ">", "<", "!=", ">=", "<=", "in", "nin", "text_match", "contains" ], "type": "string" }, "MetadataFilter": { "title": "MetadataFilter", "description": "Comprehensive metadata filter for vector stores to support more operators.\n\nValue uses Strict* types, as int, float and str are compatible types and were all\nconverted to string before.\n\nSee: https://docs.pydantic.dev/latest/usage/types/#strict-types", "type": "object", "properties": { "key": { "title": "Key", "type": "string" }, "value": { "title": "Value", "anyOf": [ { "type": "integer" }, { "type": "number" }, { "type": "string" }, { "type": "array", "items": { "anyOf": [ { "type": "integer" }, { "type": "number" }, { "type": "string" } ] } } ] }, "operator": { "default": "==", "allOf": [ { "$ref": "#/definitions/FilterOperator" } ] } }, "required": [ "key", "value" ] }, "FilterCondition": { "title": "FilterCondition", "description": "Vector store filter conditions to combine different filters.", "enum": [ "and", "or" ], "type": "string" }, "MetadataFilters": { "title": "MetadataFilters", "description": "Metadata filters for vector stores.", "type": "object", "properties": { "filters": { "title": "Filters", "type": "array", "items": { "anyOf": [ { "$ref": "#/definitions/MetadataFilter" }, { "$ref": "#/definitions/MetadataFilters" } ] } }, "condition": { "default": "and", "allOf": [ { "$ref": "#/definitions/FilterCondition" } ] } }, "required": [ "filters" ] } } }
+- Fields
+- field condition: Optional[FilterCondition] = FilterCondition.AND#
+- field filters: List[Union[MetadataFilter, MetadataFilters]] [Required]#
+- classmethod from_dict(filter_dict: Dict) MetadataFilters #
+Create MetadataFilters from json.
+- classmethod from_dicts(filter_dicts: List[Dict], condition: Optional[FilterCondition] = FilterCondition.AND) MetadataFilters #
+Create MetadataFilters from dicts.
+This takes in a list of individual MetadataFilter objects, along with the condition.
+- Parameters
+filter_dicts – List of dicts, each dict is a MetadataFilter.
+condition – FilterCondition to combine different filters.
+-
+- legacy_filters() List[MetadataFilter] #
+Convert MetadataFilters to legacy ExactMatchFilters.

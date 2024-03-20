@@ -1,0 +1,329 @@
+Instrumentation#
+LlamaIndex contains a simple instrumentation framework that allows you to observe events and spans happening in the framework.
+Event Handlers#
+- pydantic model llama_index.core.instrumentation.event_handlers.base.BaseEventHandler#
+Base callback handler that can be used to track event starts and ends.
+Show JSON schema
+{ "title": "BaseEventHandler", "description": "Base callback handler that can be used to track event starts and ends.", "type": "object", "properties": {} }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- classmethod class_name() str #
+Class name.
+Event Types#
+- pydantic model llama_index.core.instrumentation.events.base.BaseEvent#
+Show JSON schema
+{ "title": "BaseEvent", "type": "object", "properties": { "timestamp": { "title": "Timestamp", "type": "string", "format": "date-time" }, "id_": { "title": "Id ", "type": "string" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- field id_: str [Optional]#
+- field timestamp: datetime [Optional]#
+- classmethod class_name()#
+Return class name.
+- dict(**kwargs: Any) Dict[str, Any] #
+Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+- pydantic model llama_index.core.instrumentation.events.agent.AgentChatWithStepEndEvent#
+Show JSON schema
+{ "title": "AgentChatWithStepEndEvent", "type": "object", "properties": { "timestamp": { "title": "Timestamp", "type": "string", "format": "date-time" }, "id_": { "title": "Id ", "type": "string" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- classmethod class_name()#
+Class name.
+- pydantic model llama_index.core.instrumentation.events.agent.AgentChatWithStepStartEvent#
+Show JSON schema
+{ "title": "AgentChatWithStepStartEvent", "type": "object", "properties": { "timestamp": { "title": "Timestamp", "type": "string", "format": "date-time" }, "id_": { "title": "Id ", "type": "string" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- classmethod class_name()#
+Class name.
+- pydantic model llama_index.core.instrumentation.events.agent.AgentRunStepEndEvent#
+Show JSON schema
+{ "title": "AgentRunStepEndEvent", "type": "object", "properties": { "timestamp": { "title": "Timestamp", "type": "string", "format": "date-time" }, "id_": { "title": "Id ", "type": "string" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- classmethod class_name()#
+Class name.
+- pydantic model llama_index.core.instrumentation.events.agent.AgentRunStepStartEvent#
+Show JSON schema
+{ "title": "AgentRunStepStartEvent", "type": "object", "properties": { "timestamp": { "title": "Timestamp", "type": "string", "format": "date-time" }, "id_": { "title": "Id ", "type": "string" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- classmethod class_name()#
+Class name.
+- pydantic model llama_index.core.instrumentation.events.agent.AgentToolCallEvent#
+Show JSON schema
+{ "title": "AgentToolCallEvent", "type": "object", "properties": { "timestamp": { "title": "Timestamp", "type": "string", "format": "date-time" }, "id_": { "title": "Id ", "type": "string" }, "arguments": { "title": "Arguments", "type": "string" }, "tool": { "title": "Tool" } }, "required": [ "arguments" ] }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- field arguments: str [Required]#
+- field tool: ToolMetadata [Required]#
+- classmethod class_name()#
+Class name.
+- pydantic model llama_index.core.instrumentation.events.chat_engine.StreamChatDeltaReceivedEvent#
+Show JSON schema
+{ "title": "StreamChatDeltaReceivedEvent", "type": "object", "properties": { "timestamp": { "title": "Timestamp", "type": "string", "format": "date-time" }, "id_": { "title": "Id ", "type": "string" }, "delta": { "title": "Delta", "type": "string" } }, "required": [ "delta" ] }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- field delta: str [Required]#
+- classmethod class_name()#
+Class name.
+- pydantic model llama_index.core.instrumentation.events.chat_engine.StreamChatEndEvent#
+Show JSON schema
+{ "title": "StreamChatEndEvent", "type": "object", "properties": { "timestamp": { "title": "Timestamp", "type": "string", "format": "date-time" }, "id_": { "title": "Id ", "type": "string" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- classmethod class_name()#
+Class name.
+- pydantic model llama_index.core.instrumentation.events.chat_engine.StreamChatErrorEvent#
+Show JSON schema
+{ "title": "StreamChatErrorEvent", "type": "object", "properties": { "timestamp": { "title": "Timestamp", "type": "string", "format": "date-time" }, "id_": { "title": "Id ", "type": "string" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- classmethod class_name()#
+Class name.
+- pydantic model llama_index.core.instrumentation.events.chat_engine.StreamChatStartEvent#
+Show JSON schema
+{ "title": "StreamChatStartEvent", "type": "object", "properties": { "timestamp": { "title": "Timestamp", "type": "string", "format": "date-time" }, "id_": { "title": "Id ", "type": "string" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- classmethod class_name()#
+Class name.
+- pydantic model llama_index.core.instrumentation.events.embedding.EmbeddingEndEvent#
+Show JSON schema
+{ "title": "EmbeddingEndEvent", "type": "object", "properties": { "timestamp": { "title": "Timestamp", "type": "string", "format": "date-time" }, "id_": { "title": "Id ", "type": "string" }, "chunks": { "title": "Chunks", "type": "array", "items": { "type": "string" } }, "embeddings": { "title": "Embeddings", "type": "array", "items": { "type": "array", "items": { "type": "number" } } } }, "required": [ "chunks", "embeddings" ] }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- field chunks: List[str] [Required]#
+- field embeddings: List[List[float]] [Required]#
+- classmethod class_name()#
+Class name.
+- pydantic model llama_index.core.instrumentation.events.embedding.EmbeddingStartEvent#
+Show JSON schema
+{ "title": "EmbeddingStartEvent", "type": "object", "properties": { "timestamp": { "title": "Timestamp", "type": "string", "format": "date-time" }, "id_": { "title": "Id ", "type": "string" }, "model_dict": { "title": "Model Dict", "type": "object" } }, "required": [ "model_dict" ] }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- field model_dict: dict [Required]#
+- classmethod class_name()#
+Class name.
+- pydantic model llama_index.core.instrumentation.events.llm.LLMChatEndEvent#
+Show JSON schema
+{ "title": "LLMChatEndEvent", "type": "object", "properties": { "timestamp": { "title": "Timestamp", "type": "string", "format": "date-time" }, "id_": { "title": "Id ", "type": "string" }, "messages": { "title": "Messages", "type": "array", "items": { "$ref": "#/definitions/ChatMessage" } }, "response": { "$ref": "#/definitions/ChatResponse" } }, "required": [ "messages", "response" ], "definitions": { "MessageRole": { "title": "MessageRole", "description": "Message role.", "enum": [ "system", "user", "assistant", "function", "tool", "chatbot", "model" ], "type": "string" }, "ChatMessage": { "title": "ChatMessage", "description": "Chat message.", "type": "object", "properties": { "role": { "default": "user", "allOf": [ { "$ref": "#/definitions/MessageRole" } ] }, "content": { "title": "Content", "default": "" }, "additional_kwargs": { "title": "Additional Kwargs", "type": "object" } } }, "LogProb": { "title": "LogProb", "description": "LogProb of a token.", "type": "object", "properties": { "token": { "title": "Token", "type": "string" }, "logprob": { "title": "Logprob", "type": "number" }, "bytes": { "title": "Bytes", "type": "array", "items": { "type": "integer" } } } }, "ChatResponse": { "title": "ChatResponse", "description": "Chat response.", "type": "object", "properties": { "message": { "$ref": "#/definitions/ChatMessage" }, "raw": { "title": "Raw", "type": "object" }, "delta": { "title": "Delta", "type": "string" }, "logprobs": { "title": "Logprobs", "type": "array", "items": { "type": "array", "items": { "$ref": "#/definitions/LogProb" } } }, "additional_kwargs": { "title": "Additional Kwargs", "type": "object" } }, "required": [ "message" ] } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- field messages: List[ChatMessage] [Required]#
+- field response: ChatResponse [Required]#
+- classmethod class_name()#
+Class name.
+- pydantic model llama_index.core.instrumentation.events.llm.LLMChatStartEvent#
+Show JSON schema
+{ "title": "LLMChatStartEvent", "type": "object", "properties": { "timestamp": { "title": "Timestamp", "type": "string", "format": "date-time" }, "id_": { "title": "Id ", "type": "string" }, "messages": { "title": "Messages", "type": "array", "items": { "$ref": "#/definitions/ChatMessage" } }, "additional_kwargs": { "title": "Additional Kwargs", "type": "object" }, "model_dict": { "title": "Model Dict", "type": "object" } }, "required": [ "messages", "additional_kwargs", "model_dict" ], "definitions": { "MessageRole": { "title": "MessageRole", "description": "Message role.", "enum": [ "system", "user", "assistant", "function", "tool", "chatbot", "model" ], "type": "string" }, "ChatMessage": { "title": "ChatMessage", "description": "Chat message.", "type": "object", "properties": { "role": { "default": "user", "allOf": [ { "$ref": "#/definitions/MessageRole" } ] }, "content": { "title": "Content", "default": "" }, "additional_kwargs": { "title": "Additional Kwargs", "type": "object" } } } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- field additional_kwargs: dict [Required]#
+- field messages: List[ChatMessage] [Required]#
+- field model_dict: dict [Required]#
+- classmethod class_name()#
+Class name.
+- pydantic model llama_index.core.instrumentation.events.llm.LLMCompletionEndEvent#
+Show JSON schema
+{ "title": "LLMCompletionEndEvent", "type": "object", "properties": { "timestamp": { "title": "Timestamp", "type": "string", "format": "date-time" }, "id_": { "title": "Id ", "type": "string" }, "prompt": { "title": "Prompt", "type": "string" }, "response": { "$ref": "#/definitions/CompletionResponse" } }, "required": [ "prompt", "response" ], "definitions": { "LogProb": { "title": "LogProb", "description": "LogProb of a token.", "type": "object", "properties": { "token": { "title": "Token", "type": "string" }, "logprob": { "title": "Logprob", "type": "number" }, "bytes": { "title": "Bytes", "type": "array", "items": { "type": "integer" } } } }, "CompletionResponse": { "title": "CompletionResponse", "description": "Completion response.\n\nFields:\n text: Text content of the response if not streaming, or if streaming,\n the current extent of streamed text.\n additional_kwargs: Additional information on the response(i.e. token\n counts, function calling information).\n raw: Optional raw JSON that was parsed to populate text, if relevant.\n delta: New text that just streamed in (only relevant when streaming).", "type": "object", "properties": { "text": { "title": "Text", "type": "string" }, "additional_kwargs": { "title": "Additional Kwargs", "type": "object" }, "raw": { "title": "Raw", "type": "object" }, "logprobs": { "title": "Logprobs", "type": "array", "items": { "type": "array", "items": { "$ref": "#/definitions/LogProb" } } }, "delta": { "title": "Delta", "type": "string" } }, "required": [ "text" ] } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- field prompt: str [Required]#
+- field response: CompletionResponse [Required]#
+- classmethod class_name()#
+Class name.
+- pydantic model llama_index.core.instrumentation.events.llm.LLMCompletionStartEvent#
+Show JSON schema
+{ "title": "LLMCompletionStartEvent", "type": "object", "properties": { "timestamp": { "title": "Timestamp", "type": "string", "format": "date-time" }, "id_": { "title": "Id ", "type": "string" }, "prompt": { "title": "Prompt", "type": "string" }, "additional_kwargs": { "title": "Additional Kwargs", "type": "object" }, "model_dict": { "title": "Model Dict", "type": "object" } }, "required": [ "prompt", "additional_kwargs", "model_dict" ] }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- field additional_kwargs: dict [Required]#
+- field model_dict: dict [Required]#
+- field prompt: str [Required]#
+- classmethod class_name()#
+Class name.
+- pydantic model llama_index.core.instrumentation.events.llm.LLMPredictEndEvent#
+Show JSON schema
+{ "title": "LLMPredictEndEvent", "type": "object", "properties": { "timestamp": { "title": "Timestamp", "type": "string", "format": "date-time" }, "id_": { "title": "Id ", "type": "string" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- classmethod class_name()#
+Class name.
+- pydantic model llama_index.core.instrumentation.events.llm.LLMPredictStartEvent#
+Show JSON schema
+{ "title": "LLMPredictStartEvent", "type": "object", "properties": { "timestamp": { "title": "Timestamp", "type": "string", "format": "date-time" }, "id_": { "title": "Id ", "type": "string" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- classmethod class_name()#
+Class name.
+- pydantic model llama_index.core.instrumentation.events.query.QueryEndEvent#
+Show JSON schema
+{ "title": "QueryEndEvent", "type": "object", "properties": { "timestamp": { "title": "Timestamp", "type": "string", "format": "date-time" }, "id_": { "title": "Id ", "type": "string" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- classmethod class_name()#
+Class name.
+- pydantic model llama_index.core.instrumentation.events.query.QueryStartEvent#
+Show JSON schema
+{ "title": "QueryStartEvent", "type": "object", "properties": { "timestamp": { "title": "Timestamp", "type": "string", "format": "date-time" }, "id_": { "title": "Id ", "type": "string" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- classmethod class_name()#
+Class name.
+- pydantic model llama_index.core.instrumentation.events.retrieval.RetrievalEndEvent#
+Show JSON schema
+{ "title": "RetrievalEndEvent", "type": "object", "properties": { "timestamp": { "title": "Timestamp", "type": "string", "format": "date-time" }, "id_": { "title": "Id ", "type": "string" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- classmethod class_name()#
+Class name.
+- pydantic model llama_index.core.instrumentation.events.retrieval.RetrievalStartEvent#
+Show JSON schema
+{ "title": "RetrievalStartEvent", "type": "object", "properties": { "timestamp": { "title": "Timestamp", "type": "string", "format": "date-time" }, "id_": { "title": "Id ", "type": "string" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- classmethod class_name()#
+Class name.
+- pydantic model llama_index.core.instrumentation.events.synthesis.GetResponseEndEvent#
+Show JSON schema
+{ "title": "GetResponseEndEvent", "type": "object", "properties": { "timestamp": { "title": "Timestamp", "type": "string", "format": "date-time" }, "id_": { "title": "Id ", "type": "string" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- classmethod class_name()#
+Class name.
+- pydantic model llama_index.core.instrumentation.events.synthesis.GetResponseStartEvent#
+Show JSON schema
+{ "title": "GetResponseStartEvent", "type": "object", "properties": { "timestamp": { "title": "Timestamp", "type": "string", "format": "date-time" }, "id_": { "title": "Id ", "type": "string" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- classmethod class_name()#
+Class name.
+- pydantic model llama_index.core.instrumentation.events.synthesis.SynthesizeEndEvent#
+Show JSON schema
+{ "title": "SynthesizeEndEvent", "type": "object", "properties": { "timestamp": { "title": "Timestamp", "type": "string", "format": "date-time" }, "id_": { "title": "Id ", "type": "string" }, "query": { "title": "Query", "anyOf": [ { "type": "string" }, { "$ref": "#/definitions/QueryBundle" } ] }, "response": { "title": "Response" } }, "required": [ "query" ], "definitions": { "QueryBundle": { "title": "QueryBundle", "type": "object", "properties": { "query_str": { "title": "Query Str", "type": "string" }, "image_path": { "title": "Image Path", "type": "string" }, "custom_embedding_strs": { "title": "Custom Embedding Strs", "type": "array", "items": { "type": "string" } }, "embedding": { "title": "Embedding", "type": "array", "items": { "type": "number" } } }, "required": [ "query_str" ] } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- field query: Union[str, QueryBundle] [Required]#
+- field response: Union[Response, StreamingResponse, AsyncStreamingResponse, PydanticResponse] [Required]#
+- classmethod class_name()#
+Class name.
+- pydantic model llama_index.core.instrumentation.events.synthesis.SynthesizeStartEvent#
+Show JSON schema
+{ "title": "SynthesizeStartEvent", "type": "object", "properties": { "timestamp": { "title": "Timestamp", "type": "string", "format": "date-time" }, "id_": { "title": "Id ", "type": "string" }, "query": { "title": "Query", "anyOf": [ { "type": "string" }, { "$ref": "#/definitions/QueryBundle" } ] } }, "required": [ "query" ], "definitions": { "QueryBundle": { "title": "QueryBundle", "type": "object", "properties": { "query_str": { "title": "Query Str", "type": "string" }, "image_path": { "title": "Image Path", "type": "string" }, "custom_embedding_strs": { "title": "Custom Embedding Strs", "type": "array", "items": { "type": "string" } }, "embedding": { "title": "Embedding", "type": "array", "items": { "type": "number" } } }, "required": [ "query_str" ] } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- field query: Union[str, QueryBundle] [Required]#
+- classmethod class_name()#
+Class name.
+Span Handlers#
+- pydantic model llama_index.core.instrumentation.span_handlers.base.BaseSpanHandler#
+Show JSON schema
+{ "title": "BaseSpanHandler", "type": "object", "properties": { "open_spans": { "title": "Open Spans", "description": "Dictionary of open spans.", "type": "object", "additionalProperties": { "$ref": "#/definitions/BaseSpan" } }, "current_span_id": { "title": "Current Span Id", "description": "Id of current span.", "type": "string" } }, "definitions": { "BaseSpan": { "title": "BaseSpan", "description": "Base data class representing a span.", "type": "object", "properties": { "id_": { "title": "Id ", "description": "Id of span.", "type": "string" }, "parent_id": { "title": "Parent Id", "description": "Id of parent span.", "type": "string" } } } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- field current_span_id: Optional[str] = None#
+Id of current span.
+- field open_spans: Dict[str, T] [Optional]#
+Dictionary of open spans.
+- class_name() str #
+Class name.
+- abstract new_span(id: str, parent_span_id: Optional[str], **kwargs) Optional[T] #
+Create a span.
+- abstract prepare_to_drop_span(id: str, err: Optional[Exception], **kwargs) Any #
+Logic for preparing to drop a span.
+- abstract prepare_to_exit_span(id: str, result: Optional[Any] = None, **kwargs) Any #
+Logic for preparing to exit a span.
+- span_drop(id: str, err: Optional[Exception], **kwargs) None #
+Logic for dropping a span i.e. early exit.
+- span_enter(id: str, **kwargs) None #
+Logic for entering a span.
+- span_exit(id: str, result: Optional[Any] = None, **kwargs) None #
+Logic for exiting a span.
+- pydantic model llama_index.core.instrumentation.span_handlers.simple.SimpleSpanHandler#
+Span Handler that managest SimpleSpan’s.
+Show JSON schema
+{ "title": "SimpleSpanHandler", "description": "Span Handler that managest SimpleSpan's.", "type": "object", "properties": { "open_spans": { "title": "Open Spans", "description": "Dictionary of open spans.", "type": "object", "additionalProperties": { "$ref": "#/definitions/BaseSpan" } }, "current_span_id": { "title": "Current Span Id", "description": "Id of current span.", "type": "string" }, "completed_spans": { "title": "Completed Spans" } }, "definitions": { "BaseSpan": { "title": "BaseSpan", "description": "Base data class representing a span.", "type": "object", "properties": { "id_": { "title": "Id ", "description": "Id of span.", "type": "string" }, "parent_id": { "title": "Parent Id", "description": "Id of parent span.", "type": "string" } } } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- field completed_spans: List[SimpleSpan] [Optional]#
+List of completed spans.
+- class_name() str #
+Class name.
+- new_span(id: str, parent_span_id: Optional[str], **kwargs) SimpleSpan #
+Create a span.
+- prepare_to_drop_span(id: str, err: Optional[Exception], **kwargs) None #
+Logic for droppping a span.
+- prepare_to_exit_span(id: str, result: Optional[Any] = None, **kwargs) None #
+Logic for preparing to drop a span.
+- print_trace_trees() None #
+Method for viewing trace trees.
+Spans Types#
+- pydantic model llama_index.core.instrumentation.span.base.BaseSpan#
+Base data class representing a span.
+Show JSON schema
+{ "title": "BaseSpan", "description": "Base data class representing a span.", "type": "object", "properties": { "id_": { "title": "Id ", "description": "Id of span.", "type": "string" }, "parent_id": { "title": "Parent Id", "description": "Id of parent span.", "type": "string" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- field id_: str [Optional]#
+Id of span.
+- field parent_id: Optional[str] = None#
+Id of parent span.

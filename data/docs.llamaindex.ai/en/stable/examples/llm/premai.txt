@@ -1,0 +1,72 @@
+PremAI LlamaIndex#
+PremAI is an unified platform that let’s you build powerful production-ready GenAI powered applications with least effort, so that you can focus more on user experience and overall growth.
+This example goes over how to use LlamaIndex to interact with
+ChatPrem models.
+Installation and setup#
+We start by installing llama-index and premai-sdk. You can type the following command to install:
+pip install premai llama-index
+Before proceeding further, please make sure that you have made an account on Prem and already started a project. If not, then here’s how you can start for free:
+Sign in to PremAI, if you are coming for the first time and create your API key here.
+Go to app.premai.io and this will take you to the project’s dashboard.
+Create a project and this will generate a project-id (written as ID). This ID will help you to interact with your deployed application.
+Head over to LaunchPad (the one with 🚀 icon). And there deploy your model of choice. Your default model will be
+gpt-4. You can also set and fix different generation paramters (like: max-tokens, temperature etc) and also pre-set your system prompt.
+Congratulations on creating your first deployed application on Prem 🎉 Now we can use llama-index to interact with our application.
+%pip install llama-index-llms-premai
+from llama_index.llms.premai import PremAI
+from llama_index.core.llms import ChatMessage
+Setup ChatPrem instance in LlamaIndex#
+Once we imported our required modules, let’s setup our client. For now let’s assume that our
+project_id is
+8. But make sure you use your project-id, otherwise it will throw error.
+In order to use llama-index with PremAI, you do not need to pass any model name or set any parameters with our chat-client. All of those will use the default model name and paramters of the LaunchPad model.
+NOTE: If you change the
+model or any other parameter like
+temperature while setting the client, it will override existing default configurations.
+import os
+import getpass
+if os.environ.get("PREMAI_API_KEY") is None:
+os.environ["PREMAI_API_KEY"] = getpass.getpass("PremAI API Key:")
+prem_chat = PremAI(project_id=8)
+Calling the Model#
+Now you are all set. We can now start with interacting with our application. Let’s start by building simple chat request and responses using llama-index
+messages = [
+ChatMessage(role="user", content="What is your name"),
+ChatMessage(
+role="user", content="Write an essay about your school in 500 words"
+),
+]
+Please note that: You can provide system prompt here too, like this:
+messages = [
+ChatMessage(role="system", content="Act like a pirate"),
+ChatMessage(role="user", content="What is your name"),
+ChatMessage(role="user", content="Where do you live, write an essay in 500 words"),
+]
+On the other hand you can also instantiate your object with system prompt like this:
+chat = PremAI(project_id=8, system_prompt="Act like nemo fish")
+In both of the scenarios, you are going to override your system prompt that was fixed while deploying the application from the platform. And, specifically in this case, if you override system prompt while instantiating the
+PremAI class then system message in
+ChatMessage won’t provide any affect.
+So if you want to override system prompt for any experimental cases, either you need to provide that while instantiating the class or while writing
+ChatMessage with a role
+system.
+Now let’s call the model
+response = prem_chat.chat(messages)
+print(response)
+[ChatResponse(message=ChatMessage(role=<MessageRole.ASSISTANT: 'assistant'>, content="I'm here to assist you with any questions or tasks you have, but I'm not able to write essays. However, if you need help brainstorming ideas or organizing your thoughts for your essay about your school, I'd be happy to help with that. Just let me know how I can assist you further!", additional_kwargs={}), raw={'role': <RoleEnum.ASSISTANT: 'assistant'>, 'content': "I'm here to assist you with any questions or tasks you have, but I'm not able to write essays. However, if you need help brainstorming ideas or organizing your thoughts for your essay about your school, I'd be happy to help with that. Just let me know how I can assist you further!"}, delta=None, additional_kwargs={})]
+You can also convert your chat function to a completion function. Here’s how it works
+completion = prem_chat.complete("Paul Graham is ")
+Streaming#
+In this section, let’s see how we can stream tokens using llama-index and PremAI. It is very similar to above methos. Here’s how you do it.
+streamed_response = prem_chat.stream_chat(messages)
+for response_delta in streamed_response:
+print(response_delta.delta, end="")
+I'm here to assist you with writing tasks, but I don't have personal experiences or attend school. However, I can help you brainstorm ideas, outline your essay, or provide information on various school-related topics. Just let me know how I can assist you further!
+And this will stream tokens one after the other. Similar to
+complete method, we have
+stream_complete method which does streaming of tokens for completion. Here’s how do that.
+# This will stream tokens one by one
+streamed_response = prem_chat.stream_complete("hello how are you")
+for response_delta in streamed_response:
+print(response_delta.delta, end="")
+Hello! I'm here and ready to assist you. How can I help you today?

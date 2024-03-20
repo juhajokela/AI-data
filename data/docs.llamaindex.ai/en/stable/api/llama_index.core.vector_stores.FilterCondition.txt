@@ -1,0 +1,1 @@
+FilterCondition# class llama_index.core.vector_stores.FilterCondition(value, names=None, *, module=None, qualname=None, type=None, start=1, boundary=None)# Bases: str, Enum Vector store filter conditions to combine different filters. Attributes Summary AND OR Attributes Documentation AND = 'and'# OR = 'or'#

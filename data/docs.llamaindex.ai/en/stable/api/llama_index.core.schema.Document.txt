@@ -1,0 +1,40 @@
+Document#
+- pydantic model llama_index.core.schema.Document#
+Generic interface for a data document.
+This document connects to data sources.
+Show JSON schema
+{ "title": "Document", "description": "Generic interface for a data document.\n\nThis document connects to data sources.", "type": "object", "properties": { "doc_id": { "title": "Doc Id", "description": "Unique ID of the node.", "type": "string" }, "embedding": { "title": "Embedding", "description": "Embedding of the node.", "type": "array", "items": { "type": "number" } }, "extra_info": { "title": "Extra Info", "description": "A flat dictionary of metadata fields", "type": "object" }, "excluded_embed_metadata_keys": { "title": "Excluded Embed Metadata Keys", "description": "Metadata keys that are excluded from text for the embed model.", "type": "array", "items": { "type": "string" } }, "excluded_llm_metadata_keys": { "title": "Excluded Llm Metadata Keys", "description": "Metadata keys that are excluded from text for the LLM.", "type": "array", "items": { "type": "string" } }, "relationships": { "title": "Relationships", "description": "A mapping of relationships to other node information.", "type": "object", "additionalProperties": { "anyOf": [ { "$ref": "#/definitions/RelatedNodeInfo" }, { "type": "array", "items": { "$ref": "#/definitions/RelatedNodeInfo" } } ] } }, "text": { "title": "Text", "description": "Text content of the node.", "default": "", "type": "string" }, "start_char_idx": { "title": "Start Char Idx", "description": "Start char index of the node.", "type": "integer" }, "end_char_idx": { "title": "End Char Idx", "description": "End char index of the node.", "type": "integer" }, "text_template": { "title": "Text Template", "description": "Template for how text is formatted, with {content} and {metadata_str} placeholders.", "default": "{metadata_str}\n\n{content}", "type": "string" }, "metadata_template": { "title": "Metadata Template", "description": "Template for how metadata is formatted, with {key} and {value} placeholders.", "default": "{key}: {value}", "type": "string" }, "metadata_seperator": { "title": "Metadata Seperator", "description": "Separator between metadata fields when converting to string.", "default": "\n", "type": "string" }, "class_name": { "title": "Class Name", "type": "string", "default": "Document" } }, "definitions": { "ObjectType": { "title": "ObjectType", "description": "An enumeration.", "enum": [ "1", "2", "3", "4" ], "type": "string" }, "RelatedNodeInfo": { "title": "RelatedNodeInfo", "description": "Base component object to capture class names.", "type": "object", "properties": { "node_id": { "title": "Node Id", "type": "string" }, "node_type": { "$ref": "#/definitions/ObjectType" }, "metadata": { "title": "Metadata", "type": "object" }, "hash": { "title": "Hash", "type": "string" }, "class_name": { "title": "Class Name", "type": "string", "default": "RelatedNodeInfo" } }, "required": [ "node_id" ] } } }
+- Config
+allow_population_by_field_name: bool = True
+validate_assignment: bool = True
+-
+- Fields
+- field id_: str [Optional] (alias 'doc_id')#
+Unique ID of the node.
+- classmethod class_name() str #
+Get the class name, used as a unique ID in serialization.
+This provides a key that makes serialization robust against actual class name changes.
+- classmethod from_embedchain_format(doc: Dict[str, Any]) Document #
+Convert struct from EmbedChain document format.
+- classmethod from_haystack_format(doc: HaystackDocument) Document #
+Convert struct from Haystack document format.
+- classmethod from_langchain_format(doc: LCDocument) Document #
+Convert struct from LangChain document format.
+- classmethod from_semantic_kernel_format(doc: MemoryRecord) Document #
+Convert struct from Semantic Kernel document format.
+- get_doc_id() str #
+TODO: Deprecated: Get document ID.
+- classmethod get_type() str #
+Get Document type.
+- to_embedchain_format() Dict[str, Any] #
+Convert struct to EmbedChain document format.
+- to_haystack_format() HaystackDocument #
+Convert struct to Haystack document format.
+- to_langchain_format() LCDocument #
+Convert struct to LangChain document format.
+- to_semantic_kernel_format() MemoryRecord #
+Convert struct to Semantic Kernel document format.
+- to_vectorflow(client: Any) None #
+Send a document to vectorflow, since they don’t have a document object.
+- property doc_id: str#
+Get document ID.

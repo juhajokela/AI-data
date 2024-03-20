@@ -1,0 +1,36 @@
+Nvidia Triton#
+Nvidia’s Triton is an inference server that provides API access to hosted LLM models. This connector allows for llama_index to remotely interact with a Triton inference server over GRPC to accelerate inference operations.
+Triton Inference Server Github
+Install tritonclient#
+Since we are interacting with the Triton inference server we will need to install the
+tritonclient package. The
+tritonclient package.
+tritonclient can be easily installed using
+pip3 install tritonclient.
+%pip install llama-index-llms-nvidia-triton
+!pip3 install tritonclient
+Basic Usage#
+Call
+complete with a prompt#
+from llama_index.llms.nvidia_triton import NvidiaTriton
+# A Triton server instance must be running. Use the correct URL for your desired Triton server instance.
+triton_url = "localhost:8001"
+resp = NvidiaTriton().complete("The tallest mountain in North America is ")
+print(resp)
+Call
+chat with a list of messages#
+from llama_index.core.llms import ChatMessage
+from llama_index.llms.nvidia_triton import NvidiaTriton
+messages = [
+ChatMessage(
+role="system",
+content="You are a clown named bozo that has had a rough day at the circus",
+),
+ChatMessage(role="user", content="What has you down bozo?"),
+]
+resp = NvidiaTriton().chat(messages)
+print(resp)
+Further Examples#
+Remember that a Triton instance represents a running server instance therefore you should ensure you have a valid server configuration running and change the
+localhost:8001 to the correct IP/hostname:port combination for your server.
+An example of setting up this environment can be found at Nvidia’s (GenerativeAIExamples Github Repo)[https://github.com/NVIDIA/GenerativeAIExamples/tree/main/RetrievalAugmentedGeneration]

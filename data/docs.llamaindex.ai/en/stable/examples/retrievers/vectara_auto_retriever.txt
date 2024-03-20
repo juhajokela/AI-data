@@ -1,0 +1,175 @@
+Auto-Retrieval from a Vectara Index#
+This guide shows how to perform auto-retrieval in LlamaIndex with Vectara.
+Given a natural language query, we first use the LLM to infer a set of metadata filters as well as the right query string to pass to the Vectara Index.
+This allows for more dynamic, expressive forms of retrieval beyond top-k semantic search. The relevant context for a given query may only require filtering on a metadata tag, or require a joint combination of filtering + semantic search within the filtered set, or just raw semantic search.
+Setup#
+If you’re opening this Notebook on colab, you will probably need to install LlamaIndex 🦙.
+%pip install llama-index-llms-openai
+%pip install llama-index-indices-managed-vectara
+!pip install llama-index llama-index-indices-managed-vectara llama-index-llms-openai
+import logging
+import sys
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
+from llama_index.core.schema import TextNode
+from llama_index.core.indices.managed.types import ManagedIndexQueryMode
+from llama_index.indices.managed.vectara import VectaraIndex
+from llama_index.indices.managed.vectara import VectaraAutoRetriever
+from llama_index.core.vector_stores import MetadataInfo, VectorStoreInfo
+from llama_index.llms.openai import OpenAI
+INFO:numexpr.utils:Note: NumExpr detected 12 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 8.
+Note: NumExpr detected 12 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 8.
+INFO:numexpr.utils:NumExpr defaulting to 8 threads.
+NumExpr defaulting to 8 threads.
+Defining Some Sample Data#
+We insert some sample nodes containing text chunks into Vectara. Note that each
+TextNode not only contains the text, but also certain metadata fields like year, director, rating or genre.
+In Vectara you will need to define these metadata fields in your coprus.
+nodes = [
+TextNode(
+text=(
+"A pragmatic paleontologist touring an almost complete theme park on an island "
++ "in Central America is tasked with protecting a couple of kids after a power "
++ "failure causes the park's cloned dinosaurs to run loose."
+),
+metadata={"year": 1993, "rating": 7.7, "genre": "science fiction"},
+),
+TextNode(
+text=(
+"A thief who steals corporate secrets through the use of dream-sharing technology "
++ "is given the inverse task of planting an idea into the mind of a C.E.O., "
++ "but his tragic past may doom the project and his team to disaster."
+),
+metadata={
+"year": 2010,
+"director": "Christopher Nolan",
+"rating": 8.2,
+},
+),
+TextNode(
+text="Barbie suffers a crisis that leads her to question her world and her existence.",
+metadata={
+"year": 2023,
+"director": "Greta Gerwig",
+"genre": "fantasy",
+"rating": 9.5,
+},
+),
+TextNode(
+text=(
+"A cowboy doll is profoundly threatened and jealous when a new spaceman action "
++ "figure supplants him as top toy in a boy's bedroom."
+),
+metadata={"year": 1995, "genre": "animated", "rating": 8.3},
+),
+TextNode(
+text=(
+"When Woody is stolen by a toy collector, Buzz and his friends set out on a "
++ "rescue mission to save Woody before he becomes a museum toy property with his "
++ "roundup gang Jessie, Prospector, and Bullseye. "
+),
+metadata={"year": 1999, "genre": "animated", "rating": 7.9},
+),
+TextNode(
+text=(
+"The toys are mistakenly delivered to a day-care center instead of the attic "
++ "right before Andy leaves for college, and it's up to Woody to convince the "
++ "other toys that they weren't abandoned and to return home."
+),
+metadata={"year": 2010, "genre": "animated", "rating": 8.3},
+),
+]
+Build Vectara Managed Index#
+Now we load our sample data into the Vectara Index.
+index = VectaraIndex(nodes=nodes)
+LLM is explicitly disabled. Using MockLLM.
+Setup OpenAI#
+Auto-retrieval uses an LLM to convert the natural language query into a shorter query and meta data filtering conditions. We will be using the OpenAI LLM, so let’s set that up here.
+import getpass
+import openai
+import os
+if not os.environ.get("OPENAI_API_KEY", None):
+os.environ["OPENAI_API_KEY"] = getpass.getpass("OpenAI API Key:")
+openai.api_key = os.environ["OPENAI_API_KEY"]
+Define
+VectorStoreInfo#
+We define
+VectorStoreInfo, which contains a structured description of the metadata filters suported. This information is later on usedin the auto-retrieval prompt where the LLM infers metadata filters.
+vector_store_info = VectorStoreInfo(
+content_info="information about a movie",
+metadata_info=[
+MetadataInfo(
+name="genre",
+description="The genre of the movie. One of ['science fiction', 'comedy', 'drama', 'thriller', 'romance', 'action', 'animated']",
+type="string",
+),
+MetadataInfo(
+name="year",
+description="The year the movie was released",
+type="integer",
+),
+MetadataInfo(
+name="director",
+description="The name of the movie director",
+type="string",
+),
+MetadataInfo(
+name="rating",
+description="A 1-10 rating for the movie",
+type="float",
+),
+],
+)
+Running over some sample data#
+Now let’s create a
+VectaraAutoRetriever instance and run some example queries.
+from llama_index.indices.managed.vectara import VectaraAutoRetriever
+from llama_index.core.indices.service_context import ServiceContext
+from llama_index.llms.openai import OpenAI
+llm = OpenAI(model="gpt-3.5-turbo", temperature=0)
+retriever = VectaraAutoRetriever(
+index,
+vector_store_info=vector_store_info,
+llm=llm,
+verbose=False,
+)
+retriever.retrieve("movie directed by Greta Gerwig")
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[NodeWithScore(node=TextNode(id_='19ce35022e05e1d8672d1c609ce71b7b0958e1ecfc61717f54d3df26bf43b2392dc12b4148842e582d50ba813aa9381141e9ddefd4f6315da36e85efb77844f5', embedding=None, metadata={'lang': 'eng', 'offset': '0', 'len': '79', 'year': '2023', 'director': 'Greta Gerwig', 'genre': 'fantasy', 'rating': '9.5'}, excluded_embed_metadata_keys=[], excluded_llm_metadata_keys=[], relationships={}, hash='ad0e4a83d372f73b0226cb81a9ccdbd4c77526a6a70cb2d032bd5e9331441c6d', text='Barbie suffers a crisis that leads her to question her world and her existence.', start_char_idx=None, end_char_idx=None, text_template='{metadata_str}\n\n{content}', metadata_template='{key}: {value}', metadata_seperator='\n'), score=0.59363246)]
+retriever.retrieve("movie about toys with a rating above 8")
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[NodeWithScore(node=TextNode(id_='809f292b591d54338f7d8cbb3db72af48bb8a0b9de0d10cb90ab1e340b9670886387816d62acc6a61cf2a65938acfb7eb95cc8d4a65d54c72b9bd10b489fa9ee', embedding=None, metadata={'lang': 'eng', 'offset': '0', 'len': '209', 'year': '2010', 'genre': 'animated', 'rating': '8.3'}, excluded_embed_metadata_keys=[], excluded_llm_metadata_keys=[], relationships={}, hash='c1c9f42ca5857db9d154c05d68139a5d8515b1c90e6032d41deb8fdc2138ff40', text="The toys are mistakenly delivered to a day-care center instead of the attic right before Andy leaves for college, and it's up to Woody to convince the other toys that they weren't abandoned and to return home.", start_char_idx=None, end_char_idx=None, text_template='{metadata_str}\n\n{content}', metadata_template='{key}: {value}', metadata_seperator='\n'), score=0.740946),
+NodeWithScore(node=TextNode(id_='4bc116ca95b0802048d37b5807ff8b177b7ae0617207d6f56b998302b8c400cc99deedee8bdb1ccfb80107d3f0b20343c4be59ff0ec5c60312dc0ee5338d9f17', embedding=None, metadata={'lang': 'eng', 'offset': '0', 'len': '129', 'year': '1995', 'genre': 'animated', 'rating': '8.3'}, excluded_embed_metadata_keys=[], excluded_llm_metadata_keys=[], relationships={}, hash='35a858f68a9181d0a97045cb4dc92db5a02f307686ce20405e3545d1a0cf5020', text="A cowboy doll is profoundly threatened and jealous when a new spaceman action figure supplants him as top toy in a boy's bedroom.", start_char_idx=None, end_char_idx=None, text_template='{metadata_str}\n\n{content}', metadata_template='{key}: {value}', metadata_seperator='\n'), score=0.67997515)]
+We can also include standard
+VectaraRetriever arguments in the
+VectaraAutoRetriever. For example, if we want to include a
+filter that would be added to any additional filtering from the query itself, we can do it as follows:
+retriever = VectaraAutoRetriever(
+index,
+vector_store_info=vector_store_info,
+llm=llm,
+filter="doc.rating > 8",
+)
+retriever.retrieve("movie about toys")
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[NodeWithScore(node=TextNode(id_='809f292b591d54338f7d8cbb3db72af48bb8a0b9de0d10cb90ab1e340b9670886387816d62acc6a61cf2a65938acfb7eb95cc8d4a65d54c72b9bd10b489fa9ee', embedding=None, metadata={'lang': 'eng', 'offset': '0', 'len': '209', 'year': '2010', 'genre': 'animated', 'rating': '8.3'}, excluded_embed_metadata_keys=[], excluded_llm_metadata_keys=[], relationships={}, hash='c1c9f42ca5857db9d154c05d68139a5d8515b1c90e6032d41deb8fdc2138ff40', text="The toys are mistakenly delivered to a day-care center instead of the attic right before Andy leaves for college, and it's up to Woody to convince the other toys that they weren't abandoned and to return home.", start_char_idx=None, end_char_idx=None, text_template='{metadata_str}\n\n{content}', metadata_template='{key}: {value}', metadata_seperator='\n'), score=0.740946),
+NodeWithScore(node=TextNode(id_='4bc116ca95b0802048d37b5807ff8b177b7ae0617207d6f56b998302b8c400cc99deedee8bdb1ccfb80107d3f0b20343c4be59ff0ec5c60312dc0ee5338d9f17', embedding=None, metadata={'lang': 'eng', 'offset': '0', 'len': '129', 'year': '1995', 'genre': 'animated', 'rating': '8.3'}, excluded_embed_metadata_keys=[], excluded_llm_metadata_keys=[], relationships={}, hash='35a858f68a9181d0a97045cb4dc92db5a02f307686ce20405e3545d1a0cf5020', text="A cowboy doll is profoundly threatened and jealous when a new spaceman action figure supplants him as top toy in a boy's bedroom.", start_char_idx=None, end_char_idx=None, text_template='{metadata_str}\n\n{content}', metadata_template='{key}: {value}', metadata_seperator='\n'), score=0.67997515)]
+Now let’s try with MMR (max marginal relevance). To demonstrate the maximum effect we will use mmr_diversity_bias value of 1.0 (maximum diversity), noting that typical value is usually 0.2 or 0.3.
+retriever = VectaraAutoRetriever(
+index,
+vector_store_info=vector_store_info,
+llm=llm,
+filter="doc.rating > 8",
+vectara_query_mode="mmr",
+mmr_k=50,
+mmr_diversity_bias=1,
+)
+retriever.retrieve("movie about toys")
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+[NodeWithScore(node=TextNode(id_='809f292b591d54338f7d8cbb3db72af48bb8a0b9de0d10cb90ab1e340b9670886387816d62acc6a61cf2a65938acfb7eb95cc8d4a65d54c72b9bd10b489fa9ee', embedding=None, metadata={'lang': 'eng', 'offset': '0', 'len': '209', 'year': '2010', 'genre': 'animated', 'rating': '8.3'}, excluded_embed_metadata_keys=[], excluded_llm_metadata_keys=[], relationships={}, hash='c1c9f42ca5857db9d154c05d68139a5d8515b1c90e6032d41deb8fdc2138ff40', text="The toys are mistakenly delivered to a day-care center instead of the attic right before Andy leaves for college, and it's up to Woody to convince the other toys that they weren't abandoned and to return home.", start_char_idx=None, end_char_idx=None, text_template='{metadata_str}\n\n{content}', metadata_template='{key}: {value}', metadata_seperator='\n'), score=0.740946),
+NodeWithScore(node=TextNode(id_='2bc612264c3ccf53264b02765eb477d6d4aaeca6aa6261e42611307ddd8079a340f291436bd3f7b2e84a940ee4d4c51333f6d52e0c7459096501aff6a62deef8', embedding=None, metadata={'lang': 'eng', 'offset': '0', 'len': '220', 'year': '2010', 'director': 'Christopher Nolan', 'rating': '8.2'}, excluded_embed_metadata_keys=[], excluded_llm_metadata_keys=[], relationships={}, hash='a7925bf91469af831471913fd164a40c6711a6e6b236827b1a7c971e4b2cfb5e', text='A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O., but his tragic past may doom the project and his team to disaster.', start_char_idx=None, end_char_idx=None, text_template='{metadata_str}\n\n{content}', metadata_template='{key}: {value}', metadata_seperator='\n'), score=-0.7325192)]
+We can see that the results are reranked with MMR to create more diversity, and instead of two “toy story” results we get a first result about toy story and another one for the movie inception.

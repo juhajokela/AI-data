@@ -1,0 +1,24 @@
+Module Guides#
+Basic#
+First, check out our module guide on Indexes for in-depth guides for each index (vector index, summary index, knowledge graph index). Each index corresponds to a default query engine for that index.
+Then check out the rest of the sections below.
+Structured & Semi-Structured Data#
+Advanced#
+- Router Query Engine
+- Retriever Router Query Engine
+- Joint QA Summary Query Engine
+- Sub Question Query Engine
+- Multi-Step Query Engine
+- SQL Router Query Engine
+- SQL Auto Vector Query Engine
+- SQL Join Query Engine
+- [Beta] Text-to-SQL with PGVector
+- SQL Query Engine with LlamaIndex + DuckDB
+- Retry Query Engine
+- CitationQueryEngine
+- Recursive Retriever + Query Engine Demo
+- Joint Tabular/Semantic QA over Tesla 10K
+- Recursive Retriever + Document Agents
+- Ensemble Query Engine Guide
+Advanced: Towards Multi-Document Querying/Analysis#
+This specific subsection showcases modules that help with querying multiple documents.

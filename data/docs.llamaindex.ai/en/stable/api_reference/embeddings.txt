@@ -1,0 +1,48 @@
+BaseEmbedding#
+- pydantic model llama_index.core.base.embeddings.base.BaseEmbedding#
+Base class for embeddings.
+Show JSON schema
+{ "title": "BaseEmbedding", "description": "Base class for embeddings.", "type": "object", "properties": { "model_name": { "title": "Model Name", "description": "The name of the embedding model.", "default": "unknown", "type": "string" }, "embed_batch_size": { "title": "Embed Batch Size", "description": "The batch size for embedding calls.", "default": 10, "exclusiveMinimum": 0, "lte": 2048, "type": "integer" }, "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "class_name": { "title": "Class Name", "type": "string", "default": "base_component" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- Validators
+_validate_callback_manager»
+callback_manager
+-
+- field callback_manager: CallbackManager [Optional]#
+- Constraints
+type = object
+default = {}
+-
+- Validated by
+_validate_callback_manager
+-
+- field embed_batch_size: int = 10#
+The batch size for embedding calls.
+- Constraints
+exclusiveMinimum = 0
+-
+- field model_name: str = 'unknown'#
+The name of the embedding model.
+- async aget_agg_embedding_from_queries(queries: List[str], agg_fn: Optional[Callable[[...], List[float]]] = None) List[float] #
+Async get aggregated embedding from multiple queries.
+- async aget_query_embedding(query: str) List[float] #
+Get query embedding.
+- async aget_text_embedding(text: str) List[float] #
+Async get text embedding.
+- async aget_text_embedding_batch(texts: List[str], show_progress: bool = False) List[List[float]] #
+Asynchronously get a list of text embeddings, with batching.
+- get_agg_embedding_from_queries(queries: List[str], agg_fn: Optional[Callable[[...], List[float]]] = None) List[float] #
+Get aggregated embedding from multiple queries.
+- get_query_embedding(query: str) List[float] #
+Embed the input query.
+When embedding a query, depending on the model, a special instruction can be prepended to the raw query string. For example, “Represent the question for retrieving supporting documents: “. If you’re curious, other examples of predefined instructions can be found in embeddings/huggingface_utils.py.
+- get_text_embedding(text: str) List[float] #
+Embed the input text.
+When embedding text, depending on the model, a special instruction can be prepended to the raw text string. For example, “Represent the document for retrieval: “. If you’re curious, other examples of predefined instructions can be found in embeddings/huggingface_utils.py.
+- get_text_embedding_batch(texts: List[str], show_progress: bool = False, **kwargs: Any) List[List[float]] #
+Get a list of text embeddings, with batching.
+- similarity(embedding1: List[float], embedding2: List[float], mode: SimilarityMode = SimilarityMode.DEFAULT) float #
+Get embedding similarity.

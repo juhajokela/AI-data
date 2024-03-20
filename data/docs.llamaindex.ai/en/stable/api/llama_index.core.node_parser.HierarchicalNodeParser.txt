@@ -1,0 +1,33 @@
+HierarchicalNodeParser#
+- pydantic model llama_index.core.node_parser.HierarchicalNodeParser#
+Hierarchical node parser.
+Splits a document into a recursive hierarchy Nodes using a NodeParser.
+NOTE: this will return a hierarchy of nodes in a flat list, where there will be overlap between parent nodes (e.g. with a bigger chunk size), and child nodes per parent (e.g. with a smaller chunk size).
+For instance, this may return a list of nodes like: - list of top-level nodes with chunk size 2048 - list of second-level nodes, where each node is a child of a top-level node,
+chunk size 512
+list of third-level nodes, where each node is a child of a second-level node, chunk size 128
+Show JSON schema
+{ "title": "HierarchicalNodeParser", "description": "Hierarchical node parser.\n\nSplits a document into a recursive hierarchy Nodes using a NodeParser.\n\nNOTE: this will return a hierarchy of nodes in a flat list, where there will be\noverlap between parent nodes (e.g. with a bigger chunk size), and child nodes\nper parent (e.g. with a smaller chunk size).\n\nFor instance, this may return a list of nodes like:\n- list of top-level nodes with chunk size 2048\n- list of second-level nodes, where each node is a child of a top-level node,\n chunk size 512\n- list of third-level nodes, where each node is a child of a second-level node,\n chunk size 128", "type": "object", "properties": { "include_metadata": { "title": "Include Metadata", "description": "Whether or not to consider metadata when splitting.", "default": true, "type": "boolean" }, "include_prev_next_rel": { "title": "Include Prev Next Rel", "description": "Include prev/next node relationships.", "default": true, "type": "boolean" }, "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "chunk_sizes": { "title": "Chunk Sizes", "description": "The chunk sizes to use when splitting documents, in order of level.", "type": "array", "items": { "type": "integer" } }, "node_parser_ids": { "title": "Node Parser Ids", "description": "List of ids for the node parsers to use when splitting documents, in order of level (first id used for first level, etc.).", "type": "array", "items": { "type": "string" } }, "node_parser_map": { "title": "Node Parser Map", "description": "Map of node parser id to node parser.", "type": "object", "additionalProperties": { "$ref": "#/definitions/NodeParser" } }, "class_name": { "title": "Class Name", "type": "string", "default": "HierarchicalNodeParser" } }, "required": [ "node_parser_map" ], "definitions": { "NodeParser": { "title": "NodeParser", "description": "Base interface for node parser.", "type": "object", "properties": { "include_metadata": { "title": "Include Metadata", "description": "Whether or not to consider metadata when splitting.", "default": true, "type": "boolean" }, "include_prev_next_rel": { "title": "Include Prev Next Rel", "description": "Include prev/next node relationships.", "default": true, "type": "boolean" }, "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "class_name": { "title": "Class Name", "type": "string", "default": "base_component" } } } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+chunk_sizes (Optional[List[int]])
+node_parser_ids (List[str])
+node_parser_map (Dict[str, llama_index.core.node_parser.interface.NodeParser])
+-
+- Validators
+_validate_id_func»
+id_func
+-
+- field chunk_sizes: Optional[List[int]] = None#
+The chunk sizes to use when splitting documents, in order of level.
+- field node_parser_ids: List[str] [Optional]#
+List of ids for the node parsers to use when splitting documents, in order of level (first id used for first level, etc.).
+- field node_parser_map: Dict[str, NodeParser] [Required]#
+Map of node parser id to node parser.
+- classmethod class_name() str #
+Get the class name, used as a unique ID in serialization.
+This provides a key that makes serialization robust against actual class name changes.
+- classmethod from_defaults(chunk_sizes: Optional[List[int]] = None, chunk_overlap: int = 20, node_parser_ids: Optional[List[str]] = None, node_parser_map: Optional[Dict[str, NodeParser]] = None, include_metadata: bool = True, include_prev_next_rel: bool = True, callback_manager: Optional[CallbackManager] = None) HierarchicalNodeParser #
+-

@@ -1,0 +1,40 @@
+Citation Query Engine#
+- class llama_index.core.query_engine.citation_query_engine.CitationQueryEngine(retriever: BaseRetriever, llm: Optional[LLM] = None, response_synthesizer: Optional[BaseSynthesizer] = None, citation_chunk_size: int = 512, citation_chunk_overlap: int = 20, text_splitter: Optional[TextSplitter] = None, node_postprocessors: Optional[List[BaseNodePostprocessor]] = None, callback_manager: Optional[CallbackManager] = None, metadata_mode: MetadataMode = MetadataMode.NONE)#
+Citation query engine.
+- Parameters
+retriever (BaseRetriever) – A retriever object.
+response_synthesizer (Optional[BaseSynthesizer]) – A BaseSynthesizer object.
+citation_chunk_size (int) – Size of citation chunks, default=512. Useful for controlling granularity of sources.
+citation_chunk_overlap (int) – Overlap of citation nodes, default=20.
+text_splitter (Optional[TextSplitter]) – A text splitter for creating citation source nodes. Default is a SentenceSplitter.
+callback_manager (Optional[CallbackManager]) – A callback manager.
+metadata_mode (MetadataMode) – A MetadataMode object that controls how metadata is included in the citation prompt.
+-
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- classmethod from_args(index: ~llama_index.core.indices.base.BaseIndex, llm: ~typing.Optional[~llama_index.core.llms.llm.LLM] = None, response_synthesizer: ~typing.Optional[~llama_index.core.response_synthesizers.base.BaseSynthesizer] = None, citation_chunk_size: int = 512, citation_chunk_overlap: int = 20, text_splitter: ~typing.Optional[~llama_index.core.node_parser.interface.TextSplitter] = None, citation_qa_template: ~llama_index.core.prompts.base.BasePromptTemplate = PromptTemplate(metadata={'prompt_type': <PromptType.CUSTOM: 'custom'>}, template_vars=['context_str', 'query_str'], kwargs={}, output_parser=None, template_var_mappings=None, function_mappings=None, template="Please provide an answer based solely on the provided sources. When referencing information from a source, cite the appropriate source(s) using their corresponding numbers. Every answer should include at least one source citation. Only cite a source when you are explicitly referencing it. If none of the sources are helpful, you should indicate that. For example:\nSource 1:\nThe sky is red in the evening and blue in the morning.\nSource 2:\nWater is wet when the sky is red.\nQuery: When is water wet?\nAnswer: Water will be wet when the sky is red [2], which occurs in the evening [1].\nNow it's your turn. Below are several numbered sources of information:\n------\n{context_str}\n------\nQuery: {query_str}\nAnswer: "), citation_refine_template: ~llama_index.core.prompts.base.BasePromptTemplate = PromptTemplate(metadata={'prompt_type': <PromptType.CUSTOM: 'custom'>}, template_vars=['existing_answer', 'context_msg', 'query_str'], kwargs={}, output_parser=None, template_var_mappings=None, function_mappings=None, template="Please provide an answer based solely on the provided sources. When referencing information from a source, cite the appropriate source(s) using their corresponding numbers. Every answer should include at least one source citation. Only cite a source when you are explicitly referencing it. If none of the sources are helpful, you should indicate that. For example:\nSource 1:\nThe sky is red in the evening and blue in the morning.\nSource 2:\nWater is wet when the sky is red.\nQuery: When is water wet?\nAnswer: Water will be wet when the sky is red [2], which occurs in the evening [1].\nNow it's your turn. We have provided an existing answer: {existing_answer}Below are several numbered sources of information. Use them to refine the existing answer. If the provided sources are not helpful, you will repeat the existing answer.\nBegin refining!\n------\n{context_msg}\n------\nQuery: {query_str}\nAnswer: "), retriever: ~typing.Optional[~llama_index.core.base.base_retriever.BaseRetriever] = None, node_postprocessors: ~typing.Optional[~typing.List[~llama_index.core.postprocessor.types.BaseNodePostprocessor]] = None, response_mode: ~llama_index.core.response_synthesizers.type.ResponseMode = ResponseMode.COMPACT, use_async: bool = False, streaming: bool = False, metadata_mode: ~llama_index.core.schema.MetadataMode = MetadataMode.NONE, **kwargs: ~typing.Any) CitationQueryEngine #
+Initialize a CitationQueryEngine object.”.
+- Parameters
+index – (BastGPTIndex): index to use for querying
+llm – (Optional[LLM]): LLM object to use for response generation.
+citation_chunk_size (int) – Size of citation chunks, default=512. Useful for controlling granularity of sources.
+citation_chunk_overlap (int) – Overlap of citation nodes, default=20.
+text_splitter (Optional[TextSplitter]) – A text splitter for creating citation source nodes. Default is a SentenceSplitter.
+citation_qa_template (BasePromptTemplate) – Template for initial citation QA
+citation_refine_template (BasePromptTemplate) – Template for citation refinement.
+retriever (BaseRetriever) – A retriever object.
+service_context (Optional[ServiceContext]) – A ServiceContext object.
+node_postprocessors (Optional[List[BaseNodePostprocessor]]) – A list of node postprocessors.
+verbose (bool) – Whether to print out debug info.
+response_mode (ResponseMode) – A ResponseMode object.
+use_async (bool) – Whether to use async.
+streaming (bool) – Whether to use streaming.
+optimizer (Optional[BaseTokenUsageOptimizer]) – A BaseTokenUsageOptimizer object.
+-
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- property retriever: BaseRetriever#
+Get the retriever object.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.

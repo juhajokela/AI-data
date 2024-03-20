@@ -1,0 +1,49 @@
+Router Query Engine#
+- class llama_index.core.query_engine.router_query_engine.RetrieverRouterQueryEngine(retriever: BaseRetriever, node_to_query_engine_fn: Callable, callback_manager: Optional[CallbackManager] = None)#
+Retriever-based router query engine.
+NOTE: this is deprecated, please use our new ToolRetrieverRouterQueryEngine
+Use a retriever to select a set of Nodes. Each node will be converted into a ToolMetadata object, and also used to retrieve a query engine, to form a QueryEngineTool.
+NOTE: this is a beta feature. We are figuring out the right interface between the retriever and query engine.
+- Parameters
+selector (BaseSelector) – A selector that chooses one out of many options based on each candidate’s metadata and query.
+query_engine_tools (Sequence[QueryEngineTool]) – A sequence of candidate query engines. They must be wrapped as tools to expose metadata to the selector.
+callback_manager (Optional[CallbackManager]) – A callback manager.
+-
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- class llama_index.core.query_engine.router_query_engine.RouterQueryEngine(selector: BaseSelector, query_engine_tools: Sequence[QueryEngineTool], llm: Optional[LLM] = None, summarizer: Optional[TreeSummarize] = None, verbose: bool = False, service_context: Optional[ServiceContext] = None)#
+Router query engine.
+Selects one out of several candidate query engines to execute a query.
+- Parameters
+selector (BaseSelector) – A selector that chooses one out of many options based on each candidate’s metadata and query.
+query_engine_tools (Sequence[QueryEngineTool]) – A sequence of candidate query engines. They must be wrapped as tools to expose metadata to the selector.
+service_context (Optional[ServiceContext]) – A service context.
+summarizer (Optional[TreeSummarize]) – Tree summarizer to summarize sub-results.
+-
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- class llama_index.core.query_engine.router_query_engine.ToolRetrieverRouterQueryEngine(retriever: ObjectRetriever[QueryEngineTool], service_context: Optional[ServiceContext] = None, summarizer: Optional[TreeSummarize] = None)#
+Tool Retriever router query engine.
+Selects a set of candidate query engines to execute a query.
+- Parameters
+retriever (ObjectRetriever) – A retriever that retrieves a set of query engine tools.
+service_context (Optional[ServiceContext]) – A service context.
+summarizer (Optional[TreeSummarize]) – Tree summarizer to summarize sub-results.
+-
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.

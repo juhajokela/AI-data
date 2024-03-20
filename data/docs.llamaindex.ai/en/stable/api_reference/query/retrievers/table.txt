@@ -1,0 +1,77 @@
+Keyword Table Retrievers#
+Query for KeywordTableIndex.
+- class llama_index.core.indices.keyword_table.retrievers.BaseKeywordTableRetriever(index: BaseKeywordTableIndex, keyword_extract_template: Optional[BasePromptTemplate] = None, query_keyword_extract_template: Optional[BasePromptTemplate] = None, max_keywords_per_query: int = 10, num_chunks_per_query: int = 10, callback_manager: Optional[CallbackManager] = None, object_map: Optional[dict] = None, verbose: bool = False, **kwargs: Any)#
+Base Keyword Table Retriever.
+Arguments are shared among subclasses.
+- Parameters
+keyword_extract_template (Optional[BasePromptTemplate]) – A Keyword Extraction Prompt (see Prompt Templates).
+query_keyword_extract_template (Optional[BasePromptTemplate]) – A Query Keyword Extraction Prompt (see Prompt Templates).
+refine_template (Optional[BasePromptTemplate]) – A Refinement Prompt (see Prompt Templates).
+text_qa_template (Optional[BasePromptTemplate]) – A Question Answering Prompt (see Prompt Templates).
+max_keywords_per_query (int) – Maximum number of keywords to extract from query.
+num_chunks_per_query (int) – Maximum number of text chunks to query.
+-
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- get_service_context() Optional[ServiceContext] #
+Attempts to resolve a service context. Short-circuits at self.service_context, self._service_context, or self._index.service_context.
+- retrieve(str_or_query_bundle: Union[str, QueryBundle]) List[NodeWithScore] #
+Retrieve nodes given query.
+- Parameters
+str_or_query_bundle (QueryType) – Either a query string or a QueryBundle object.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- class llama_index.core.indices.keyword_table.retrievers.KeywordTableGPTRetriever(index: BaseKeywordTableIndex, keyword_extract_template: Optional[BasePromptTemplate] = None, query_keyword_extract_template: Optional[BasePromptTemplate] = None, max_keywords_per_query: int = 10, num_chunks_per_query: int = 10, llm: Optional[LLM] = None, callback_manager: Optional[CallbackManager] = None, object_map: Optional[dict] = None, verbose: bool = False, **kwargs: Any)#
+Keyword Table Index GPT Retriever.
+Extracts keywords using GPT. Set when using retriever_mode=”default”.
+See BaseGPTKeywordTableQuery for arguments.
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- get_service_context() Optional[ServiceContext] #
+Attempts to resolve a service context. Short-circuits at self.service_context, self._service_context, or self._index.service_context.
+- retrieve(str_or_query_bundle: Union[str, QueryBundle]) List[NodeWithScore] #
+Retrieve nodes given query.
+- Parameters
+str_or_query_bundle (QueryType) – Either a query string or a QueryBundle object.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- class llama_index.core.indices.keyword_table.retrievers.KeywordTableRAKERetriever(index: BaseKeywordTableIndex, keyword_extract_template: Optional[BasePromptTemplate] = None, query_keyword_extract_template: Optional[BasePromptTemplate] = None, max_keywords_per_query: int = 10, num_chunks_per_query: int = 10, callback_manager: Optional[CallbackManager] = None, object_map: Optional[dict] = None, verbose: bool = False, **kwargs: Any)#
+Keyword Table Index RAKE Retriever.
+Extracts keywords using RAKE keyword extractor. Set when retriever_mode=”rake”.
+See BaseGPTKeywordTableQuery for arguments.
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- get_service_context() Optional[ServiceContext] #
+Attempts to resolve a service context. Short-circuits at self.service_context, self._service_context, or self._index.service_context.
+- retrieve(str_or_query_bundle: Union[str, QueryBundle]) List[NodeWithScore] #
+Retrieve nodes given query.
+- Parameters
+str_or_query_bundle (QueryType) – Either a query string or a QueryBundle object.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- class llama_index.core.indices.keyword_table.retrievers.KeywordTableSimpleRetriever(index: BaseKeywordTableIndex, keyword_extract_template: Optional[BasePromptTemplate] = None, query_keyword_extract_template: Optional[BasePromptTemplate] = None, max_keywords_per_query: int = 10, num_chunks_per_query: int = 10, callback_manager: Optional[CallbackManager] = None, object_map: Optional[dict] = None, verbose: bool = False, **kwargs: Any)#
+Keyword Table Index Simple Retriever.
+Extracts keywords using simple regex-based keyword extractor. Set when retriever_mode=”simple”.
+See BaseGPTKeywordTableQuery for arguments.
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- get_service_context() Optional[ServiceContext] #
+Attempts to resolve a service context. Short-circuits at self.service_context, self._service_context, or self._index.service_context.
+- retrieve(str_or_query_bundle: Union[str, QueryBundle]) List[NodeWithScore] #
+Retrieve nodes given query.
+- Parameters
+str_or_query_bundle (QueryType) – Either a query string or a QueryBundle object.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.

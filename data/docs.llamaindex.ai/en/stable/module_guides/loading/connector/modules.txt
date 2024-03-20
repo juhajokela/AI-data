@@ -1,0 +1,25 @@
+Module Guides#
+- Simple Directory Reader
+- Psychic Reader
+- DeepLake Reader
+- Qdrant Reader
+- Discord Reader
+- MongoDB Reader
+- Chroma Reader
+- MyScale Reader
+- Faiss Reader
+- Obsidian Reader
+- Slack Reader
+- Web Page Reader
+- Pinecone Reader
+- Pathway Reader
+- Mbox Reader
+- MilvusReader
+- Notion Reader
+- Github Repo Reader
+- Google Docs Reader
+- Database Reader
+- Twitter Reader
+- Weaviate Reader
+- Make Reader
+- Deplot Reader Demo

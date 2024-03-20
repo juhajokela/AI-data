@@ -1,0 +1,14 @@
+MetadataAwareTextSplitter#
+- pydantic model llama_index.core.node_parser.MetadataAwareTextSplitter#
+Show JSON schema
+{ "title": "MetadataAwareTextSplitter", "description": "Base interface for node parser.", "type": "object", "properties": { "include_metadata": { "title": "Include Metadata", "description": "Whether or not to consider metadata when splitting.", "default": true, "type": "boolean" }, "include_prev_next_rel": { "title": "Include Prev Next Rel", "description": "Include prev/next node relationships.", "default": true, "type": "boolean" }, "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "class_name": { "title": "Class Name", "type": "string", "default": "base_component" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- Validators
+_validate_id_func»
+id_func
+-
+- abstract split_text_metadata_aware(text: str, metadata_str: str) List[str] #
+- split_texts_metadata_aware(texts: List[str], metadata_strs: List[str]) List[str] #

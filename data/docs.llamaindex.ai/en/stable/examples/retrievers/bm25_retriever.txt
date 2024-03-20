@@ -1,0 +1,213 @@
+BM25 Retriever#
+In this guide, we define a bm25 retriever that search documents using bm25 method.
+This notebook is very similar to the RouterQueryEngine notebook.
+Setup#
+If you’re opening this Notebook on colab, you will probably need to install LlamaIndex 🦙.
+%pip install llama-index-llms-openai
+%pip install llama-index-retrievers-bm25
+!pip install llama-index
+# NOTE: This is ONLY necessary in jupyter notebook.
+# Details: Jupyter runs an event-loop behind the scenes.
+# This results in nested event-loops when we start an event-loop to make async queries.
+# This is normally not allowed, we use nest_asyncio to allow it for convenience.
+import nest_asyncio
+nest_asyncio.apply()
+import os
+import openai
+os.environ["OPENAI_API_KEY"] = "sk-..."
+openai.api_key = os.environ["OPENAI_API_KEY"]
+import logging
+import sys
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+logging.getLogger().handlers = []
+logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
+from llama_index.core import (
+SimpleDirectoryReader,
+StorageContext,
+VectorStoreIndex,
+)
+from llama_index.retrievers.bm25 import BM25Retriever
+from llama_index.core.retrievers import VectorIndexRetriever
+from llama_index.core.node_parser import SentenceSplitter
+from llama_index.llms.openai import OpenAI
+Download Data#
+!mkdir -p 'data/paul_graham/'
+!wget 'https://raw.githubusercontent.com/run-llama/llama_index/main/docs/examples/data/paul_graham/paul_graham_essay.txt' -O 'data/paul_graham/paul_graham_essay.txt'
+Load Data#
+We first show how to convert a Document into a set of Nodes, and insert into a DocumentStore.
+# load documents
+documents = SimpleDirectoryReader("./data/paul_graham").load_data()
+# initialize LLM + node parser
+llm = OpenAI(model="gpt-4")
+splitter = SentenceSplitter(chunk_size=1024)
+nodes = splitter.get_nodes_from_documents(documents)
+# initialize storage context (by default it's in-memory)
+storage_context = StorageContext.from_defaults()
+storage_context.docstore.add_documents(nodes)
+index = VectorStoreIndex(
+nodes=nodes,
+storage_context=storage_context,
+)
+HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+BM25 Retriever#
+We will search document with bm25 retriever.
+# We can pass in the index, doctore, or list of nodes to create the retriever
+retriever = BM25Retriever.from_defaults(nodes=nodes, similarity_top_k=2)
+from llama_index.core.response.notebook_utils import display_source_node
+# will retrieve context from specific companies
+nodes = retriever.retrieve("What happened at Viaweb and Interleaf?")
+for node in nodes:
+display_source_node(node)
+Node ID: 9afb8cb9-42f3-4160-807c-1cd6685fa774
+Similarity: 1.6781810094192822
+Text: Now that I could write essays again, I wrote a bunch about topics I’d had stacked up. I kept writ…
+Node ID: 71de4371-10ff-4d3a-8a31-14b2d4ddec83
+Similarity: 1.546534805781164
+Text: I couldn’t have put this into words when I was 18. All I knew at the time was that I kept taking …
+nodes = retriever.retrieve("What did Paul Graham do after RISD?")
+for node in nodes:
+display_source_node(node)
+Node ID: 42c88008-dd05-4590-8fd1-df85567579ea
+Similarity: 5.389397745654172
+Text: It was missing a lot of things you’d want in a programming language. So these had to be added, an…
+Node ID: 4d98c2ad-60cc-4cc0-abe2-b95c0c4be87b
+Similarity: 1.141523170922594
+Text: Painting students were supposed to express themselves, which to the more worldly ones meant to tr…
+Router Retriever with bm25 method#
+Now we will combine bm25 retriever with vector index retriever.
+from llama_index.core.tools import RetrieverTool
+vector_retriever = VectorIndexRetriever(index)
+bm25_retriever = BM25Retriever.from_defaults(nodes=nodes, similarity_top_k=2)
+retriever_tools = [
+RetrieverTool.from_defaults(
+retriever=vector_retriever,
+description="Useful in most cases",
+),
+RetrieverTool.from_defaults(
+retriever=bm25_retriever,
+description="Useful if searching about specific information",
+),
+]
+from llama_index.core.retrievers import RouterRetriever
+retriever = RouterRetriever.from_defaults(
+retriever_tools=retriever_tools,
+llm=llm,
+select_multi=True,
+)
+# will retrieve all context from the author's life
+nodes = retriever.retrieve(
+"Can you give me all the context regarding the author's life?"
+)
+for node in nodes:
+display_source_node(node)
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+Selecting retriever 0: The author's life context is a broad topic and can be useful in most cases..
+HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+Node ID: 9afb8cb9-42f3-4160-807c-1cd6685fa774
+Similarity: 0.7961776744788842
+Text: Now that I could write essays again, I wrote a bunch about topics I’d had stacked up. I kept writ…
+Node ID: b1ffb78d-dc4c-439b-906a-cca73b713940
+Similarity: 0.7924813308773564
+Text: We actually had one of those little stoves, fed with kindling, that you see in 19th century studi…
+Advanced - Hybrid Retriever + Re-Ranking#
+Here we extend the base retriever class and create a custom retriever that always uses the vector retriever and BM25 retreiver.
+Then, nodes can be re-ranked and filtered. This lets us keep intermediate top-k values large and letting the re-ranking filter out un-needed nodes.
+To best demonstrate this, we will use a larger set of source documents – Chapter 3 from the 2022 IPCC Climate Report.
+Setup data#
+!curl https://www.ipcc.ch/report/ar6/wg2/downloads/report/IPCC_AR6_WGII_Chapter03.pdf --output IPCC_AR6_WGII_Chapter03.pdf
+# !pip install pypdf
+from llama_index.core import (
+VectorStoreIndex,
+StorageContext,
+SimpleDirectoryReader,
+Document,
+)
+from llama_index.core.node_parser import SentenceSplitter
+from llama_index.llms.openai import OpenAI
+# load documents
+documents = SimpleDirectoryReader(
+input_files=["IPCC_AR6_WGII_Chapter03.pdf"]
+).load_data()
+# initialize llm + node parser
+# -- here, we set a smaller chunk size, to allow for more effective re-ranking
+llm = OpenAI(model="gpt-3.5-turbo")
+splitter = SentenceSplitter(chunk_size=256)
+# limit to a smaller section
+nodes = splitter.get_nodes_from_documents(
+[Document(text=documents[0].get_content()[:1000000])]
+)
+# initialize storage context (by default it's in-memory)
+storage_context = StorageContext.from_defaults()
+storage_context.docstore.add_documents(nodes)
+index = VectorStoreIndex(nodes, storage_context=storage_context)
+from llama_index.retrievers.bm25 import BM25Retriever
+# retireve the top 10 most similar nodes using embeddings
+vector_retriever = index.as_retriever(similarity_top_k=10)
+# retireve the top 10 most similar nodes using bm25
+bm25_retriever = BM25Retriever.from_defaults(nodes=nodes, similarity_top_k=10)
+Custom Retriever Implementation#
+from llama_index.core.retrievers import BaseRetriever
+class HybridRetriever(BaseRetriever):
+def __init__(self, vector_retriever, bm25_retriever):
+self.vector_retriever = vector_retriever
+self.bm25_retriever = bm25_retriever
+super().__init__()
+def _retrieve(self, query, **kwargs):
+bm25_nodes = self.bm25_retriever.retrieve(query, **kwargs)
+vector_nodes = self.vector_retriever.retrieve(query, **kwargs)
+# combine the two lists of nodes
+all_nodes = []
+node_ids = set()
+for n in bm25_nodes + vector_nodes:
+if n.node.node_id not in node_ids:
+all_nodes.append(n)
+node_ids.add(n.node.node_id)
+return all_nodes
+index.as_retriever(similarity_top_k=5)
+hybrid_retriever = HybridRetriever(vector_retriever, bm25_retriever)
+Re-Ranker Setup#
+!pip install sentence-transformers
+from llama_index.core.postprocessor import SentenceTransformerRerank
+reranker = SentenceTransformerRerank(top_n=4, model="BAAI/bge-reranker-base")
+Retrieve#
+from llama_index.core import QueryBundle
+retrieved_nodes = hybrid_retriever.retrieve(
+"What is the impact of climate change on the ocean?"
+)
+reranked_nodes = reranker.postprocess_nodes(
+nodes,
+query_bundle=QueryBundle(
+"What is the impact of climate change on the ocean?"
+),
+)
+print("Initial retrieval: ", len(retrieved_nodes), " nodes")
+print("Re-ranked retrieval: ", len(reranked_nodes), " nodes")
+from llama_index.core.response.notebook_utils import display_source_node
+for node in reranked_nodes:
+display_source_node(node)
+Node ID: 735c563d-e68c-42e7-bbeb-d360a2918d22
+Similarity: 0.6910567283630371
+Text: lb88\8a|hiac2:,sg
+HfvyȔskz44+)t$EAs9<"L䴺-iai]}?R)Jv8Q0V#9>f=3ב&WTFKNӅ9GN8v`4gtz…
+Node ID: 07a796db-8307-47a0-83a0-9b5f953b86b0
+Similarity: 0.609274685382843
+Text: {_d3<,fCȀ0K0~n(A ̙$saxt :xY3z/ߕXAWwpTeHY0HZHe̚kÇ>.82%ϖ^.rCS.2^12C?
+Node ID: 0ee98fbd-d015-4cd4-aba0-812423880915
+Similarity: 0.5765283107757568
+Text: X+V/Z6;O8/%Z3EC\asU1f(xLͼ]X\q”1}.66OKGSi9ǧ’(?Iʲi=4ޮ^m,Mp1~lBxP3]S<?C)3WM;WGQt@l…
+Node ID: 2562bbfb-fda2-432d-9674-5ba77ff4b767
+Similarity: 0.3882860541343689
+Text: PxS0s.MAK|+MOUÊ^;tc0 $XHmL<ҁ;Q@nUd&ի 2`B01i^yOw:rsM冫S*wu4a{-.Խ=j鷩nQD_AA%~T>~’OxU gk…
+Full Query Engine#
+from llama_index.core.query_engine import RetrieverQueryEngine
+query_engine = RetrieverQueryEngine.from_args(
+retriever=hybrid_retriever,
+node_postprocessors=[reranker],
+llm=llm,
+)
+response = query_engine.query(
+"What is the impact of climate change on the ocean?"
+)
+from llama_index.core.response.notebook_utils import display_response
+display_response(response)
+Final Response: Climate change can have a significant impact on the ocean. Rising temperatures can lead to the melting of polar ice caps, resulting in sea-level rise and coastal flooding. It can also disrupt ocean currents and affect marine ecosystems, including coral reefs and fish populations. Additionally, climate change can lead to ocean acidification, which can harm marine life and impact the overall health of the ocean.

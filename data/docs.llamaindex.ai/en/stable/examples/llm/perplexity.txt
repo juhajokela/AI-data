@@ -1,0 +1,54 @@
+Perplexity#
+Before we get started, make sure you install llama_index
+%pip install llama-index-llms-perplexity
+!pip install llama-index
+Setup LLM#
+As of Nov 14, 2023 - the following models are supported with the Perplexity LLM class in LLaMa Index:
+[1] Context length of mistral-7b-instruct and openhermes-2-mistral-7b will be increased to 32k tokens (see perplexity roadmap).
+You can find the latest supported models here - https://docs.perplexity.ai/docs/model-cards
+Rate limits are found here - https://docs.perplexity.ai/docs/rate-limits
+from llama_index.llms.perplexity import Perplexity
+pplx_api_key = "your-perplexity-api-key"
+llm = Perplexity(
+api_key=pplx_api_key, model="mistral-7b-instruct", temperature=0.5
+)
+from llama_index.core.llms import ChatMessage
+messages_dict = [
+{"role": "system", "content": "Be precise and concise."},
+{"role": "user", "content": "Tell me 5 sentences about Perplexity."},
+]
+messages = [ChatMessage(**msg) for msg in messages_dict]
+Chat#
+response = llm.chat(messages)
+print(response)
+assistant: 1. Perplexity is the state of being puzzled or confused.
+2. It is a measure of how difficult it is to understand something.
+3. Perplexity can be caused by a lack of information or a mismatch between the information provided and what is being understood.
+4. It can also be caused by the complexity of a problem or the way it is presented.
+5. Perplexity can be reduced through further information, clarification, or simplification.
+Async Chat#
+response = await llm.achat(messages)
+print(response)
+assistant: 1. Perplexity is a measure of how difficult it is to understand or solve a problem or concept.
+2. It is often used in fields such as cryptography, linguistics, and artificial intelligence.
+3. A high degree of perplexity indicates that a problem or concept is complex and difficult to understand.
+4. Perplexity can be calculated using various mathematical formulas, such as the entropy formula.
+5. Perplexity is an important concept in many areas of study, as it helps researchers to better understand and solve complex problems.
+Stream Chat#
+resp = llm.stream_chat(messages)
+for r in resp:
+print(r.delta, end="")
+1. Perplexity refers to the state of being confused or bewildered.
+2. It can be caused by a lack of understanding or a mismatch between one's expectations and reality.
+3. Perplexity can occur in various areas of life, such as personal relationships, work, or decision-making processes.
+4. It can lead to feelings of frustration or anxiety, and can be difficult to resolve.
+5. However, perplexity can also be a source of inspiration or creativity, as it can challenge one's assumptions and assumptions.
+Async Stream Chat#
+resp = await llm.astream_chat(messages)
+async for delta in resp:
+print(delta.delta, end="")
+1. Perplexity refers to the state of being puzzled or confused.
+2. It is often associated with a lack of understanding or difficulty in comprehending something.
+3. Perplexity can be caused by a variety of factors, including complexity, ambiguity, or lack of information.
+4. It can manifest in different forms, such as confusion, uncertainty, or disorientation.
+5. Perplexity can be overcome through problem-solving, clarification, or seeking additional information.

@@ -1,0 +1,22 @@
+Condense Question Chat Engine#
+- class llama_index.core.chat_engine.condense_question.CondenseQuestionChatEngine(query_engine: BaseQueryEngine, condense_question_prompt: BasePromptTemplate, memory: BaseMemory, llm: Union[LLMPredictor, LLM], verbose: bool = False, callback_manager: Optional[CallbackManager] = None)#
+Condense Question Chat Engine.
+First generate a standalone question from conversation context and last message, then query the query engine for a response.
+- async achat(message: str, chat_history: Optional[List[ChatMessage]] = None) AgentChatResponse #
+Async version of main chat interface.
+- async astream_chat(message: str, chat_history: Optional[List[ChatMessage]] = None) StreamingAgentChatResponse #
+Async version of main chat interface.
+- chat(message: str, chat_history: Optional[List[ChatMessage]] = None) AgentChatResponse #
+Main chat interface.
+- property chat_history: List[ChatMessage]#
+Get chat history.
+- chat_repl() None #
+Enter interactive chat REPL.
+- classmethod from_defaults(query_engine: ~llama_index.core.base.base_query_engine.BaseQueryEngine, condense_question_prompt: ~typing.Optional[~llama_index.core.prompts.base.BasePromptTemplate] = None, chat_history: ~typing.Optional[~typing.List[~llama_index.core.base.llms.types.ChatMessage]] = None, memory: ~typing.Optional[~llama_index.core.memory.types.BaseMemory] = None, memory_cls: ~typing.Type[~llama_index.core.memory.types.BaseMemory] = <class 'llama_index.core.memory.chat_memory_buffer.ChatMemoryBuffer'>, service_context: ~typing.Optional[~llama_index.core.service_context.ServiceContext] = None, verbose: bool = False, system_prompt: ~typing.Optional[str] = None, prefix_messages: ~typing.Optional[~typing.List[~llama_index.core.base.llms.types.ChatMessage]] = None, llm: ~typing.Optional[~llama_index.core.llms.llm.LLM] = None, **kwargs: ~typing.Any) CondenseQuestionChatEngine #
+Initialize a CondenseQuestionChatEngine from default parameters.
+- reset() None #
+Reset conversation state.
+- stream_chat(message: str, chat_history: Optional[List[ChatMessage]] = None) StreamingAgentChatResponse #
+Stream chat interface.
+- streaming_chat_repl() None #
+Enter interactive chat REPL with streaming responses.

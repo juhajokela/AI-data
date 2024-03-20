@@ -1,0 +1,32 @@
+NodeParser#
+- pydantic model llama_index.core.node_parser.NodeParser#
+Base interface for node parser.
+Show JSON schema
+{ "title": "NodeParser", "description": "Base interface for node parser.", "type": "object", "properties": { "include_metadata": { "title": "Include Metadata", "description": "Whether or not to consider metadata when splitting.", "default": true, "type": "boolean" }, "include_prev_next_rel": { "title": "Include Prev Next Rel", "description": "Include prev/next node relationships.", "default": true, "type": "boolean" }, "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "class_name": { "title": "Class Name", "type": "string", "default": "base_component" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+callback_manager (llama_index.core.callbacks.base.CallbackManager)
+id_func (Callable)
+include_metadata (bool)
+include_prev_next_rel (bool)
+-
+- Validators
+_validate_id_func»
+id_func
+-
+- field callback_manager: CallbackManager [Optional]#
+- Constraints
+type = object
+default = {}
+-
+- field id_func: Callable = None#
+Function to generate node IDs.
+- Validated by
+_validate_id_func
+-
+- field include_metadata: bool = True#
+Whether or not to consider metadata when splitting.
+- field include_prev_next_rel: bool = True#
+Include prev/next node relationships.

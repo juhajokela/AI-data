@@ -1,0 +1,1 @@
+ObjectType# class llama_index.core.schema.ObjectType(value, names=None, *, module=None, qualname=None, type=None, start=1, boundary=None)# Bases: str, Enum Attributes Summary DOCUMENT IMAGE INDEX TEXT Attributes Documentation DOCUMENT = '4'# IMAGE = '2'# INDEX = '3'# TEXT = '1'#

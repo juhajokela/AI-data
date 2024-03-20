@@ -1,0 +1,40 @@
+Maritalk#
+Introduction#
+MariTalk is an assistant developed by the Brazilian company Maritaca AI. MariTalk is based on language models that have been specially trained to understand Portuguese well.
+This notebook demonstrates how to use MariTalk with llama-index through a simple example.
+Installation#
+If you’re opening this Notebook on colab, you will probably need to install LlamaIndex.
+!pip install llama-index
+!pip install llama-index-llms-maritalk
+API Key#
+You will need an API key that can be obtained from chat.maritaca.ai (“Chaves da API” section).
+Usage#
+Chat#
+from llama_index.core.llms import ChatMessage
+from llama_index.llms.maritalk import Maritalk
+# To customize your API key, do this
+# otherwise it will lookup MARITALK_API_KEY from your env variable
+# llm = Maritalk(api_key="<your_maritalk_api_key>")
+llm = Maritalk()
+# Call chat with a list of messages
+messages = [
+ChatMessage(
+role="system",
+content="You are an assistant specialized in suggesting pet names. Given the animal, you must suggest 4 names.",
+),
+ChatMessage(role="user", content="I have a dog."),
+]
+response = llm.chat(messages)
+print(response)
+Few-shot examples#
+We recommend using the
+llm.complete() method when using the model with few-shot examples
+prompt = """Classifique a resenha de filme como "positiva" ou "negativa".
+Resenha: Gostei muito do filme, é o melhor do ano!
+Classe: positiva
+Resenha: O filme deixa muito a desejar.
+Classe: negativa
+Resenha: Apesar de longo, valeu o ingresso..
+Classe:"""
+response = llm.complete(prompt, stopping_tokens=["\n"])
+print(response)

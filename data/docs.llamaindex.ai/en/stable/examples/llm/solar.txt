@@ -1,0 +1,17 @@
+Solar LLM#
+!pip install llama-index-llms-solar
+import os
+os.environ["SOLAR_API_KEY"] = "SOLAR_API_KEY"
+# from llama_index.llms import
+from llama_index.llms.solar import Solar
+from llama_index.core.base.llms.types import ChatMessage, MessageRole
+llm = Solar(model="solar-1-mini-chat", is_chat_model=True)
+response = llm.chat(
+messages=[
+ChatMessage(role="user", content="아버지가방에들어가셨다"),
+ChatMessage(role="assistant", content="Father went into his room"),
+ChatMessage(role="user", content="엄마도들어가셨다"),
+]
+)
+print(response)
+assistant: Mother also went into the room.

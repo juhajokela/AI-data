@@ -1,0 +1,22 @@
+Multistep Query Engine#
+- class llama_index.core.query_engine.multistep_query_engine.MultiStepQueryEngine(query_engine: BaseQueryEngine, query_transform: StepDecomposeQueryTransform, response_synthesizer: Optional[BaseSynthesizer] = None, num_steps: Optional[int] = 3, early_stopping: bool = True, index_summary: str = 'None', stop_fn: Optional[Callable[[Dict], bool]] = None)#
+Multi-step query engine.
+This query engine can operate over an existing base query engine, along with the multi-step query transform.
+- Parameters
+query_engine (BaseQueryEngine) – A BaseQueryEngine object.
+query_transform (StepDecomposeQueryTransform) – A StepDecomposeQueryTransform object.
+response_synthesizer (Optional[BaseSynthesizer]) – A BaseSynthesizer object.
+num_steps (Optional[int]) – Number of steps to run the multi-step query.
+early_stopping (bool) – Whether to stop early if the stop function returns True.
+index_summary (str) – A string summary of the index.
+stop_fn (Optional[Callable[[Dict], bool]]) – A stop function that takes in a dictionary of information and returns a boolean.
+-
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- llama_index.core.query_engine.multistep_query_engine.default_stop_fn(stop_dict: Dict) bool #
+Stop function for multi-step query combiner.

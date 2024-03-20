@@ -1,0 +1,15 @@
+RelatedNodeInfo#
+- pydantic model llama_index.core.schema.RelatedNodeInfo#
+Show JSON schema
+{ "title": "RelatedNodeInfo", "description": "Base component object to capture class names.", "type": "object", "properties": { "node_id": { "title": "Node Id", "type": "string" }, "node_type": { "$ref": "#/definitions/ObjectType" }, "metadata": { "title": "Metadata", "type": "object" }, "hash": { "title": "Hash", "type": "string" }, "class_name": { "title": "Class Name", "type": "string", "default": "RelatedNodeInfo" } }, "required": [ "node_id" ], "definitions": { "ObjectType": { "title": "ObjectType", "description": "An enumeration.", "enum": [ "1", "2", "3", "4" ], "type": "string" } } }
+- Config
+schema_extra: function = <function BaseComponent.Config.schema_extra at 0x7ff4abe98860>
+-
+- Fields
+- field hash: Optional[str] = None#
+- field metadata: Dict[str, Any] [Optional]#
+- field node_id: str [Required]#
+- field node_type: Optional[ObjectType] = None#
+- classmethod class_name() → str#
+Get the class name, used as a unique ID in serialization.
+This provides a key that makes serialization robust against actual class name changes.

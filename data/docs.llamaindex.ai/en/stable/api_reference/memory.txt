@@ -1,0 +1,132 @@
+Memory#
+- pydantic model llama_index.core.memory.BaseMemory#
+Base class for all memory types.
+NOTE: The interface for memory is not yet finalized and is subject to change.
+Show JSON schema
+{ "title": "BaseMemory", "description": "Base class for all memory types.\n\nNOTE: The interface for memory is not yet finalized and is subject to change.", "type": "object", "properties": { "class_name": { "title": "Class Name", "type": "string", "default": "BaseMemory" } } }
+- Config
+schema_extra: function = <function BaseComponent.Config.schema_extra at 0x7ff4abe98860>
+-
+- classmethod class_name() str #
+Get class name.
+- classmethod construct(_fields_set: Optional[SetStr] = None, **values: Any) Model #
+Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data. Default values are respected, but no other validation is performed. Behaves as if Config.extra = ‘allow’ was set since it adds all passed values
+- copy(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, update: Optional[DictStrAny] = None, deep: bool = False) Model #
+Duplicate a model, optionally choose which fields to include, exclude and change.
+- Parameters
+include – fields to include in new model
+exclude – fields to exclude from new model, as with values this takes precedence over include
+update – values to change/add in the new model. Note: the data is not validated before creating the new model: you should trust this data
+deep – set to True to make a deep copy of the model
+-
+- Returns
+new model instance
+- dict(**kwargs: Any) Dict[str, Any] #
+Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+- abstract classmethod from_defaults(chat_history: Optional[List[ChatMessage]] = None, llm: Optional[LLM] = None) BaseMemory #
+Create a chat memory from defaults.
+- classmethod from_dict(data: Dict[str, Any], **kwargs: Any) Self #
+- classmethod from_json(data_str: str, **kwargs: Any) Self #
+- classmethod from_orm(obj: Any) Model #
+- abstract get(**kwargs: Any) List[ChatMessage] #
+Get chat history.
+- abstract get_all() List[ChatMessage] #
+Get all chat history.
+- json(**kwargs: Any) str #
+Generate a JSON representation of the model, include and exclude arguments as per dict().
+encoder is an optional function to supply as default to json.dumps(), other arguments as per json.dumps().
+- classmethod parse_file(path: Union[str, Path], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod parse_obj(obj: Any) Model #
+- classmethod parse_raw(b: Union[str, bytes], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- abstract put(message: ChatMessage) None #
+Put chat history.
+- abstract reset() None #
+Reset chat history.
+- classmethod schema(by_alias: bool = True, ref_template: unicode = '#/definitions/{model}') DictStrAny #
+- classmethod schema_json(*, by_alias: bool = True, ref_template: unicode = '#/definitions/{model}', **dumps_kwargs: Any) unicode #
+- abstract set(messages: List[ChatMessage]) None #
+Set chat history.
+- to_dict(**kwargs: Any) Dict[str, Any] #
+- to_json(**kwargs: Any) str #
+- classmethod update_forward_refs(**localns: Any) None #
+Try to update ForwardRefs on fields based on this Model, globalns and localns.
+- classmethod validate(value: Any) Model #
+- pydantic model llama_index.core.memory.ChatMemoryBuffer#
+Simple buffer for storing chat history.
+Show JSON schema
+{ "title": "ChatMemoryBuffer", "description": "Simple buffer for storing chat history.", "type": "object", "properties": { "token_limit": { "title": "Token Limit", "type": "integer" }, "chat_store": { "$ref": "#/definitions/BaseChatStore" }, "chat_store_key": { "title": "Chat Store Key", "default": "chat_history", "type": "string" }, "class_name": { "title": "Class Name", "type": "string", "default": "ChatMemoryBuffer" } }, "required": [ "token_limit" ], "definitions": { "BaseChatStore": { "title": "BaseChatStore", "description": "Base component object to capture class names.", "type": "object", "properties": { "class_name": { "title": "Class Name", "type": "string", "default": "BaseChatStore" } } } } }
+- Config
+schema_extra: function = <function BaseComponent.Config.schema_extra at 0x7ff4abe98860>
+-
+- Fields
+chat_store (llama_index.core.storage.chat_store.base.BaseChatStore)
+chat_store_key (str)
+token_limit (int)
+tokenizer_fn (Callable[[str], List])
+-
+- field chat_store: BaseChatStore [Optional]#
+- Validated by
+validate_memory
+-
+- field chat_store_key: str = 'chat_history'#
+- Validated by
+validate_memory
+-
+- field token_limit: int [Required]#
+- Validated by
+validate_memory
+-
+- field tokenizer_fn: Callable[[str], List] [Optional]#
+- Validated by
+validate_memory
+-
+- classmethod class_name() str #
+Get class name.
+- classmethod construct(_fields_set: Optional[SetStr] = None, **values: Any) Model #
+Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data. Default values are respected, but no other validation is performed. Behaves as if Config.extra = ‘allow’ was set since it adds all passed values
+- copy(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, update: Optional[DictStrAny] = None, deep: bool = False) Model #
+Duplicate a model, optionally choose which fields to include, exclude and change.
+- Parameters
+include – fields to include in new model
+exclude – fields to exclude from new model, as with values this takes precedence over include
+update – values to change/add in the new model. Note: the data is not validated before creating the new model: you should trust this data
+deep – set to True to make a deep copy of the model
+-
+- Returns
+new model instance
+- dict(**kwargs: Any) Dict[str, Any] #
+Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+- classmethod from_defaults(chat_history: Optional[List[ChatMessage]] = None, llm: Optional[LLM] = None, chat_store: Optional[BaseChatStore] = None, chat_store_key: str = 'chat_history', token_limit: Optional[int] = None, tokenizer_fn: Optional[Callable[[str], List]] = None) ChatMemoryBuffer #
+Create a chat memory buffer from an LLM.
+- classmethod from_dict(data: Dict[str, Any], **kwargs: Any) ChatMemoryBuffer #
+- classmethod from_json(data_str: str, **kwargs: Any) Self #
+- classmethod from_orm(obj: Any) Model #
+- classmethod from_string(json_str: str) ChatMemoryBuffer #
+Create a chat memory buffer from a string.
+- get(initial_token_count: int = 0, **kwargs: Any) List[ChatMessage] #
+Get chat history.
+- get_all() List[ChatMessage] #
+Get all chat history.
+- json(**kwargs: Any) str #
+Generate a JSON representation of the model, include and exclude arguments as per dict().
+encoder is an optional function to supply as default to json.dumps(), other arguments as per json.dumps().
+- classmethod parse_file(path: Union[str, Path], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod parse_obj(obj: Any) Model #
+- classmethod parse_raw(b: Union[str, bytes], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- put(message: ChatMessage) None #
+Put chat history.
+- reset() None #
+Reset chat history.
+- classmethod schema(by_alias: bool = True, ref_template: unicode = '#/definitions/{model}') DictStrAny #
+- classmethod schema_json(*, by_alias: bool = True, ref_template: unicode = '#/definitions/{model}', **dumps_kwargs: Any) unicode #
+- set(messages: List[ChatMessage]) None #
+Set chat history.
+- to_dict(**kwargs: Any) dict #
+Convert memory to dict.
+- to_json(**kwargs: Any) str #
+- to_string() str #
+Convert memory to string.
+- classmethod update_forward_refs(**localns: Any) None #
+Try to update ForwardRefs on fields based on this Model, globalns and localns.
+- classmethod validate(value: Any) Model #
+- validator validate_memory » all fields#

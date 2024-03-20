@@ -1,0 +1,21 @@
+MarkdownNodeParser#
+- pydantic model llama_index.core.node_parser.MarkdownNodeParser#
+Markdown node parser.
+Splits a document into Nodes using custom Markdown splitting logic.
+- Parameters
+include_metadata (bool) – whether to include metadata in nodes
+include_prev_next_rel (bool) – whether to include prev/next relationships
+-
+Show JSON schema
+{ "title": "MarkdownNodeParser", "description": "Markdown node parser.\n\nSplits a document into Nodes using custom Markdown splitting logic.\n\nArgs:\n include_metadata (bool): whether to include metadata in nodes\n include_prev_next_rel (bool): whether to include prev/next relationships", "type": "object", "properties": { "include_metadata": { "title": "Include Metadata", "description": "Whether or not to consider metadata when splitting.", "default": true, "type": "boolean" }, "include_prev_next_rel": { "title": "Include Prev Next Rel", "description": "Include prev/next node relationships.", "default": true, "type": "boolean" }, "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "class_name": { "title": "Class Name", "type": "string", "default": "MarkdownNodeParser" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- Validators
+_validate_id_func»
+id_func
+-
+- classmethod class_name() str #
+Get class name.
+- classmethod from_defaults(include_metadata: bool = True, include_prev_next_rel: bool = True, callback_manager: Optional[CallbackManager] = None) MarkdownNodeParser #

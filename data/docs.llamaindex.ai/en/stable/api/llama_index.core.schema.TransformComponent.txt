@@ -1,0 +1,8 @@
+TransformComponent#
+- pydantic model llama_index.core.schema.TransformComponent#
+Base class for transform components.
+Show JSON schema
+{ "title": "TransformComponent", "description": "Base class for transform components.", "type": "object", "properties": { "class_name": { "title": "Class Name", "type": "string", "default": "base_component" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-

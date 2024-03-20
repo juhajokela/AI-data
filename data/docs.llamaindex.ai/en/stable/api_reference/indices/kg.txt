@@ -1,0 +1,147 @@
+Knowledge Graph Index#
+Building the Knowledge Graph Index
+KG-based data structures.
+- class llama_index.core.indices.knowledge_graph.KGTableRetriever(index: KnowledgeGraphIndex, llm: Optional[LLM] = None, embed_model: Optional[BaseEmbedding] = None, query_keyword_extract_template: Optional[BasePromptTemplate] = None, max_keywords_per_query: int = 10, num_chunks_per_query: int = 10, include_text: bool = True, retriever_mode: Optional[KGRetrieverMode] = KGRetrieverMode.KEYWORD, similarity_top_k: int = 2, graph_store_query_depth: int = 2, use_global_node_triplets: bool = False, max_knowledge_sequence: int = 30, callback_manager: Optional[CallbackManager] = None, object_map: Optional[dict] = None, verbose: bool = False, **kwargs: Any)#
+KG Table Retriever.
+Arguments are shared among subclasses.
+- Parameters
+query_keyword_extract_template (Optional[QueryKGExtractPrompt]) – A Query KG Extraction Prompt (see Prompt Templates).
+refine_template (Optional[BasePromptTemplate]) – A Refinement Prompt (see Prompt Templates).
+text_qa_template (Optional[BasePromptTemplate]) – A Question Answering Prompt (see Prompt Templates).
+max_keywords_per_query (int) – Maximum number of keywords to extract from query.
+num_chunks_per_query (int) – Maximum number of text chunks to query.
+include_text (bool) – Use the document text source from each relevant triplet during queries.
+retriever_mode (KGRetrieverMode) – Specifies whether to use keywords, embeddings, or both to find relevant triplets. Should be one of “keyword”, “embedding”, or “hybrid”.
+similarity_top_k (int) – The number of top embeddings to use (if embeddings are used).
+graph_store_query_depth (int) – The depth of the graph store query.
+use_global_node_triplets (bool) – Whether to get more keywords(entities) from text chunks matched by keywords. This helps introduce more global knowledge. While it’s more expensive, thus to be turned off by default.
+max_knowledge_sequence (int) – The maximum number of knowledge sequence to include in the response. By default, it’s 30.
+-
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- get_service_context() Optional[ServiceContext] #
+Attempts to resolve a service context. Short-circuits at self.service_context, self._service_context, or self._index.service_context.
+- retrieve(str_or_query_bundle: Union[str, QueryBundle]) List[NodeWithScore] #
+Retrieve nodes given query.
+- Parameters
+str_or_query_bundle (QueryType) – Either a query string or a QueryBundle object.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- class llama_index.core.indices.knowledge_graph.KnowledgeGraphIndex(nodes: Optional[Sequence[BaseNode]] = None, objects: Optional[Sequence[IndexNode]] = None, index_struct: Optional[KG] = None, llm: Optional[LLM] = None, embed_model: Optional[BaseEmbedding] = None, storage_context: Optional[StorageContext] = None, kg_triple_extract_template: Optional[BasePromptTemplate] = None, max_triplets_per_chunk: int = 10, include_embeddings: bool = False, show_progress: bool = False, max_object_length: int = 128, kg_triplet_extract_fn: Optional[Callable] = None, service_context: Optional[ServiceContext] = None, **kwargs: Any)#
+Knowledge Graph Index.
+Build a KG by extracting triplets, and leveraging the KG during query-time.
+- Parameters
+kg_triple_extract_template (BasePromptTemplate) – The prompt to use for extracting triplets.
+max_triplets_per_chunk (int) – The maximum number of triplets to extract.
+service_context (Optional[ServiceContext]) – The service context to use.
+storage_context (Optional[StorageContext]) – The storage context to use.
+graph_store (Optional[GraphStore]) – The graph store to use.
+show_progress (bool) – Whether to show tqdm progress bars. Defaults to False.
+include_embeddings (bool) – Whether to include embeddings in the index. Defaults to False.
+max_object_length (int) – The maximum length of the object in a triplet. Defaults to 128.
+kg_triplet_extract_fn (Optional[Callable]) – The function to use for extracting triplets. Defaults to None.
+-
+- add_node(keywords: List[str], node: BaseNode) None #
+Add node.
+Used for manual insertion of nodes (keyed by keywords).
+- Parameters
+keywords (List[str]) – Keywords to index the node.
+node (Node) – Node to be indexed.
+-
+- delete_nodes(node_ids: List[str], delete_from_docstore: bool = False, **delete_kwargs: Any) None #
+Delete a list of nodes from the index.
+- Parameters
+doc_ids (List[str]) – A list of doc_ids from the nodes to delete
+- delete_ref_doc(ref_doc_id: str, delete_from_docstore: bool = False, **delete_kwargs: Any) None #
+Delete a document and it’s nodes by using ref_doc_id.
+- classmethod from_documents(documents: Sequence[Document], storage_context: Optional[StorageContext] = None, show_progress: bool = False, callback_manager: Optional[CallbackManager] = None, transformations: Optional[List[TransformComponent]] = None, service_context: Optional[ServiceContext] = None, **kwargs: Any) IndexType #
+Create index from documents.
+- Parameters
+documents (Optional[Sequence[BaseDocument]]) – List of documents to build the index from.
+- get_networkx_graph(limit: int = 100) Any #
+Get networkx representation of the graph structure.
+- Parameters
+limit (int) – Number of starting nodes to be included in the graph.
+NOTE: This function requires networkx to be installed. NOTE: This is a beta feature.
+- property index_id: str#
+Get the index struct.
+- property ref_doc_info: Dict[str, RefDocInfo]#
+Retrieve a dict mapping of ingested documents and their nodes+metadata.
+- refresh(documents: Sequence[Document], **update_kwargs: Any) List[bool] #
+Refresh an index with documents that have changed.
+This allows users to save LLM and Embedding model calls, while only updating documents that have any changes in text or metadata. It will also insert any documents that previously were not stored.
+- refresh_ref_docs(documents: Sequence[Document], **update_kwargs: Any) List[bool] #
+Refresh an index with documents that have changed.
+This allows users to save LLM and Embedding model calls, while only updating documents that have any changes in text or metadata. It will also insert any documents that previously were not stored.
+- set_index_id(index_id: str) None #
+Set the index id.
+NOTE: if you decide to set the index_id on the index_struct manually, you will need to explicitly call add_index_struct on the index_store to update the index store.
+- Parameters
+index_id (str) – Index id to set.
+- update(document: Document, **update_kwargs: Any) None #
+Update a document and it’s corresponding nodes.
+This is equivalent to deleting the document and then inserting it again.
+- Parameters
+document (Union[BaseDocument, BaseIndex]) – document to update
+insert_kwargs (Dict) – kwargs to pass to insert
+delete_kwargs (Dict) – kwargs to pass to delete
+-
+- update_ref_doc(document: Document, **update_kwargs: Any) None #
+Update a document and it’s corresponding nodes.
+This is equivalent to deleting the document and then inserting it again.
+- Parameters
+document (Union[BaseDocument, BaseIndex]) – document to update
+insert_kwargs (Dict) – kwargs to pass to insert
+delete_kwargs (Dict) – kwargs to pass to delete
+-
+- upsert_triplet(triplet: Tuple[str, str, str], include_embeddings: bool = False) None #
+Insert triplets and optionally embeddings.
+Used for manual insertion of KG triplets (in the form of (subject, relationship, object)).
+- Parameters
+triplet (tuple) – Knowledge triplet
+embedding (Any, optional) – Embedding option for the triplet. Defaults to None.
+-
+- upsert_triplet_and_node(triplet: Tuple[str, str, str], node: BaseNode, include_embeddings: bool = False) None #
+Upsert KG triplet and node.
+Calls both upsert_triplet and add_node. Behavior is idempotent; if Node already exists, only triplet will be added.
+- Parameters
+keywords (List[str]) – Keywords to index the node.
+node (Node) – Node to be indexed.
+include_embeddings (bool) – Option to add embeddings for triplets. Defaults to False
+-
+- class llama_index.core.indices.knowledge_graph.KnowledgeGraphRAGRetriever(storage_context: Optional[StorageContext] = None, llm: Optional[LLM] = None, entity_extract_fn: Optional[Callable] = None, entity_extract_template: Optional[BasePromptTemplate] = None, entity_extract_policy: Optional[str] = 'union', synonym_expand_fn: Optional[Callable] = None, synonym_expand_template: Optional[BasePromptTemplate] = None, synonym_expand_policy: Optional[str] = 'union', max_entities: int = 5, max_synonyms: int = 5, retriever_mode: Optional[str] = 'keyword', with_nl2graphquery: bool = False, graph_traversal_depth: int = 2, max_knowledge_sequence: int = 30, verbose: bool = False, callback_manager: Optional[CallbackManager] = None, service_context: Optional[ServiceContext] = None, **kwargs: Any)#
+Knowledge Graph RAG retriever.
+Retriever that perform SubGraph RAG towards knowledge graph.
+- Parameters
+service_context (Optional[ServiceContext]) – A service context to use.
+storage_context (Optional[StorageContext]) – A storage context to use.
+entity_extract_fn (Optional[Callable]) – A function to extract entities.
+Optional[BasePromptTemplate]) (entity_extract_template) – A Query Key Entity Extraction Prompt (see Prompt Templates).
+entity_extract_policy (Optional[str]) – The entity extraction policy to use. default: “union” possible values: “union”, “intersection”
+synonym_expand_fn (Optional[Callable]) – A function to expand synonyms.
+synonym_expand_template (Optional[QueryKeywordExpandPrompt]) – A Query Key Entity Expansion Prompt (see Prompt Templates).
+synonym_expand_policy (Optional[str]) – The synonym expansion policy to use. default: “union” possible values: “union”, “intersection”
+max_entities (int) – The maximum number of entities to extract. default: 5
+max_synonyms (int) – The maximum number of synonyms to expand per entity. default: 5
+retriever_mode (Optional[str]) – The retriever mode to use. default: “keyword” possible values: “keyword”, “embedding”, “keyword_embedding”
+with_nl2graphquery (bool) – Whether to combine NL2GraphQuery in context. default: False
+graph_traversal_depth (int) – The depth of graph traversal. default: 2
+max_knowledge_sequence (int) – The maximum number of knowledge sequence to include in the response. By default, it’s 30.
+verbose (bool) – Whether to print out debug info.
+-
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- get_service_context() Optional[ServiceContext] #
+Attempts to resolve a service context. Short-circuits at self.service_context, self._service_context, or self._index.service_context.
+- retrieve(str_or_query_bundle: Union[str, QueryBundle]) List[NodeWithScore] #
+Retrieve nodes given query.
+- Parameters
+str_or_query_bundle (QueryType) – Either a query string or a QueryBundle object.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.

@@ -1,0 +1,51 @@
+Vector Stores#
+Vector stores contain embedding vectors of ingested document chunks (and sometimes the document chunks as well).
+Simple Vector Store#
+By default, LlamaIndex uses a simple in-memory vector store that’s great for quick experimentation.
+They can be persisted to (and loaded from) disk by calling
+vector_store.persist() (and
+SimpleVectorStore.from_persist_path(...) respectively).
+Vector Store Options & Feature Support#
+LlamaIndex supports over 20 different vector store options. We are actively adding more integrations and improving feature coverage for each.
+For more details, see Vector Store Integrations.
+- Astra DB
+- Simple Vector Store - Async Index Creation
+- Azure AI Search
+- Azure CosmosDB MongoDB Vector Store
+- Baidu VectorDB
+- Cassandra Vector Store
+- Chroma
+- DashVector Vector Store
+- Databricks Vector Search
+- Deep Lake Vector Store Quickstart
+- DocArray Hnsw Vector Store
+- DocArray InMemory Vector Store
+- DuckDB
+- Epsilla Vector Store
+- Jaguar Vector Store
+- LanceDB Vector Store
+- Lantern Vector Store
+- Metal Vector Store
+- Milvus Vector Store
+- MyScale Vector Store
+- Elasticsearch Vector Store
+- Faiss Vector Store
+- MongoDB Atlas
+- Neo4j vector store
+- Opensearch Vector Store
+- Pinecone Vector Store
+- Pinecone Vector Store - Hybrid Search
+- pgvecto.rs
+- Postgres Vector Store
+- Redis Vector Store
+- Qdrant Vector Store
+- Qdrant Hybrid Search
+- Rockset Vector Store
+- Simple Vector Store
+- Supabase Vector Store
+- Tair Vector Store
+- Tencent Cloud VectorDB
+- Timescale Vector Store (PostgreSQL)
+- Weaviate Vector Store
+- Weaviate Vector Store - Hybrid Search
+- Zep Vector Store

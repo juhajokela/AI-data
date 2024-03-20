@@ -1,0 +1,60 @@
+Indices#
+This doc shows both the overarching class used to represent an index. These classes allow for index creation, insertion, and also querying. We first show the different index subclasses. We then show the base class that all indices inherit from, which contains parameters and methods common to all indices.
+Base Index Class#
+Base index classes.
+- class llama_index.core.indices.base.BaseIndex(nodes: Optional[Sequence[BaseNode]] = None, objects: Optional[Sequence[IndexNode]] = None, index_struct: Optional[IS] = None, storage_context: Optional[StorageContext] = None, callback_manager: Optional[CallbackManager] = None, transformations: Optional[List[TransformComponent]] = None, show_progress: bool = False, service_context: Optional[ServiceContext] = None, **kwargs: Any)#
+Base LlamaIndex.
+- Parameters
+nodes (List[Node]) – List of nodes to index
+show_progress (bool) – Whether to show tqdm progress bars. Defaults to False.
+service_context (ServiceContext) – Service context container (contains components like LLM, Embeddings, etc.).
+-
+- delete(doc_id: str, **delete_kwargs: Any) None #
+Delete a document from the index. All nodes in the index related to the index will be deleted.
+- Parameters
+doc_id (str) – A doc_id of the ingested document
+- delete_nodes(node_ids: List[str], delete_from_docstore: bool = False, **delete_kwargs: Any) None #
+Delete a list of nodes from the index.
+- Parameters
+doc_ids (List[str]) – A list of doc_ids from the nodes to delete
+- delete_ref_doc(ref_doc_id: str, delete_from_docstore: bool = False, **delete_kwargs: Any) None #
+Delete a document and it’s nodes by using ref_doc_id.
+- property docstore: BaseDocumentStore#
+Get the docstore corresponding to the index.
+- classmethod from_documents(documents: Sequence[Document], storage_context: Optional[StorageContext] = None, show_progress: bool = False, callback_manager: Optional[CallbackManager] = None, transformations: Optional[List[TransformComponent]] = None, service_context: Optional[ServiceContext] = None, **kwargs: Any) IndexType #
+Create index from documents.
+- Parameters
+documents (Optional[Sequence[BaseDocument]]) – List of documents to build the index from.
+- property index_id: str#
+Get the index struct.
+- property index_struct: IS#
+Get the index struct.
+- abstract property ref_doc_info: Dict[str, RefDocInfo]#
+Retrieve a dict mapping of ingested documents and their nodes+metadata.
+- refresh(documents: Sequence[Document], **update_kwargs: Any) List[bool] #
+Refresh an index with documents that have changed.
+This allows users to save LLM and Embedding model calls, while only updating documents that have any changes in text or metadata. It will also insert any documents that previously were not stored.
+- refresh_ref_docs(documents: Sequence[Document], **update_kwargs: Any) List[bool] #
+Refresh an index with documents that have changed.
+This allows users to save LLM and Embedding model calls, while only updating documents that have any changes in text or metadata. It will also insert any documents that previously were not stored.
+- set_index_id(index_id: str) None #
+Set the index id.
+NOTE: if you decide to set the index_id on the index_struct manually, you will need to explicitly call add_index_struct on the index_store to update the index store.
+- Parameters
+index_id (str) – Index id to set.
+- update(document: Document, **update_kwargs: Any) None #
+Update a document and it’s corresponding nodes.
+This is equivalent to deleting the document and then inserting it again.
+- Parameters
+document (Union[BaseDocument, BaseIndex]) – document to update
+insert_kwargs (Dict) – kwargs to pass to insert
+delete_kwargs (Dict) – kwargs to pass to delete
+-
+- update_ref_doc(document: Document, **update_kwargs: Any) None #
+Update a document and it’s corresponding nodes.
+This is equivalent to deleting the document and then inserting it again.
+- Parameters
+document (Union[BaseDocument, BaseIndex]) – document to update
+insert_kwargs (Dict) – kwargs to pass to insert
+delete_kwargs (Dict) – kwargs to pass to delete
+-

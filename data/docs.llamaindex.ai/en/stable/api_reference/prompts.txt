@@ -1,0 +1,90 @@
+Prompt Templates#
+These are the reference prompt templates.
+We first show links to default prompts.
+We then show the base prompt template class and its subclasses.
+Default Prompts#
+Prompt Classes#
+- pydantic model llama_index.core.prompts.base.BasePromptTemplate#
+Show JSON schema
+{ "title": "BasePromptTemplate", "description": "Chainable mixin.\n\nA module that can produce a `QueryComponent` from a set of inputs through\n`as_query_component`.\n\nIf plugged in directly into a `QueryPipeline`, the `ChainableMixin` will be\nconverted into a `QueryComponent` with default parameters.", "type": "object", "properties": { "metadata": { "title": "Metadata", "type": "object" }, "template_vars": { "title": "Template Vars", "type": "array", "items": { "type": "string" } }, "kwargs": { "title": "Kwargs", "type": "object", "additionalProperties": { "type": "string" } }, "output_parser": { "title": "Output Parser", "type": "object", "default": {} }, "template_var_mappings": { "title": "Template Var Mappings", "description": "Template variable mappings (Optional).", "type": "object" } }, "required": [ "metadata", "template_vars", "kwargs" ] }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- field function_mappings: Optional[Dict[str, Callable]] [Optional]#
+Function mappings (Optional). This is a mapping from template variable names to functions that take in the current kwargs and return a string.
+- field kwargs: Dict[str, str] [Required]#
+- field metadata: Dict[str, Any] [Required]#
+- field output_parser: Optional[BaseOutputParser] = None#
+- Constraints
+type = object
+default = {}
+-
+- field template_var_mappings: Optional[Dict[str, Any]] [Optional]#
+Template variable mappings (Optional).
+- field template_vars: List[str] [Required]#
+- abstract format(llm: Optional[BaseLLM] = None, **kwargs: Any) str #
+- abstract format_messages(llm: Optional[BaseLLM] = None, **kwargs: Any) List[ChatMessage] #
+- abstract get_template(llm: Optional[BaseLLM] = None) str #
+- abstract partial_format(**kwargs: Any) BasePromptTemplate #
+- pydantic model llama_index.core.prompts.base.PromptTemplate#
+Show JSON schema
+{ "title": "PromptTemplate", "description": "Chainable mixin.\n\nA module that can produce a `QueryComponent` from a set of inputs through\n`as_query_component`.\n\nIf plugged in directly into a `QueryPipeline`, the `ChainableMixin` will be\nconverted into a `QueryComponent` with default parameters.", "type": "object", "properties": { "metadata": { "title": "Metadata", "type": "object" }, "template_vars": { "title": "Template Vars", "type": "array", "items": { "type": "string" } }, "kwargs": { "title": "Kwargs", "type": "object", "additionalProperties": { "type": "string" } }, "output_parser": { "title": "Output Parser", "type": "object", "default": {} }, "template_var_mappings": { "title": "Template Var Mappings", "description": "Template variable mappings (Optional).", "type": "object" }, "template": { "title": "Template", "type": "string" } }, "required": [ "metadata", "template_vars", "kwargs", "template" ] }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- field template: str [Required]#
+- format(llm: Optional[BaseLLM] = None, completion_to_prompt: Optional[Callable[[str], str]] = None, **kwargs: Any) str #
+Format the prompt into a string.
+- format_messages(llm: Optional[BaseLLM] = None, **kwargs: Any) List[ChatMessage] #
+Format the prompt into a list of chat messages.
+- get_template(llm: Optional[BaseLLM] = None) str #
+- partial_format(**kwargs: Any) PromptTemplate #
+Partially format the prompt.
+- pydantic model llama_index.core.prompts.base.ChatPromptTemplate#
+Show JSON schema
+{ "title": "ChatPromptTemplate", "description": "Chainable mixin.\n\nA module that can produce a `QueryComponent` from a set of inputs through\n`as_query_component`.\n\nIf plugged in directly into a `QueryPipeline`, the `ChainableMixin` will be\nconverted into a `QueryComponent` with default parameters.", "type": "object", "properties": { "metadata": { "title": "Metadata", "type": "object" }, "template_vars": { "title": "Template Vars", "type": "array", "items": { "type": "string" } }, "kwargs": { "title": "Kwargs", "type": "object", "additionalProperties": { "type": "string" } }, "output_parser": { "title": "Output Parser", "type": "object", "default": {} }, "template_var_mappings": { "title": "Template Var Mappings", "description": "Template variable mappings (Optional).", "type": "object" }, "message_templates": { "title": "Message Templates", "type": "array", "items": { "$ref": "#/definitions/ChatMessage" } } }, "required": [ "metadata", "template_vars", "kwargs", "message_templates" ], "definitions": { "MessageRole": { "title": "MessageRole", "description": "Message role.", "enum": [ "system", "user", "assistant", "function", "tool", "chatbot", "model" ], "type": "string" }, "ChatMessage": { "title": "ChatMessage", "description": "Chat message.", "type": "object", "properties": { "role": { "default": "user", "allOf": [ { "$ref": "#/definitions/MessageRole" } ] }, "content": { "title": "Content", "default": "" }, "additional_kwargs": { "title": "Additional Kwargs", "type": "object" } } } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- field message_templates: List[ChatMessage] [Required]#
+- format(llm: Optional[BaseLLM] = None, messages_to_prompt: Optional[Callable[[Sequence[ChatMessage]], str]] = None, **kwargs: Any) str #
+- format_messages(llm: Optional[BaseLLM] = None, **kwargs: Any) List[ChatMessage] #
+- classmethod from_messages(message_templates: Union[List[Tuple[str, str]], List[ChatMessage]], **kwargs: Any) ChatPromptTemplate #
+From messages.
+- get_template(llm: Optional[BaseLLM] = None) str #
+- partial_format(**kwargs: Any) ChatPromptTemplate #
+- pydantic model llama_index.core.prompts.base.SelectorPromptTemplate#
+Show JSON schema
+{ "title": "SelectorPromptTemplate", "description": "Chainable mixin.\n\nA module that can produce a `QueryComponent` from a set of inputs through\n`as_query_component`.\n\nIf plugged in directly into a `QueryPipeline`, the `ChainableMixin` will be\nconverted into a `QueryComponent` with default parameters.", "type": "object", "properties": { "metadata": { "title": "Metadata", "type": "object" }, "template_vars": { "title": "Template Vars", "type": "array", "items": { "type": "string" } }, "kwargs": { "title": "Kwargs", "type": "object", "additionalProperties": { "type": "string" } }, "output_parser": { "title": "Output Parser", "type": "object", "default": {} }, "template_var_mappings": { "title": "Template Var Mappings", "description": "Template variable mappings (Optional).", "type": "object" }, "default_template": { "$ref": "#/definitions/BasePromptTemplate" } }, "required": [ "metadata", "template_vars", "kwargs", "default_template" ], "definitions": { "BasePromptTemplate": { "title": "BasePromptTemplate", "description": "Chainable mixin.\n\nA module that can produce a `QueryComponent` from a set of inputs through\n`as_query_component`.\n\nIf plugged in directly into a `QueryPipeline`, the `ChainableMixin` will be\nconverted into a `QueryComponent` with default parameters.", "type": "object", "properties": { "metadata": { "title": "Metadata", "type": "object" }, "template_vars": { "title": "Template Vars", "type": "array", "items": { "type": "string" } }, "kwargs": { "title": "Kwargs", "type": "object", "additionalProperties": { "type": "string" } }, "output_parser": { "title": "Output Parser", "type": "object", "default": {} }, "template_var_mappings": { "title": "Template Var Mappings", "description": "Template variable mappings (Optional).", "type": "object" } }, "required": [ "metadata", "template_vars", "kwargs" ] } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- field conditionals: Optional[List[Tuple[Callable[[BaseLLM], bool], BasePromptTemplate]]] = None#
+- field default_template: BasePromptTemplate [Required]#
+- format(llm: Optional[BaseLLM] = None, **kwargs: Any) str #
+Format the prompt into a string.
+- format_messages(llm: Optional[BaseLLM] = None, **kwargs: Any) List[ChatMessage] #
+Format the prompt into a list of chat messages.
+- get_template(llm: Optional[BaseLLM] = None) str #
+- partial_format(**kwargs: Any) SelectorPromptTemplate #
+- select(llm: Optional[BaseLLM] = None) BasePromptTemplate #
+- pydantic model llama_index.core.prompts.base.LangchainPromptTemplate#
+Show JSON schema
+{ "title": "LangchainPromptTemplate", "description": "Chainable mixin.\n\nA module that can produce a `QueryComponent` from a set of inputs through\n`as_query_component`.\n\nIf plugged in directly into a `QueryPipeline`, the `ChainableMixin` will be\nconverted into a `QueryComponent` with default parameters.", "type": "object", "properties": { "metadata": { "title": "Metadata", "type": "object" }, "template_vars": { "title": "Template Vars", "type": "array", "items": { "type": "string" } }, "kwargs": { "title": "Kwargs", "type": "object", "additionalProperties": { "type": "string" } }, "output_parser": { "title": "Output Parser", "type": "object", "default": {} }, "template_var_mappings": { "title": "Template Var Mappings", "description": "Template variable mappings (Optional).", "type": "object" }, "selector": { "title": "Selector" }, "requires_langchain_llm": { "title": "Requires Langchain Llm", "default": false, "type": "boolean" } }, "required": [ "metadata", "template_vars", "kwargs" ] }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+- field requires_langchain_llm: bool = False#
+- field selector: Any = None#
+- format(llm: Optional[BaseLLM] = None, **kwargs: Any) str #
+Format the prompt into a string.
+- format_messages(llm: Optional[BaseLLM] = None, **kwargs: Any) List[ChatMessage] #
+Format the prompt into a list of chat messages.
+- get_template(llm: Optional[BaseLLM] = None) str #
+- partial_format(**kwargs: Any) BasePromptTemplate #
+Partially format the prompt.

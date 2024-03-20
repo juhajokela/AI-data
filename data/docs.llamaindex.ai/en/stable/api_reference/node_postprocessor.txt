@@ -1,0 +1,856 @@
+Node Postprocessors#
+Node PostProcessor module.
+- pydantic model llama_index.core.postprocessor.AutoPrevNextNodePostprocessor#
+Previous/Next Node post-processor.
+Allows users to fetch additional nodes from the document store, based on the prev/next relationships of the nodes.
+NOTE: difference with PrevNextPostprocessor is that this infers forward/backwards direction.
+NOTE: this is a beta feature.
+- Parameters
+docstore (BaseDocumentStore) – The document store.
+num_nodes (int) – The number of nodes to return (default: 1)
+infer_prev_next_tmpl (str) – The template to use for inference. Required fields are {context_str} and {query_str}.
+-
+Show JSON schema
+{ "title": "AutoPrevNextNodePostprocessor", "description": "Previous/Next Node post-processor.\n\nAllows users to fetch additional nodes from the document store,\nbased on the prev/next relationships of the nodes.\n\nNOTE: difference with PrevNextPostprocessor is that\nthis infers forward/backwards direction.\n\nNOTE: this is a beta feature.\n\nArgs:\n docstore (BaseDocumentStore): The document store.\n num_nodes (int): The number of nodes to return (default: 1)\n infer_prev_next_tmpl (str): The template to use for inference.\n Required fields are {context_str} and {query_str}.", "type": "object", "properties": { "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "docstore": { "title": "Docstore" }, "service_context": { "title": "Service Context" }, "num_nodes": { "title": "Num Nodes", "default": 1, "type": "integer" }, "infer_prev_next_tmpl": { "title": "Infer Prev Next Tmpl", "default": "The current context information is provided. \nA question is also provided. \nYou are a retrieval agent deciding whether to search the document store for additional prior context or future context. \nGiven the context and question, return PREVIOUS or NEXT or NONE. \nExamples: \n\nContext: Describes the author's experience at Y Combinator.Question: What did the author do after his time at Y Combinator? \nAnswer: NEXT \n\nContext: Describes the author's experience at Y Combinator.Question: What did the author do before his time at Y Combinator? \nAnswer: PREVIOUS \n\nContext: Describe the author's experience at Y Combinator.Question: What did the author do at Y Combinator? \nAnswer: NONE \n\nContext: {context_str}\nQuestion: {query_str}\nAnswer: ", "type": "string" }, "refine_prev_next_tmpl": { "title": "Refine Prev Next Tmpl", "default": "The current context information is provided. \nA question is also provided. \nAn existing answer is also provided.\nYou are a retrieval agent deciding whether to search the document store for additional prior context or future context. \nGiven the context, question, and previous answer, return PREVIOUS or NEXT or NONE.\nExamples: \n\nContext: {context_msg}\nQuestion: {query_str}\nExisting Answer: {existing_answer}\nAnswer: ", "type": "string" }, "verbose": { "title": "Verbose", "default": false, "type": "boolean" }, "class_name": { "title": "Class Name", "type": "string", "default": "AutoPrevNextNodePostprocessor" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+callback_manager (llama_index.core.callbacks.base.CallbackManager)
+docstore (llama_index.core.storage.docstore.types.BaseDocumentStore)
+infer_prev_next_tmpl (str)
+num_nodes (int)
+refine_prev_next_tmpl (str)
+service_context (llama_index.core.service_context.ServiceContext)
+verbose (bool)
+-
+- field callback_manager: CallbackManager [Optional]#
+- Constraints
+type = object
+default = {}
+-
+- field docstore: BaseDocumentStore [Required]#
+- field infer_prev_next_tmpl: str = "The current context information is provided. \nA question is also provided. \nYou are a retrieval agent deciding whether to search the document store for additional prior context or future context. \nGiven the context and question, return PREVIOUS or NEXT or NONE. \nExamples: \n\nContext: Describes the author's experience at Y Combinator.Question: What did the author do after his time at Y Combinator? \nAnswer: NEXT \n\nContext: Describes the author's experience at Y Combinator.Question: What did the author do before his time at Y Combinator? \nAnswer: PREVIOUS \n\nContext: Describe the author's experience at Y Combinator.Question: What did the author do at Y Combinator? \nAnswer: NONE \n\nContext: {context_str}\nQuestion: {query_str}\nAnswer: "#
+- field num_nodes: int = 1#
+- field refine_prev_next_tmpl: str = 'The current context information is provided. \nA question is also provided. \nAn existing answer is also provided.\nYou are a retrieval agent deciding whether to search the document store for additional prior context or future context. \nGiven the context, question, and previous answer, return PREVIOUS or NEXT or NONE.\nExamples: \n\nContext: {context_msg}\nQuestion: {query_str}\nExisting Answer: {existing_answer}\nAnswer: '#
+- field service_context: ServiceContext [Required]#
+- field verbose: bool = False#
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- classmethod class_name() str #
+Get the class name, used as a unique ID in serialization.
+This provides a key that makes serialization robust against actual class name changes.
+- classmethod construct(_fields_set: Optional[SetStr] = None, **values: Any) Model #
+Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data. Default values are respected, but no other validation is performed. Behaves as if Config.extra = ‘allow’ was set since it adds all passed values
+- copy(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, update: Optional[DictStrAny] = None, deep: bool = False) Model #
+Duplicate a model, optionally choose which fields to include, exclude and change.
+- Parameters
+include – fields to include in new model
+exclude – fields to exclude from new model, as with values this takes precedence over include
+update – values to change/add in the new model. Note: the data is not validated before creating the new model: you should trust this data
+deep – set to True to make a deep copy of the model
+-
+- Returns
+new model instance
+- dict(**kwargs: Any) Dict[str, Any] #
+Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+- classmethod from_dict(data: Dict[str, Any], **kwargs: Any) Self #
+- classmethod from_json(data_str: str, **kwargs: Any) Self #
+- classmethod from_orm(obj: Any) Model #
+- json(**kwargs: Any) str #
+Generate a JSON representation of the model, include and exclude arguments as per dict().
+encoder is an optional function to supply as default to json.dumps(), other arguments as per json.dumps().
+- classmethod parse_file(path: Union[str, Path], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod parse_obj(obj: Any) Model #
+- classmethod parse_raw(b: Union[str, bytes], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- postprocess_nodes(nodes: List[NodeWithScore], query_bundle: Optional[QueryBundle] = None, query_str: Optional[str] = None) List[NodeWithScore] #
+Postprocess nodes.
+- classmethod schema(by_alias: bool = True, ref_template: unicode = '#/definitions/{model}') DictStrAny #
+- classmethod schema_json(*, by_alias: bool = True, ref_template: unicode = '#/definitions/{model}', **dumps_kwargs: Any) unicode #
+- to_dict(**kwargs: Any) Dict[str, Any] #
+- to_json(**kwargs: Any) str #
+- classmethod update_forward_refs(**localns: Any) None #
+Try to update ForwardRefs on fields based on this Model, globalns and localns.
+- classmethod validate(value: Any) Model #
+- pydantic model llama_index.core.postprocessor.EmbeddingRecencyPostprocessor#
+Embedding Recency post-processor.
+Show JSON schema
+{ "title": "EmbeddingRecencyPostprocessor", "description": "Embedding Recency post-processor.", "type": "object", "properties": { "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "embed_model": { "$ref": "#/definitions/BaseEmbedding" }, "date_key": { "title": "Date Key", "default": "date", "type": "string" }, "similarity_cutoff": { "title": "Similarity Cutoff", "default": 0.7, "type": "number" }, "query_embedding_tmpl": { "title": "Query Embedding Tmpl", "default": "The current document is provided.\n----------------\n{context_str}\n----------------\nGiven the document, we wish to find documents that contain \nsimilar context. Note that these documents are older than the current document, meaning that certain details may be changed. \nHowever, the high-level context should be similar.\n", "type": "string" }, "class_name": { "title": "Class Name", "type": "string", "default": "EmbeddingRecencyPostprocessor" } }, "definitions": { "BaseEmbedding": { "title": "BaseEmbedding", "description": "Base class for embeddings.", "type": "object", "properties": { "model_name": { "title": "Model Name", "description": "The name of the embedding model.", "default": "unknown", "type": "string" }, "embed_batch_size": { "title": "Embed Batch Size", "description": "The batch size for embedding calls.", "default": 10, "exclusiveMinimum": 0, "lte": 2048, "type": "integer" }, "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "class_name": { "title": "Class Name", "type": "string", "default": "base_component" } } } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+callback_manager (llama_index.core.callbacks.base.CallbackManager)
+date_key (str)
+embed_model (llama_index.core.base.embeddings.base.BaseEmbedding)
+query_embedding_tmpl (str)
+similarity_cutoff (float)
+-
+- field callback_manager: CallbackManager [Optional]#
+- Constraints
+type = object
+default = {}
+-
+- field date_key: str = 'date'#
+- field embed_model: BaseEmbedding [Optional]#
+- field query_embedding_tmpl: str = 'The current document is provided.\n----------------\n{context_str}\n----------------\nGiven the document, we wish to find documents that contain \nsimilar context. Note that these documents are older than the current document, meaning that certain details may be changed. \nHowever, the high-level context should be similar.\n'#
+- field similarity_cutoff: float = 0.7#
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- classmethod class_name() str #
+Get the class name, used as a unique ID in serialization.
+This provides a key that makes serialization robust against actual class name changes.
+- classmethod construct(_fields_set: Optional[SetStr] = None, **values: Any) Model #
+Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data. Default values are respected, but no other validation is performed. Behaves as if Config.extra = ‘allow’ was set since it adds all passed values
+- copy(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, update: Optional[DictStrAny] = None, deep: bool = False) Model #
+Duplicate a model, optionally choose which fields to include, exclude and change.
+- Parameters
+include – fields to include in new model
+exclude – fields to exclude from new model, as with values this takes precedence over include
+update – values to change/add in the new model. Note: the data is not validated before creating the new model: you should trust this data
+deep – set to True to make a deep copy of the model
+-
+- Returns
+new model instance
+- dict(**kwargs: Any) Dict[str, Any] #
+Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+- classmethod from_dict(data: Dict[str, Any], **kwargs: Any) Self #
+- classmethod from_json(data_str: str, **kwargs: Any) Self #
+- classmethod from_orm(obj: Any) Model #
+- json(**kwargs: Any) str #
+Generate a JSON representation of the model, include and exclude arguments as per dict().
+encoder is an optional function to supply as default to json.dumps(), other arguments as per json.dumps().
+- classmethod parse_file(path: Union[str, Path], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod parse_obj(obj: Any) Model #
+- classmethod parse_raw(b: Union[str, bytes], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- postprocess_nodes(nodes: List[NodeWithScore], query_bundle: Optional[QueryBundle] = None, query_str: Optional[str] = None) List[NodeWithScore] #
+Postprocess nodes.
+- classmethod schema(by_alias: bool = True, ref_template: unicode = '#/definitions/{model}') DictStrAny #
+- classmethod schema_json(*, by_alias: bool = True, ref_template: unicode = '#/definitions/{model}', **dumps_kwargs: Any) unicode #
+- to_dict(**kwargs: Any) Dict[str, Any] #
+- to_json(**kwargs: Any) str #
+- classmethod update_forward_refs(**localns: Any) None #
+Try to update ForwardRefs on fields based on this Model, globalns and localns.
+- classmethod validate(value: Any) Model #
+- pydantic model llama_index.core.postprocessor.FixedRecencyPostprocessor#
+Fixed Recency post-processor.
+This post-processor does the following steps orders nodes by date.
+Assumes the date_key corresponds to a date field in the metadata.
+Show JSON schema
+{ "title": "FixedRecencyPostprocessor", "description": "Fixed Recency post-processor.\n\nThis post-processor does the following steps orders nodes by date.\n\nAssumes the date_key corresponds to a date field in the metadata.", "type": "object", "properties": { "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "top_k": { "title": "Top K", "default": 1, "type": "integer" }, "date_key": { "title": "Date Key", "default": "date", "type": "string" }, "class_name": { "title": "Class Name", "type": "string", "default": "FixedRecencyPostprocessor" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+callback_manager (llama_index.core.callbacks.base.CallbackManager)
+date_key (str)
+top_k (int)
+-
+- field callback_manager: CallbackManager [Optional]#
+- Constraints
+type = object
+default = {}
+-
+- field date_key: str = 'date'#
+- field top_k: int = 1#
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- classmethod class_name() str #
+Get the class name, used as a unique ID in serialization.
+This provides a key that makes serialization robust against actual class name changes.
+- classmethod construct(_fields_set: Optional[SetStr] = None, **values: Any) Model #
+Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data. Default values are respected, but no other validation is performed. Behaves as if Config.extra = ‘allow’ was set since it adds all passed values
+- copy(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, update: Optional[DictStrAny] = None, deep: bool = False) Model #
+Duplicate a model, optionally choose which fields to include, exclude and change.
+- Parameters
+include – fields to include in new model
+exclude – fields to exclude from new model, as with values this takes precedence over include
+update – values to change/add in the new model. Note: the data is not validated before creating the new model: you should trust this data
+deep – set to True to make a deep copy of the model
+-
+- Returns
+new model instance
+- dict(**kwargs: Any) Dict[str, Any] #
+Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+- classmethod from_dict(data: Dict[str, Any], **kwargs: Any) Self #
+- classmethod from_json(data_str: str, **kwargs: Any) Self #
+- classmethod from_orm(obj: Any) Model #
+- json(**kwargs: Any) str #
+Generate a JSON representation of the model, include and exclude arguments as per dict().
+encoder is an optional function to supply as default to json.dumps(), other arguments as per json.dumps().
+- classmethod parse_file(path: Union[str, Path], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod parse_obj(obj: Any) Model #
+- classmethod parse_raw(b: Union[str, bytes], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- postprocess_nodes(nodes: List[NodeWithScore], query_bundle: Optional[QueryBundle] = None, query_str: Optional[str] = None) List[NodeWithScore] #
+Postprocess nodes.
+- classmethod schema(by_alias: bool = True, ref_template: unicode = '#/definitions/{model}') DictStrAny #
+- classmethod schema_json(*, by_alias: bool = True, ref_template: unicode = '#/definitions/{model}', **dumps_kwargs: Any) unicode #
+- to_dict(**kwargs: Any) Dict[str, Any] #
+- to_json(**kwargs: Any) str #
+- classmethod update_forward_refs(**localns: Any) None #
+Try to update ForwardRefs on fields based on this Model, globalns and localns.
+- classmethod validate(value: Any) Model #
+- pydantic model llama_index.core.postprocessor.KeywordNodePostprocessor#
+Keyword-based Node processor.
+Show JSON schema
+{ "title": "KeywordNodePostprocessor", "description": "Keyword-based Node processor.", "type": "object", "properties": { "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "required_keywords": { "title": "Required Keywords", "type": "array", "items": { "type": "string" } }, "exclude_keywords": { "title": "Exclude Keywords", "type": "array", "items": { "type": "string" } }, "lang": { "title": "Lang", "default": "en", "type": "string" }, "class_name": { "title": "Class Name", "type": "string", "default": "KeywordNodePostprocessor" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+callback_manager (llama_index.core.callbacks.base.CallbackManager)
+exclude_keywords (List[str])
+lang (str)
+required_keywords (List[str])
+-
+- field callback_manager: CallbackManager [Optional]#
+- Constraints
+type = object
+default = {}
+-
+- field exclude_keywords: List[str] [Optional]#
+- field lang: str = 'en'#
+- field required_keywords: List[str] [Optional]#
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- classmethod class_name() str #
+Get the class name, used as a unique ID in serialization.
+This provides a key that makes serialization robust against actual class name changes.
+- classmethod construct(_fields_set: Optional[SetStr] = None, **values: Any) Model #
+Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data. Default values are respected, but no other validation is performed. Behaves as if Config.extra = ‘allow’ was set since it adds all passed values
+- copy(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, update: Optional[DictStrAny] = None, deep: bool = False) Model #
+Duplicate a model, optionally choose which fields to include, exclude and change.
+- Parameters
+include – fields to include in new model
+exclude – fields to exclude from new model, as with values this takes precedence over include
+update – values to change/add in the new model. Note: the data is not validated before creating the new model: you should trust this data
+deep – set to True to make a deep copy of the model
+-
+- Returns
+new model instance
+- dict(**kwargs: Any) Dict[str, Any] #
+Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+- classmethod from_dict(data: Dict[str, Any], **kwargs: Any) Self #
+- classmethod from_json(data_str: str, **kwargs: Any) Self #
+- classmethod from_orm(obj: Any) Model #
+- json(**kwargs: Any) str #
+Generate a JSON representation of the model, include and exclude arguments as per dict().
+encoder is an optional function to supply as default to json.dumps(), other arguments as per json.dumps().
+- classmethod parse_file(path: Union[str, Path], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod parse_obj(obj: Any) Model #
+- classmethod parse_raw(b: Union[str, bytes], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- postprocess_nodes(nodes: List[NodeWithScore], query_bundle: Optional[QueryBundle] = None, query_str: Optional[str] = None) List[NodeWithScore] #
+Postprocess nodes.
+- classmethod schema(by_alias: bool = True, ref_template: unicode = '#/definitions/{model}') DictStrAny #
+- classmethod schema_json(*, by_alias: bool = True, ref_template: unicode = '#/definitions/{model}', **dumps_kwargs: Any) unicode #
+- to_dict(**kwargs: Any) Dict[str, Any] #
+- to_json(**kwargs: Any) str #
+- classmethod update_forward_refs(**localns: Any) None #
+Try to update ForwardRefs on fields based on this Model, globalns and localns.
+- classmethod validate(value: Any) Model #
+- pydantic model llama_index.core.postprocessor.LLMRerank#
+LLM-based reranker.
+Show JSON schema
+{ "title": "LLMRerank", "description": "LLM-based reranker.", "type": "object", "properties": { "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "top_n": { "title": "Top N", "description": "Top N nodes to return.", "type": "integer" }, "choice_select_prompt": { "title": "Choice Select Prompt", "description": "Choice select prompt.", "allOf": [ { "$ref": "#/definitions/BasePromptTemplate" } ] }, "choice_batch_size": { "title": "Choice Batch Size", "description": "Batch size for choice select.", "type": "integer" }, "llm": { "title": "Llm", "description": "The LLM to rerank with.", "allOf": [ { "$ref": "#/definitions/LLM" } ] }, "class_name": { "title": "Class Name", "type": "string", "default": "LLMRerank" } }, "required": [ "top_n", "choice_select_prompt", "choice_batch_size", "llm" ], "definitions": { "BasePromptTemplate": { "title": "BasePromptTemplate", "description": "Chainable mixin.\n\nA module that can produce a `QueryComponent` from a set of inputs through\n`as_query_component`.\n\nIf plugged in directly into a `QueryPipeline`, the `ChainableMixin` will be\nconverted into a `QueryComponent` with default parameters.", "type": "object", "properties": { "metadata": { "title": "Metadata", "type": "object" }, "template_vars": { "title": "Template Vars", "type": "array", "items": { "type": "string" } }, "kwargs": { "title": "Kwargs", "type": "object", "additionalProperties": { "type": "string" } }, "output_parser": { "title": "Output Parser", "type": "object", "default": {} }, "template_var_mappings": { "title": "Template Var Mappings", "description": "Template variable mappings (Optional).", "type": "object" } }, "required": [ "metadata", "template_vars", "kwargs" ] }, "PydanticProgramMode": { "title": "PydanticProgramMode", "description": "Pydantic program mode.", "enum": [ "default", "openai", "llm", "guidance", "lm-format-enforcer" ], "type": "string" }, "LLM": { "title": "LLM", "description": "LLM interface.", "type": "object", "properties": { "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "system_prompt": { "title": "System Prompt", "description": "System prompt for LLM calls.", "type": "string" }, "output_parser": { "title": "Output Parser", "description": "Output parser to parse, validate, and correct errors programmatically.", "type": "object", "default": {} }, "pydantic_program_mode": { "default": "default", "allOf": [ { "$ref": "#/definitions/PydanticProgramMode" } ] }, "query_wrapper_prompt": { "title": "Query Wrapper Prompt", "description": "Query wrapper prompt for LLM calls.", "allOf": [ { "$ref": "#/definitions/BasePromptTemplate" } ] }, "class_name": { "title": "Class Name", "type": "string", "default": "base_component" } } } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+callback_manager (llama_index.core.callbacks.base.CallbackManager)
+choice_batch_size (int)
+choice_select_prompt (llama_index.core.prompts.base.BasePromptTemplate)
+llm (llama_index.core.llms.llm.LLM)
+top_n (int)
+-
+- field callback_manager: CallbackManager [Optional]#
+- Constraints
+type = object
+default = {}
+-
+- field choice_batch_size: int [Required]#
+Batch size for choice select.
+- field choice_select_prompt: BasePromptTemplate [Required]#
+Choice select prompt.
+- field llm: LLM [Required]#
+The LLM to rerank with.
+- field top_n: int [Required]#
+Top N nodes to return.
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- classmethod class_name() str #
+Get the class name, used as a unique ID in serialization.
+This provides a key that makes serialization robust against actual class name changes.
+- classmethod construct(_fields_set: Optional[SetStr] = None, **values: Any) Model #
+Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data. Default values are respected, but no other validation is performed. Behaves as if Config.extra = ‘allow’ was set since it adds all passed values
+- copy(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, update: Optional[DictStrAny] = None, deep: bool = False) Model #
+Duplicate a model, optionally choose which fields to include, exclude and change.
+- Parameters
+include – fields to include in new model
+exclude – fields to exclude from new model, as with values this takes precedence over include
+update – values to change/add in the new model. Note: the data is not validated before creating the new model: you should trust this data
+deep – set to True to make a deep copy of the model
+-
+- Returns
+new model instance
+- dict(**kwargs: Any) Dict[str, Any] #
+Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+- classmethod from_dict(data: Dict[str, Any], **kwargs: Any) Self #
+- classmethod from_json(data_str: str, **kwargs: Any) Self #
+- classmethod from_orm(obj: Any) Model #
+- json(**kwargs: Any) str #
+Generate a JSON representation of the model, include and exclude arguments as per dict().
+encoder is an optional function to supply as default to json.dumps(), other arguments as per json.dumps().
+- classmethod parse_file(path: Union[str, Path], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod parse_obj(obj: Any) Model #
+- classmethod parse_raw(b: Union[str, bytes], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- postprocess_nodes(nodes: List[NodeWithScore], query_bundle: Optional[QueryBundle] = None, query_str: Optional[str] = None) List[NodeWithScore] #
+Postprocess nodes.
+- classmethod schema(by_alias: bool = True, ref_template: unicode = '#/definitions/{model}') DictStrAny #
+- classmethod schema_json(*, by_alias: bool = True, ref_template: unicode = '#/definitions/{model}', **dumps_kwargs: Any) unicode #
+- to_dict(**kwargs: Any) Dict[str, Any] #
+- to_json(**kwargs: Any) str #
+- classmethod update_forward_refs(**localns: Any) None #
+Try to update ForwardRefs on fields based on this Model, globalns and localns.
+- classmethod validate(value: Any) Model #
+- pydantic model llama_index.core.postprocessor.LongContextReorder#
+Models struggle to access significant details found in the center of extended contexts. A study (https://arxiv.org/abs/2307.03172) observed that the best performance typically arises when crucial data is positioned at the start or conclusion of the input context. Additionally, as the input context lengthens, performance drops notably, even in models designed for long contexts.”.
+Show JSON schema
+{ "title": "LongContextReorder", "description": "Models struggle to access significant details found\nin the center of extended contexts. A study\n(https://arxiv.org/abs/2307.03172) observed that the best\nperformance typically arises when crucial data is positioned\nat the start or conclusion of the input context. Additionally,\nas the input context lengthens, performance drops notably, even\nin models designed for long contexts.\".", "type": "object", "properties": { "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "class_name": { "title": "Class Name", "type": "string", "default": "LongContextReorder" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+callback_manager (llama_index.core.callbacks.base.CallbackManager)
+-
+- field callback_manager: CallbackManager [Optional]#
+- Constraints
+type = object
+default = {}
+-
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- classmethod class_name() str #
+Get the class name, used as a unique ID in serialization.
+This provides a key that makes serialization robust against actual class name changes.
+- classmethod construct(_fields_set: Optional[SetStr] = None, **values: Any) Model #
+Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data. Default values are respected, but no other validation is performed. Behaves as if Config.extra = ‘allow’ was set since it adds all passed values
+- copy(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, update: Optional[DictStrAny] = None, deep: bool = False) Model #
+Duplicate a model, optionally choose which fields to include, exclude and change.
+- Parameters
+include – fields to include in new model
+exclude – fields to exclude from new model, as with values this takes precedence over include
+update – values to change/add in the new model. Note: the data is not validated before creating the new model: you should trust this data
+deep – set to True to make a deep copy of the model
+-
+- Returns
+new model instance
+- dict(**kwargs: Any) Dict[str, Any] #
+Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+- classmethod from_dict(data: Dict[str, Any], **kwargs: Any) Self #
+- classmethod from_json(data_str: str, **kwargs: Any) Self #
+- classmethod from_orm(obj: Any) Model #
+- json(**kwargs: Any) str #
+Generate a JSON representation of the model, include and exclude arguments as per dict().
+encoder is an optional function to supply as default to json.dumps(), other arguments as per json.dumps().
+- classmethod parse_file(path: Union[str, Path], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod parse_obj(obj: Any) Model #
+- classmethod parse_raw(b: Union[str, bytes], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- postprocess_nodes(nodes: List[NodeWithScore], query_bundle: Optional[QueryBundle] = None, query_str: Optional[str] = None) List[NodeWithScore] #
+Postprocess nodes.
+- classmethod schema(by_alias: bool = True, ref_template: unicode = '#/definitions/{model}') DictStrAny #
+- classmethod schema_json(*, by_alias: bool = True, ref_template: unicode = '#/definitions/{model}', **dumps_kwargs: Any) unicode #
+- to_dict(**kwargs: Any) Dict[str, Any] #
+- to_json(**kwargs: Any) str #
+- classmethod update_forward_refs(**localns: Any) None #
+Try to update ForwardRefs on fields based on this Model, globalns and localns.
+- classmethod validate(value: Any) Model #
+- pydantic model llama_index.core.postprocessor.MetadataReplacementPostProcessor#
+Show JSON schema
+{ "title": "MetadataReplacementPostProcessor", "description": "Chainable mixin.\n\nA module that can produce a `QueryComponent` from a set of inputs through\n`as_query_component`.\n\nIf plugged in directly into a `QueryPipeline`, the `ChainableMixin` will be\nconverted into a `QueryComponent` with default parameters.", "type": "object", "properties": { "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "target_metadata_key": { "title": "Target Metadata Key", "description": "Target metadata key to replace node content with.", "type": "string" }, "class_name": { "title": "Class Name", "type": "string", "default": "MetadataReplacementPostProcessor" } }, "required": [ "target_metadata_key" ] }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+callback_manager (llama_index.core.callbacks.base.CallbackManager)
+target_metadata_key (str)
+-
+- field callback_manager: CallbackManager [Optional]#
+- Constraints
+type = object
+default = {}
+-
+- field target_metadata_key: str [Required]#
+Target metadata key to replace node content with.
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- classmethod class_name() str #
+Get the class name, used as a unique ID in serialization.
+This provides a key that makes serialization robust against actual class name changes.
+- classmethod construct(_fields_set: Optional[SetStr] = None, **values: Any) Model #
+Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data. Default values are respected, but no other validation is performed. Behaves as if Config.extra = ‘allow’ was set since it adds all passed values
+- copy(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, update: Optional[DictStrAny] = None, deep: bool = False) Model #
+Duplicate a model, optionally choose which fields to include, exclude and change.
+- Parameters
+include – fields to include in new model
+exclude – fields to exclude from new model, as with values this takes precedence over include
+update – values to change/add in the new model. Note: the data is not validated before creating the new model: you should trust this data
+deep – set to True to make a deep copy of the model
+-
+- Returns
+new model instance
+- dict(**kwargs: Any) Dict[str, Any] #
+Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+- classmethod from_dict(data: Dict[str, Any], **kwargs: Any) Self #
+- classmethod from_json(data_str: str, **kwargs: Any) Self #
+- classmethod from_orm(obj: Any) Model #
+- json(**kwargs: Any) str #
+Generate a JSON representation of the model, include and exclude arguments as per dict().
+encoder is an optional function to supply as default to json.dumps(), other arguments as per json.dumps().
+- classmethod parse_file(path: Union[str, Path], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod parse_obj(obj: Any) Model #
+- classmethod parse_raw(b: Union[str, bytes], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- postprocess_nodes(nodes: List[NodeWithScore], query_bundle: Optional[QueryBundle] = None, query_str: Optional[str] = None) List[NodeWithScore] #
+Postprocess nodes.
+- classmethod schema(by_alias: bool = True, ref_template: unicode = '#/definitions/{model}') DictStrAny #
+- classmethod schema_json(*, by_alias: bool = True, ref_template: unicode = '#/definitions/{model}', **dumps_kwargs: Any) unicode #
+- to_dict(**kwargs: Any) Dict[str, Any] #
+- to_json(**kwargs: Any) str #
+- classmethod update_forward_refs(**localns: Any) None #
+Try to update ForwardRefs on fields based on this Model, globalns and localns.
+- classmethod validate(value: Any) Model #
+- pydantic model llama_index.core.postprocessor.NERPIINodePostprocessor#
+NER PII Node processor.
+Uses a HF transformers model.
+Show JSON schema
+{ "title": "NERPIINodePostprocessor", "description": "NER PII Node processor.\n\nUses a HF transformers model.", "type": "object", "properties": { "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "pii_node_info_key": { "title": "Pii Node Info Key", "default": "__pii_node_info__", "type": "string" }, "class_name": { "title": "Class Name", "type": "string", "default": "NERPIINodePostprocessor" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+callback_manager (llama_index.core.callbacks.base.CallbackManager)
+pii_node_info_key (str)
+-
+- field callback_manager: CallbackManager [Optional]#
+- Constraints
+type = object
+default = {}
+-
+- field pii_node_info_key: str = '__pii_node_info__'#
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- classmethod class_name() str #
+Get the class name, used as a unique ID in serialization.
+This provides a key that makes serialization robust against actual class name changes.
+- classmethod construct(_fields_set: Optional[SetStr] = None, **values: Any) Model #
+Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data. Default values are respected, but no other validation is performed. Behaves as if Config.extra = ‘allow’ was set since it adds all passed values
+- copy(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, update: Optional[DictStrAny] = None, deep: bool = False) Model #
+Duplicate a model, optionally choose which fields to include, exclude and change.
+- Parameters
+include – fields to include in new model
+exclude – fields to exclude from new model, as with values this takes precedence over include
+update – values to change/add in the new model. Note: the data is not validated before creating the new model: you should trust this data
+deep – set to True to make a deep copy of the model
+-
+- Returns
+new model instance
+- dict(**kwargs: Any) Dict[str, Any] #
+Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+- classmethod from_dict(data: Dict[str, Any], **kwargs: Any) Self #
+- classmethod from_json(data_str: str, **kwargs: Any) Self #
+- classmethod from_orm(obj: Any) Model #
+- json(**kwargs: Any) str #
+Generate a JSON representation of the model, include and exclude arguments as per dict().
+encoder is an optional function to supply as default to json.dumps(), other arguments as per json.dumps().
+- mask_pii(ner: Callable, text: str) Tuple[str, Dict] #
+Mask PII in text.
+- classmethod parse_file(path: Union[str, Path], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod parse_obj(obj: Any) Model #
+- classmethod parse_raw(b: Union[str, bytes], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- postprocess_nodes(nodes: List[NodeWithScore], query_bundle: Optional[QueryBundle] = None, query_str: Optional[str] = None) List[NodeWithScore] #
+Postprocess nodes.
+- classmethod schema(by_alias: bool = True, ref_template: unicode = '#/definitions/{model}') DictStrAny #
+- classmethod schema_json(*, by_alias: bool = True, ref_template: unicode = '#/definitions/{model}', **dumps_kwargs: Any) unicode #
+- to_dict(**kwargs: Any) Dict[str, Any] #
+- to_json(**kwargs: Any) str #
+- classmethod update_forward_refs(**localns: Any) None #
+Try to update ForwardRefs on fields based on this Model, globalns and localns.
+- classmethod validate(value: Any) Model #
+- pydantic model llama_index.core.postprocessor.PIINodePostprocessor#
+PII Node processor.
+NOTE: this is a beta feature, the API might change.
+- Parameters
+llm (LLM) – The local LLM to use for prediction.
+Show JSON schema
+{ "title": "PIINodePostprocessor", "description": "PII Node processor.\n\nNOTE: this is a beta feature, the API might change.\n\nArgs:\n llm (LLM): The local LLM to use for prediction.", "type": "object", "properties": { "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "llm": { "$ref": "#/definitions/LLM" }, "pii_str_tmpl": { "title": "Pii Str Tmpl", "default": "The current context information is provided. \nA task is also provided to mask the PII within the context. \nReturn the text, with all PII masked out, and a mapping of the original PII to the masked PII. \nReturn the output of the task in JSON. \nContext:\nHello Zhang Wei, I am John. Your AnyCompany Financial Services, LLC credit card account 1111-0000-1111-0008 has a minimum payment of $24.53 that is due by July 31st. Based on your autopay settings, we will withdraw your payment. Task: Mask out the PII, replace each PII with a tag, and return the text. Return the mapping in JSON. \nOutput: \nHello [NAME1], I am [NAME2]. Your AnyCompany Financial Services, LLC credit card account [CREDIT_CARD_NUMBER] has a minimum payment of $24.53 that is due by [DATE_TIME]. Based on your autopay settings, we will withdraw your payment. Output Mapping:\n{{\"NAME1\": \"Zhang Wei\", \"NAME2\": \"John\", \"CREDIT_CARD_NUMBER\": \"1111-0000-1111-0008\", \"DATE_TIME\": \"July 31st\"}}\nContext:\n{context_str}\nTask: {query_str}\nOutput: \n", "type": "string" }, "pii_node_info_key": { "title": "Pii Node Info Key", "default": "__pii_node_info__", "type": "string" }, "class_name": { "title": "Class Name", "type": "string", "default": "PIINodePostprocessor" } }, "required": [ "llm" ], "definitions": { "PydanticProgramMode": { "title": "PydanticProgramMode", "description": "Pydantic program mode.", "enum": [ "default", "openai", "llm", "guidance", "lm-format-enforcer" ], "type": "string" }, "BasePromptTemplate": { "title": "BasePromptTemplate", "description": "Chainable mixin.\n\nA module that can produce a `QueryComponent` from a set of inputs through\n`as_query_component`.\n\nIf plugged in directly into a `QueryPipeline`, the `ChainableMixin` will be\nconverted into a `QueryComponent` with default parameters.", "type": "object", "properties": { "metadata": { "title": "Metadata", "type": "object" }, "template_vars": { "title": "Template Vars", "type": "array", "items": { "type": "string" } }, "kwargs": { "title": "Kwargs", "type": "object", "additionalProperties": { "type": "string" } }, "output_parser": { "title": "Output Parser", "type": "object", "default": {} }, "template_var_mappings": { "title": "Template Var Mappings", "description": "Template variable mappings (Optional).", "type": "object" } }, "required": [ "metadata", "template_vars", "kwargs" ] }, "LLM": { "title": "LLM", "description": "LLM interface.", "type": "object", "properties": { "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "system_prompt": { "title": "System Prompt", "description": "System prompt for LLM calls.", "type": "string" }, "output_parser": { "title": "Output Parser", "description": "Output parser to parse, validate, and correct errors programmatically.", "type": "object", "default": {} }, "pydantic_program_mode": { "default": "default", "allOf": [ { "$ref": "#/definitions/PydanticProgramMode" } ] }, "query_wrapper_prompt": { "title": "Query Wrapper Prompt", "description": "Query wrapper prompt for LLM calls.", "allOf": [ { "$ref": "#/definitions/BasePromptTemplate" } ] }, "class_name": { "title": "Class Name", "type": "string", "default": "base_component" } } } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+callback_manager (llama_index.core.callbacks.base.CallbackManager)
+llm (llama_index.core.llms.llm.LLM)
+pii_node_info_key (str)
+pii_str_tmpl (str)
+-
+- field callback_manager: CallbackManager [Optional]#
+- Constraints
+type = object
+default = {}
+-
+- field llm: LLM [Required]#
+- field pii_node_info_key: str = '__pii_node_info__'#
+- field pii_str_tmpl: str = 'The current context information is provided. \nA task is also provided to mask the PII within the context. \nReturn the text, with all PII masked out, and a mapping of the original PII to the masked PII. \nReturn the output of the task in JSON. \nContext:\nHello Zhang Wei, I am John. Your AnyCompany Financial Services, LLC credit card account 1111-0000-1111-0008 has a minimum payment of $24.53 that is due by July 31st. Based on your autopay settings, we will withdraw your payment. Task: Mask out the PII, replace each PII with a tag, and return the text. Return the mapping in JSON. \nOutput: \nHello [NAME1], I am [NAME2]. Your AnyCompany Financial Services, LLC credit card account [CREDIT_CARD_NUMBER] has a minimum payment of $24.53 that is due by [DATE_TIME]. Based on your autopay settings, we will withdraw your payment. Output Mapping:\n{{"NAME1": "Zhang Wei", "NAME2": "John", "CREDIT_CARD_NUMBER": "1111-0000-1111-0008", "DATE_TIME": "July 31st"}}\nContext:\n{context_str}\nTask: {query_str}\nOutput: \n'#
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- classmethod class_name() str #
+Get the class name, used as a unique ID in serialization.
+This provides a key that makes serialization robust against actual class name changes.
+- classmethod construct(_fields_set: Optional[SetStr] = None, **values: Any) Model #
+Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data. Default values are respected, but no other validation is performed. Behaves as if Config.extra = ‘allow’ was set since it adds all passed values
+- copy(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, update: Optional[DictStrAny] = None, deep: bool = False) Model #
+Duplicate a model, optionally choose which fields to include, exclude and change.
+- Parameters
+include – fields to include in new model
+exclude – fields to exclude from new model, as with values this takes precedence over include
+update – values to change/add in the new model. Note: the data is not validated before creating the new model: you should trust this data
+deep – set to True to make a deep copy of the model
+-
+- Returns
+new model instance
+- dict(**kwargs: Any) Dict[str, Any] #
+Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+- classmethod from_dict(data: Dict[str, Any], **kwargs: Any) Self #
+- classmethod from_json(data_str: str, **kwargs: Any) Self #
+- classmethod from_orm(obj: Any) Model #
+- json(**kwargs: Any) str #
+Generate a JSON representation of the model, include and exclude arguments as per dict().
+encoder is an optional function to supply as default to json.dumps(), other arguments as per json.dumps().
+- mask_pii(text: str) Tuple[str, Dict] #
+Mask PII in text.
+- classmethod parse_file(path: Union[str, Path], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod parse_obj(obj: Any) Model #
+- classmethod parse_raw(b: Union[str, bytes], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- postprocess_nodes(nodes: List[NodeWithScore], query_bundle: Optional[QueryBundle] = None, query_str: Optional[str] = None) List[NodeWithScore] #
+Postprocess nodes.
+- classmethod schema(by_alias: bool = True, ref_template: unicode = '#/definitions/{model}') DictStrAny #
+- classmethod schema_json(*, by_alias: bool = True, ref_template: unicode = '#/definitions/{model}', **dumps_kwargs: Any) unicode #
+- to_dict(**kwargs: Any) Dict[str, Any] #
+- to_json(**kwargs: Any) str #
+- classmethod update_forward_refs(**localns: Any) None #
+Try to update ForwardRefs on fields based on this Model, globalns and localns.
+- classmethod validate(value: Any) Model #
+- pydantic model llama_index.core.postprocessor.PrevNextNodePostprocessor#
+Previous/Next Node post-processor.
+Allows users to fetch additional nodes from the document store, based on the relationships of the nodes.
+NOTE: this is a beta feature.
+- Parameters
+docstore (BaseDocumentStore) – The document store.
+num_nodes (int) – The number of nodes to return (default: 1)
+mode (str) – The mode of the post-processor. Can be “previous”, “next”, or “both.
+-
+Show JSON schema
+{ "title": "PrevNextNodePostprocessor", "description": "Previous/Next Node post-processor.\n\nAllows users to fetch additional nodes from the document store,\nbased on the relationships of the nodes.\n\nNOTE: this is a beta feature.\n\nArgs:\n docstore (BaseDocumentStore): The document store.\n num_nodes (int): The number of nodes to return (default: 1)\n mode (str): The mode of the post-processor.\n Can be \"previous\", \"next\", or \"both.", "type": "object", "properties": { "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "docstore": { "title": "Docstore" }, "num_nodes": { "title": "Num Nodes", "default": 1, "type": "integer" }, "mode": { "title": "Mode", "default": "next", "type": "string" }, "class_name": { "title": "Class Name", "type": "string", "default": "PrevNextNodePostprocessor" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+callback_manager (llama_index.core.callbacks.base.CallbackManager)
+docstore (llama_index.core.storage.docstore.types.BaseDocumentStore)
+mode (str)
+num_nodes (int)
+-
+- Validators
+_validate_mode»
+mode
+-
+- field callback_manager: CallbackManager [Optional]#
+- Constraints
+type = object
+default = {}
+-
+- field docstore: BaseDocumentStore [Required]#
+- field mode: str = 'next'#
+- Validated by
+_validate_mode
+-
+- field num_nodes: int = 1#
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- classmethod class_name() str #
+Get the class name, used as a unique ID in serialization.
+This provides a key that makes serialization robust against actual class name changes.
+- classmethod construct(_fields_set: Optional[SetStr] = None, **values: Any) Model #
+Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data. Default values are respected, but no other validation is performed. Behaves as if Config.extra = ‘allow’ was set since it adds all passed values
+- copy(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, update: Optional[DictStrAny] = None, deep: bool = False) Model #
+Duplicate a model, optionally choose which fields to include, exclude and change.
+- Parameters
+include – fields to include in new model
+exclude – fields to exclude from new model, as with values this takes precedence over include
+update – values to change/add in the new model. Note: the data is not validated before creating the new model: you should trust this data
+deep – set to True to make a deep copy of the model
+-
+- Returns
+new model instance
+- dict(**kwargs: Any) Dict[str, Any] #
+Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+- classmethod from_dict(data: Dict[str, Any], **kwargs: Any) Self #
+- classmethod from_json(data_str: str, **kwargs: Any) Self #
+- classmethod from_orm(obj: Any) Model #
+- json(**kwargs: Any) str #
+Generate a JSON representation of the model, include and exclude arguments as per dict().
+encoder is an optional function to supply as default to json.dumps(), other arguments as per json.dumps().
+- classmethod parse_file(path: Union[str, Path], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod parse_obj(obj: Any) Model #
+- classmethod parse_raw(b: Union[str, bytes], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- postprocess_nodes(nodes: List[NodeWithScore], query_bundle: Optional[QueryBundle] = None, query_str: Optional[str] = None) List[NodeWithScore] #
+Postprocess nodes.
+- classmethod schema(by_alias: bool = True, ref_template: unicode = '#/definitions/{model}') DictStrAny #
+- classmethod schema_json(*, by_alias: bool = True, ref_template: unicode = '#/definitions/{model}', **dumps_kwargs: Any) unicode #
+- to_dict(**kwargs: Any) Dict[str, Any] #
+- to_json(**kwargs: Any) str #
+- classmethod update_forward_refs(**localns: Any) None #
+Try to update ForwardRefs on fields based on this Model, globalns and localns.
+- classmethod validate(value: Any) Model #
+- pydantic model llama_index.core.postprocessor.SentenceEmbeddingOptimizer#
+Optimization of a text chunk given the query by shortening the input text.
+Show JSON schema
+{ "title": "SentenceEmbeddingOptimizer", "description": "Optimization of a text chunk given the query by shortening the input text.", "type": "object", "properties": { "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "percentile_cutoff": { "title": "Percentile Cutoff", "description": "Percentile cutoff for the top k sentences to use.", "type": "number" }, "threshold_cutoff": { "title": "Threshold Cutoff", "description": "Threshold cutoff for similarity for each sentence to use.", "type": "number" }, "context_before": { "title": "Context Before", "description": "Number of sentences before retrieved sentence for further context", "type": "integer" }, "context_after": { "title": "Context After", "description": "Number of sentences after retrieved sentence for further context", "type": "integer" }, "class_name": { "title": "Class Name", "type": "string", "default": "SentenceEmbeddingOptimizer" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+callback_manager (llama_index.core.callbacks.base.CallbackManager)
+context_after (Optional[int])
+context_before (Optional[int])
+percentile_cutoff (Optional[float])
+threshold_cutoff (Optional[float])
+-
+- field callback_manager: CallbackManager [Optional]#
+- Constraints
+type = object
+default = {}
+-
+- field context_after: Optional[int] = None#
+Number of sentences after retrieved sentence for further context
+- field context_before: Optional[int] = None#
+Number of sentences before retrieved sentence for further context
+- field percentile_cutoff: Optional[float] = None#
+Percentile cutoff for the top k sentences to use.
+- field threshold_cutoff: Optional[float] = None#
+Threshold cutoff for similarity for each sentence to use.
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- classmethod class_name() str #
+Get the class name, used as a unique ID in serialization.
+This provides a key that makes serialization robust against actual class name changes.
+- classmethod construct(_fields_set: Optional[SetStr] = None, **values: Any) Model #
+Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data. Default values are respected, but no other validation is performed. Behaves as if Config.extra = ‘allow’ was set since it adds all passed values
+- copy(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, update: Optional[DictStrAny] = None, deep: bool = False) Model #
+Duplicate a model, optionally choose which fields to include, exclude and change.
+- Parameters
+include – fields to include in new model
+exclude – fields to exclude from new model, as with values this takes precedence over include
+update – values to change/add in the new model. Note: the data is not validated before creating the new model: you should trust this data
+deep – set to True to make a deep copy of the model
+-
+- Returns
+new model instance
+- dict(**kwargs: Any) Dict[str, Any] #
+Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+- classmethod from_dict(data: Dict[str, Any], **kwargs: Any) Self #
+- classmethod from_json(data_str: str, **kwargs: Any) Self #
+- classmethod from_orm(obj: Any) Model #
+- json(**kwargs: Any) str #
+Generate a JSON representation of the model, include and exclude arguments as per dict().
+encoder is an optional function to supply as default to json.dumps(), other arguments as per json.dumps().
+- classmethod parse_file(path: Union[str, Path], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod parse_obj(obj: Any) Model #
+- classmethod parse_raw(b: Union[str, bytes], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- postprocess_nodes(nodes: List[NodeWithScore], query_bundle: Optional[QueryBundle] = None, query_str: Optional[str] = None) List[NodeWithScore] #
+Postprocess nodes.
+- classmethod schema(by_alias: bool = True, ref_template: unicode = '#/definitions/{model}') DictStrAny #
+- classmethod schema_json(*, by_alias: bool = True, ref_template: unicode = '#/definitions/{model}', **dumps_kwargs: Any) unicode #
+- to_dict(**kwargs: Any) Dict[str, Any] #
+- to_json(**kwargs: Any) str #
+- classmethod update_forward_refs(**localns: Any) None #
+Try to update ForwardRefs on fields based on this Model, globalns and localns.
+- classmethod validate(value: Any) Model #
+- pydantic model llama_index.core.postprocessor.SentenceTransformerRerank#
+Show JSON schema
+{ "title": "SentenceTransformerRerank", "description": "Chainable mixin.\n\nA module that can produce a `QueryComponent` from a set of inputs through\n`as_query_component`.\n\nIf plugged in directly into a `QueryPipeline`, the `ChainableMixin` will be\nconverted into a `QueryComponent` with default parameters.", "type": "object", "properties": { "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "model": { "title": "Model", "description": "Sentence transformer model name.", "type": "string" }, "top_n": { "title": "Top N", "description": "Number of nodes to return sorted by score.", "type": "integer" }, "device": { "title": "Device", "description": "Device to use for sentence transformer.", "default": "cpu", "type": "string" }, "keep_retrieval_score": { "title": "Keep Retrieval Score", "description": "Whether to keep the retrieval score in metadata.", "default": false, "type": "boolean" }, "class_name": { "title": "Class Name", "type": "string", "default": "SentenceTransformerRerank" } }, "required": [ "model", "top_n" ] }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+callback_manager (llama_index.core.callbacks.base.CallbackManager)
+device (str)
+keep_retrieval_score (bool)
+model (str)
+top_n (int)
+-
+- field callback_manager: CallbackManager [Optional]#
+- Constraints
+type = object
+default = {}
+-
+- field device: str = 'cpu'#
+Device to use for sentence transformer.
+- field keep_retrieval_score: bool = False#
+Whether to keep the retrieval score in metadata.
+- field model: str [Required]#
+Sentence transformer model name.
+- field top_n: int [Required]#
+Number of nodes to return sorted by score.
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- classmethod class_name() str #
+Get the class name, used as a unique ID in serialization.
+This provides a key that makes serialization robust against actual class name changes.
+- classmethod construct(_fields_set: Optional[SetStr] = None, **values: Any) Model #
+Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data. Default values are respected, but no other validation is performed. Behaves as if Config.extra = ‘allow’ was set since it adds all passed values
+- copy(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, update: Optional[DictStrAny] = None, deep: bool = False) Model #
+Duplicate a model, optionally choose which fields to include, exclude and change.
+- Parameters
+include – fields to include in new model
+exclude – fields to exclude from new model, as with values this takes precedence over include
+update – values to change/add in the new model. Note: the data is not validated before creating the new model: you should trust this data
+deep – set to True to make a deep copy of the model
+-
+- Returns
+new model instance
+- dict(**kwargs: Any) Dict[str, Any] #
+Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+- classmethod from_dict(data: Dict[str, Any], **kwargs: Any) Self #
+- classmethod from_json(data_str: str, **kwargs: Any) Self #
+- classmethod from_orm(obj: Any) Model #
+- json(**kwargs: Any) str #
+Generate a JSON representation of the model, include and exclude arguments as per dict().
+encoder is an optional function to supply as default to json.dumps(), other arguments as per json.dumps().
+- classmethod parse_file(path: Union[str, Path], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod parse_obj(obj: Any) Model #
+- classmethod parse_raw(b: Union[str, bytes], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- postprocess_nodes(nodes: List[NodeWithScore], query_bundle: Optional[QueryBundle] = None, query_str: Optional[str] = None) List[NodeWithScore] #
+Postprocess nodes.
+- classmethod schema(by_alias: bool = True, ref_template: unicode = '#/definitions/{model}') DictStrAny #
+- classmethod schema_json(*, by_alias: bool = True, ref_template: unicode = '#/definitions/{model}', **dumps_kwargs: Any) unicode #
+- to_dict(**kwargs: Any) Dict[str, Any] #
+- to_json(**kwargs: Any) str #
+- classmethod update_forward_refs(**localns: Any) None #
+Try to update ForwardRefs on fields based on this Model, globalns and localns.
+- classmethod validate(value: Any) Model #
+- pydantic model llama_index.core.postprocessor.SimilarityPostprocessor#
+Similarity-based Node processor.
+Show JSON schema
+{ "title": "SimilarityPostprocessor", "description": "Similarity-based Node processor.", "type": "object", "properties": { "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "similarity_cutoff": { "title": "Similarity Cutoff", "type": "number" }, "class_name": { "title": "Class Name", "type": "string", "default": "SimilarityPostprocessor" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+callback_manager (llama_index.core.callbacks.base.CallbackManager)
+similarity_cutoff (float)
+-
+- field callback_manager: CallbackManager [Optional]#
+- Constraints
+type = object
+default = {}
+-
+- field similarity_cutoff: float = None#
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- classmethod class_name() str #
+Get the class name, used as a unique ID in serialization.
+This provides a key that makes serialization robust against actual class name changes.
+- classmethod construct(_fields_set: Optional[SetStr] = None, **values: Any) Model #
+Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data. Default values are respected, but no other validation is performed. Behaves as if Config.extra = ‘allow’ was set since it adds all passed values
+- copy(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, update: Optional[DictStrAny] = None, deep: bool = False) Model #
+Duplicate a model, optionally choose which fields to include, exclude and change.
+- Parameters
+include – fields to include in new model
+exclude – fields to exclude from new model, as with values this takes precedence over include
+update – values to change/add in the new model. Note: the data is not validated before creating the new model: you should trust this data
+deep – set to True to make a deep copy of the model
+-
+- Returns
+new model instance
+- dict(**kwargs: Any) Dict[str, Any] #
+Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+- classmethod from_dict(data: Dict[str, Any], **kwargs: Any) Self #
+- classmethod from_json(data_str: str, **kwargs: Any) Self #
+- classmethod from_orm(obj: Any) Model #
+- json(**kwargs: Any) str #
+Generate a JSON representation of the model, include and exclude arguments as per dict().
+encoder is an optional function to supply as default to json.dumps(), other arguments as per json.dumps().
+- classmethod parse_file(path: Union[str, Path], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod parse_obj(obj: Any) Model #
+- classmethod parse_raw(b: Union[str, bytes], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- postprocess_nodes(nodes: List[NodeWithScore], query_bundle: Optional[QueryBundle] = None, query_str: Optional[str] = None) List[NodeWithScore] #
+Postprocess nodes.
+- classmethod schema(by_alias: bool = True, ref_template: unicode = '#/definitions/{model}') DictStrAny #
+- classmethod schema_json(*, by_alias: bool = True, ref_template: unicode = '#/definitions/{model}', **dumps_kwargs: Any) unicode #
+- to_dict(**kwargs: Any) Dict[str, Any] #
+- to_json(**kwargs: Any) str #
+- classmethod update_forward_refs(**localns: Any) None #
+Try to update ForwardRefs on fields based on this Model, globalns and localns.
+- classmethod validate(value: Any) Model #
+- pydantic model llama_index.core.postprocessor.TimeWeightedPostprocessor#
+Time-weighted post-processor.
+Reranks a set of nodes based on their recency.
+Show JSON schema
+{ "title": "TimeWeightedPostprocessor", "description": "Time-weighted post-processor.\n\nReranks a set of nodes based on their recency.", "type": "object", "properties": { "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "time_decay": { "title": "Time Decay", "default": 0.99, "type": "number" }, "last_accessed_key": { "title": "Last Accessed Key", "default": "__last_accessed__", "type": "string" }, "time_access_refresh": { "title": "Time Access Refresh", "default": true, "type": "boolean" }, "now": { "title": "Now", "type": "number" }, "top_k": { "title": "Top K", "default": 1, "type": "integer" }, "class_name": { "title": "Class Name", "type": "string", "default": "TimeWeightedPostprocessor" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+callback_manager (llama_index.core.callbacks.base.CallbackManager)
+last_accessed_key (str)
+now (Optional[float])
+time_access_refresh (bool)
+time_decay (float)
+top_k (int)
+-
+- field callback_manager: CallbackManager [Optional]#
+- Constraints
+type = object
+default = {}
+-
+- field last_accessed_key: str = '__last_accessed__'#
+- field now: Optional[float] = None#
+- field time_access_refresh: bool = True#
+- field time_decay: float = 0.99#
+- field top_k: int = 1#
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- classmethod class_name() str #
+Get the class name, used as a unique ID in serialization.
+This provides a key that makes serialization robust against actual class name changes.
+- classmethod construct(_fields_set: Optional[SetStr] = None, **values: Any) Model #
+Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data. Default values are respected, but no other validation is performed. Behaves as if Config.extra = ‘allow’ was set since it adds all passed values
+- copy(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, update: Optional[DictStrAny] = None, deep: bool = False) Model #
+Duplicate a model, optionally choose which fields to include, exclude and change.
+- Parameters
+include – fields to include in new model
+exclude – fields to exclude from new model, as with values this takes precedence over include
+update – values to change/add in the new model. Note: the data is not validated before creating the new model: you should trust this data
+deep – set to True to make a deep copy of the model
+-
+- Returns
+new model instance
+- dict(**kwargs: Any) Dict[str, Any] #
+Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+- classmethod from_dict(data: Dict[str, Any], **kwargs: Any) Self #
+- classmethod from_json(data_str: str, **kwargs: Any) Self #
+- classmethod from_orm(obj: Any) Model #
+- json(**kwargs: Any) str #
+Generate a JSON representation of the model, include and exclude arguments as per dict().
+encoder is an optional function to supply as default to json.dumps(), other arguments as per json.dumps().
+- classmethod parse_file(path: Union[str, Path], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod parse_obj(obj: Any) Model #
+- classmethod parse_raw(b: Union[str, bytes], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- postprocess_nodes(nodes: List[NodeWithScore], query_bundle: Optional[QueryBundle] = None, query_str: Optional[str] = None) List[NodeWithScore] #
+Postprocess nodes.
+- classmethod schema(by_alias: bool = True, ref_template: unicode = '#/definitions/{model}') DictStrAny #
+- classmethod schema_json(*, by_alias: bool = True, ref_template: unicode = '#/definitions/{model}', **dumps_kwargs: Any) unicode #
+- to_dict(**kwargs: Any) Dict[str, Any] #
+- to_json(**kwargs: Any) str #
+- classmethod update_forward_refs(**localns: Any) None #
+Try to update ForwardRefs on fields based on this Model, globalns and localns.
+- classmethod validate(value: Any) Model #

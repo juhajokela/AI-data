@@ -1,0 +1,1 @@
+Models# There are a few primary ways you interact with models in LlamaIndex: Using LLMs Embeddings Experimental [Beta] Multi-modal models

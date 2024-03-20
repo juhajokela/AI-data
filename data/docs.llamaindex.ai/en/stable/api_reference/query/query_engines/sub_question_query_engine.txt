@@ -1,0 +1,53 @@
+Sub Question Query Engine#
+- pydantic model llama_index.core.query_engine.sub_question_query_engine.SubQuestionAnswerPair#
+Pair of the sub question and optionally its answer (if its been answered yet).
+Show JSON schema
+{ "title": "SubQuestionAnswerPair", "description": "Pair of the sub question and optionally its answer (if its been answered yet).", "type": "object", "properties": { "sub_q": { "$ref": "#/definitions/SubQuestion" }, "answer": { "title": "Answer", "type": "string" }, "sources": { "title": "Sources", "type": "array", "items": { "$ref": "#/definitions/NodeWithScore" } } }, "required": [ "sub_q" ], "definitions": { "SubQuestion": { "title": "SubQuestion", "type": "object", "properties": { "sub_question": { "title": "Sub Question", "type": "string" }, "tool_name": { "title": "Tool Name", "type": "string" } }, "required": [ "sub_question", "tool_name" ] }, "ObjectType": { "title": "ObjectType", "description": "An enumeration.", "enum": [ "1", "2", "3", "4" ], "type": "string" }, "RelatedNodeInfo": { "title": "RelatedNodeInfo", "description": "Base component object to capture class names.", "type": "object", "properties": { "node_id": { "title": "Node Id", "type": "string" }, "node_type": { "$ref": "#/definitions/ObjectType" }, "metadata": { "title": "Metadata", "type": "object" }, "hash": { "title": "Hash", "type": "string" }, "class_name": { "title": "Class Name", "type": "string", "default": "RelatedNodeInfo" } }, "required": [ "node_id" ] }, "BaseNode": { "title": "BaseNode", "description": "Base node Object.\n\nGeneric abstract interface for retrievable nodes", "type": "object", "properties": { "id_": { "title": "Id ", "description": "Unique ID of the node.", "type": "string" }, "embedding": { "title": "Embedding", "description": "Embedding of the node.", "type": "array", "items": { "type": "number" } }, "extra_info": { "title": "Extra Info", "description": "A flat dictionary of metadata fields", "type": "object" }, "excluded_embed_metadata_keys": { "title": "Excluded Embed Metadata Keys", "description": "Metadata keys that are excluded from text for the embed model.", "type": "array", "items": { "type": "string" } }, "excluded_llm_metadata_keys": { "title": "Excluded Llm Metadata Keys", "description": "Metadata keys that are excluded from text for the LLM.", "type": "array", "items": { "type": "string" } }, "relationships": { "title": "Relationships", "description": "A mapping of relationships to other node information.", "type": "object", "additionalProperties": { "anyOf": [ { "$ref": "#/definitions/RelatedNodeInfo" }, { "type": "array", "items": { "$ref": "#/definitions/RelatedNodeInfo" } } ] } }, "class_name": { "title": "Class Name", "type": "string", "default": "base_component" } } }, "NodeWithScore": { "title": "NodeWithScore", "description": "Base component object to capture class names.", "type": "object", "properties": { "node": { "$ref": "#/definitions/BaseNode" }, "score": { "title": "Score", "type": "number" }, "class_name": { "title": "Class Name", "type": "string", "default": "NodeWithScore" } }, "required": [ "node" ] } } }
+- Fields
+- field answer: Optional[str] = None#
+- field sources: List[NodeWithScore] [Optional]#
+- field sub_q: SubQuestion [Required]#
+- classmethod construct(_fields_set: Optional[SetStr] = None, **values: Any) Model #
+Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data. Default values are respected, but no other validation is performed. Behaves as if Config.extra = ‘allow’ was set since it adds all passed values
+- copy(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, update: Optional[DictStrAny] = None, deep: bool = False) Model #
+Duplicate a model, optionally choose which fields to include, exclude and change.
+- Parameters
+include – fields to include in new model
+exclude – fields to exclude from new model, as with values this takes precedence over include
+update – values to change/add in the new model. Note: the data is not validated before creating the new model: you should trust this data
+deep – set to True to make a deep copy of the model
+-
+- Returns
+new model instance
+- dict(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, by_alias: bool = False, skip_defaults: Optional[bool] = None, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) DictStrAny #
+Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+- classmethod from_orm(obj: Any) Model #
+- json(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, by_alias: bool = False, skip_defaults: Optional[bool] = None, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[Any], Any]] = None, models_as_dict: bool = True, **dumps_kwargs: Any) unicode #
+Generate a JSON representation of the model, include and exclude arguments as per dict().
+encoder is an optional function to supply as default to json.dumps(), other arguments as per json.dumps().
+- classmethod parse_file(path: Union[str, Path], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod parse_obj(obj: Any) Model #
+- classmethod parse_raw(b: Union[str, bytes], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod schema(by_alias: bool = True, ref_template: unicode = '#/definitions/{model}') DictStrAny #
+- classmethod schema_json(*, by_alias: bool = True, ref_template: unicode = '#/definitions/{model}', **dumps_kwargs: Any) unicode #
+- classmethod update_forward_refs(**localns: Any) None #
+Try to update ForwardRefs on fields based on this Model, globalns and localns.
+- classmethod validate(value: Any) Model #
+- class llama_index.core.query_engine.sub_question_query_engine.SubQuestionQueryEngine(question_gen: BaseQuestionGenerator, response_synthesizer: BaseSynthesizer, query_engine_tools: Sequence[QueryEngineTool], callback_manager: Optional[CallbackManager] = None, verbose: bool = True, use_async: bool = False)#
+Sub question query engine.
+- A query engine that breaks down a complex query (e.g. compare and contrast) into
+many sub questions and their target query engine for execution. After executing all sub questions, all responses are gathered and sent to response synthesizer to produce the final response.
+- Parameters
+question_gen (BaseQuestionGenerator) – A module for generating sub questions given a complex question and tools.
+response_synthesizer (BaseSynthesizer) – A response synthesizer for generating the final response
+query_engine_tools (Sequence[QueryEngineTool]) – Tools to answer the sub questions.
+verbose (bool) – whether to print intermediate questions and answers. Defaults to True
+use_async (bool) – whether to execute the sub questions with asyncio. Defaults to True
+-
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.

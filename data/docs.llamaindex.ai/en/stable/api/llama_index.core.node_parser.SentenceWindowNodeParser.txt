@@ -1,0 +1,41 @@
+SentenceWindowNodeParser#
+- pydantic model llama_index.core.node_parser.SentenceWindowNodeParser#
+Sentence window node parser.
+Splits a document into Nodes, with each node being a sentence. Each node contains a window from the surrounding sentences in the metadata.
+- Parameters
+sentence_splitter (Optional[Callable]) – splits text into sentences
+include_metadata (bool) – whether to include metadata in nodes
+include_prev_next_rel (bool) – whether to include prev/next relationships
+-
+Show JSON schema
+{ "title": "SentenceWindowNodeParser", "description": "Sentence window node parser.\n\nSplits a document into Nodes, with each node being a sentence.\nEach node contains a window from the surrounding sentences in the metadata.\n\nArgs:\n sentence_splitter (Optional[Callable]): splits text into sentences\n include_metadata (bool): whether to include metadata in nodes\n include_prev_next_rel (bool): whether to include prev/next relationships", "type": "object", "properties": { "include_metadata": { "title": "Include Metadata", "description": "Whether or not to consider metadata when splitting.", "default": true, "type": "boolean" }, "include_prev_next_rel": { "title": "Include Prev Next Rel", "description": "Include prev/next node relationships.", "default": true, "type": "boolean" }, "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "window_size": { "title": "Window Size", "description": "The number of sentences on each side of a sentence to capture.", "default": 3, "exclusiveMinimum": 0, "type": "integer" }, "window_metadata_key": { "title": "Window Metadata Key", "description": "The metadata key to store the sentence window under.", "default": "window", "type": "string" }, "original_text_metadata_key": { "title": "Original Text Metadata Key", "description": "The metadata key to store the original sentence in.", "default": "original_text", "type": "string" }, "class_name": { "title": "Class Name", "type": "string", "default": "SentenceWindowNodeParser" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+original_text_metadata_key (str)
+sentence_splitter (Callable[[str], List[str]])
+window_metadata_key (str)
+window_size (int)
+-
+- Validators
+_validate_id_func»
+id_func
+-
+- field original_text_metadata_key: str = 'original_text'#
+The metadata key to store the original sentence in.
+- field sentence_splitter: Callable[[str], List[str]] [Optional]#
+The text splitter to use when splitting documents.
+- field window_metadata_key: str = 'window'#
+The metadata key to store the sentence window under.
+- field window_size: int = 3#
+The number of sentences on each side of a sentence to capture.
+- Constraints
+exclusiveMinimum = 0
+-
+- build_window_nodes_from_documents(documents: Sequence[Document]) List[BaseNode] #
+Build window nodes from documents.
+- classmethod class_name() str #
+Get the class name, used as a unique ID in serialization.
+This provides a key that makes serialization robust against actual class name changes.
+- classmethod from_defaults(sentence_splitter: Optional[Callable[[str], List[str]]] = None, window_size: int = 3, window_metadata_key: str = 'window', original_text_metadata_key: str = 'original_text', include_metadata: bool = True, include_prev_next_rel: bool = True, callback_manager: Optional[CallbackManager] = None, id_func: Optional[Callable[[int, Document], str]] = None) SentenceWindowNodeParser #

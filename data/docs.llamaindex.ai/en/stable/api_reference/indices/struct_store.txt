@@ -1,0 +1,218 @@
+Structured Store Index#
+Structured store indices.
+- llama_index.core.indices.struct_store.GPTNLStructStoreQueryEngine#
+alias of
+NLStructStoreQueryEngine
+- llama_index.core.indices.struct_store.GPTPandasIndex#
+alias of
+PandasIndex
+- llama_index.core.indices.struct_store.GPTSQLStructStoreIndex#
+alias of
+SQLStructStoreIndex
+- llama_index.core.indices.struct_store.GPTSQLStructStoreQueryEngine#
+alias of
+SQLStructStoreQueryEngine
+- class llama_index.core.indices.struct_store.JSONQueryEngine(json_value: Optional[Union[Dict[str, Optional[Union[Dict[str, JSONType], List[JSONType], str, int, float, bool]]], List[Optional[Union[Dict[str, JSONType], List[JSONType], str, int, float, bool]]], str, int, float, bool]], json_schema: Optional[Union[Dict[str, Optional[Union[Dict[str, JSONType], List[JSONType], str, int, float, bool]]], List[Optional[Union[Dict[str, JSONType], List[JSONType], str, int, float, bool]]], str, int, float, bool]], service_context: Optional[ServiceContext] = None, llm: Optional[LLM] = None, json_path_prompt: Optional[BasePromptTemplate] = None, output_processor: Optional[Callable] = None, output_kwargs: Optional[dict] = None, synthesize_response: bool = True, response_synthesis_prompt: Optional[BasePromptTemplate] = None, verbose: bool = False, **kwargs: Any)#
+GPT JSON Query Engine.
+Converts natural language to JSON Path queries.
+- Parameters
+json_value (JSONType) – JSON value
+json_schema (JSONType) – JSON schema
+service_context (ServiceContext) – ServiceContext
+json_path_prompt (BasePromptTemplate) – The JSON Path prompt to use.
+output_processor (Callable) – The output processor that executes the JSON Path query.
+output_kwargs (dict) – Additional output processor kwargs for the output_processor function.
+verbose (bool) – Whether to print verbose output.
+-
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- class llama_index.core.indices.struct_store.NLSQLTableQueryEngine(sql_database: SQLDatabase, llm: Optional[LLM] = None, text_to_sql_prompt: Optional[BasePromptTemplate] = None, context_query_kwargs: Optional[dict] = None, synthesize_response: bool = True, response_synthesis_prompt: Optional[BasePromptTemplate] = None, refine_synthesis_prompt: Optional[BasePromptTemplate] = None, tables: Optional[Union[List[str], List[Table]]] = None, service_context: Optional[ServiceContext] = None, context_str_prefix: Optional[str] = None, sql_only: bool = False, callback_manager: Optional[CallbackManager] = None, verbose: bool = False, **kwargs: Any)#
+Natural language SQL Table query engine.
+Read NLStructStoreQueryEngine’s docstring for more info on NL SQL.
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- property service_context: Optional[ServiceContext]#
+Get service context.
+- property sql_retriever: NLSQLRetriever#
+Get SQL retriever.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- class llama_index.core.indices.struct_store.NLStructStoreQueryEngine(index: SQLStructStoreIndex, text_to_sql_prompt: Optional[BasePromptTemplate] = None, context_query_kwargs: Optional[dict] = None, synthesize_response: bool = True, response_synthesis_prompt: Optional[BasePromptTemplate] = None, sql_only: bool = False, **kwargs: Any)#
+GPT natural language query engine over a structured database.
+NOTE: deprecated in favor of SQLTableRetriever, kept for backward compatibility.
+Given a natural language query, we will extract the query to SQL. Runs raw SQL over a SQLStructStoreIndex. No LLM calls are made during the SQL execution.
+NOTE: this query cannot work with composed indices - if the index contains subindices, those subindices will not be queried.
+- Parameters
+index (SQLStructStoreIndex) – A SQL Struct Store Index
+text_to_sql_prompt (Optional[BasePromptTemplate]) – A Text to SQL BasePromptTemplate to use for the query. Defaults to DEFAULT_TEXT_TO_SQL_PROMPT.
+context_query_kwargs (Optional[dict]) – Keyword arguments for the context query. Defaults to {}.
+synthesize_response (bool) – Whether to synthesize a response from the query results. Defaults to True.
+sql_only (bool) – Whether to get only sql and not the sql query result. Default to False.
+response_synthesis_prompt (Optional[BasePromptTemplate]) – A Response Synthesis BasePromptTemplate to use for the query. Defaults to DEFAULT_RESPONSE_SYNTHESIS_PROMPT.
+-
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- property service_context: Optional[ServiceContext]#
+Get service context.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- class llama_index.core.indices.struct_store.PandasIndex(df: DataFrame, nodes: Optional[Sequence[BaseNode]] = None, index_struct: Optional[PandasStructTable] = None, **kwargs: Any)#
+Pandas Index.
+Deprecated. Please use
+PandasQueryEngineinstead.
+The PandasIndex is an index that stores a Pandas dataframe under the hood. Currently index “construction” is not supported.
+During query time, the user can either specify a raw SQL query or a natural language query to retrieve their data.
+- Parameters
+pandas_df (Optional[pd.DataFrame]) – Pandas dataframe to use. See Structured Index Configuration for more details.
+- delete_nodes(node_ids: List[str], delete_from_docstore: bool = False, **delete_kwargs: Any) None #
+Delete a list of nodes from the index.
+- Parameters
+doc_ids (List[str]) – A list of doc_ids from the nodes to delete
+- delete_ref_doc(ref_doc_id: str, delete_from_docstore: bool = False, **delete_kwargs: Any) None #
+Delete a document and it’s nodes by using ref_doc_id.
+- classmethod from_documents(documents: Sequence[Document], storage_context: Optional[StorageContext] = None, show_progress: bool = False, callback_manager: Optional[CallbackManager] = None, transformations: Optional[List[TransformComponent]] = None, service_context: Optional[ServiceContext] = None, **kwargs: Any) IndexType #
+Create index from documents.
+- Parameters
+documents (Optional[Sequence[BaseDocument]]) – List of documents to build the index from.
+- property index_id: str#
+Get the index struct.
+- property ref_doc_info: Dict[str, RefDocInfo]#
+Retrieve a dict mapping of ingested documents and their nodes+metadata.
+- refresh(documents: Sequence[Document], **update_kwargs: Any) List[bool] #
+Refresh an index with documents that have changed.
+This allows users to save LLM and Embedding model calls, while only updating documents that have any changes in text or metadata. It will also insert any documents that previously were not stored.
+- refresh_ref_docs(documents: Sequence[Document], **update_kwargs: Any) List[bool] #
+Refresh an index with documents that have changed.
+This allows users to save LLM and Embedding model calls, while only updating documents that have any changes in text or metadata. It will also insert any documents that previously were not stored.
+- set_index_id(index_id: str) None #
+Set the index id.
+NOTE: if you decide to set the index_id on the index_struct manually, you will need to explicitly call add_index_struct on the index_store to update the index store.
+- Parameters
+index_id (str) – Index id to set.
+- update(document: Document, **update_kwargs: Any) None #
+Update a document and it’s corresponding nodes.
+This is equivalent to deleting the document and then inserting it again.
+- Parameters
+document (Union[BaseDocument, BaseIndex]) – document to update
+insert_kwargs (Dict) – kwargs to pass to insert
+delete_kwargs (Dict) – kwargs to pass to delete
+-
+- update_ref_doc(document: Document, **update_kwargs: Any) None #
+Update a document and it’s corresponding nodes.
+This is equivalent to deleting the document and then inserting it again.
+- Parameters
+document (Union[BaseDocument, BaseIndex]) – document to update
+insert_kwargs (Dict) – kwargs to pass to insert
+delete_kwargs (Dict) – kwargs to pass to delete
+-
+- class llama_index.core.indices.struct_store.SQLContextContainerBuilder(sql_database: SQLDatabase, context_dict: Optional[Dict[str, str]] = None, context_str: Optional[str] = None)#
+SQLContextContainerBuilder.
+Build a SQLContextContainer that can be passed to the SQL index during index construction or during query-time.
+NOTE: if context_str is specified, that will be used as context instead of context_dict
+- Parameters
+sql_database (SQLDatabase) – SQL database
+context_dict (Optional[Dict[str, str]]) – context dict
+-
+- build_context_container(ignore_db_schema: bool = False) SQLContextContainer #
+Build index structure.
+- derive_index_from_context(index_cls: Type[BaseIndex], ignore_db_schema: bool = False, **index_kwargs: Any) BaseIndex #
+Derive index from context.
+- classmethod from_documents(documents_dict: Dict[str, List[BaseNode]], sql_database: SQLDatabase, **context_builder_kwargs: Any) SQLContextContainerBuilder #
+Build context from documents.
+- query_index_for_context(index: BaseIndex, query_str: Union[str, QueryBundle], query_tmpl: Optional[str] = 'Please return the relevant tables (including the full schema) for the following query: {orig_query_str}', store_context_str: bool = True, **index_kwargs: Any) str #
+Query index for context.
+A simple wrapper around the index.query call which injects a query template to specifically fetch table information, and can store a context_str.
+- Parameters
+index (BaseIndex) – index data structure
+query_str (QueryType) – query string
+query_tmpl (Optional[str]) – query template
+store_context_str (bool) – store context_str
+-
+- class llama_index.core.indices.struct_store.SQLStructStoreIndex(nodes: Optional[Sequence[BaseNode]] = None, index_struct: Optional[SQLStructTable] = None, service_context: Optional[ServiceContext] = None, sql_database: Optional[SQLDatabase] = None, table_name: Optional[str] = None, table: Optional[Table] = None, ref_doc_id_column: Optional[str] = None, sql_context_container: Optional[SQLContextContainer] = None, **kwargs: Any)#
+SQL Struct Store Index.
+The SQLStructStoreIndex is an index that uses a SQL database under the hood. During index construction, the data can be inferred from unstructured documents given a schema extract prompt, or it can be pre-loaded in the database.
+During query time, the user can either specify a raw SQL query or a natural language query to retrieve their data.
+NOTE: this is deprecated.
+- Parameters
+documents (Optional[Sequence[DOCUMENTS_INPUT]]) – Documents to index. NOTE: in the SQL index, this is an optional field.
+sql_database (Optional[SQLDatabase]) – SQL database to use, including table names to specify. See Structured Index Configuration for more details.
+table_name (Optional[str]) – Name of the table to use for extracting data. Either table_name or table must be specified.
+table (Optional[Table]) – SQLAlchemy Table object to use. Specifying the Table object explicitly, instead of the table name, allows you to pass in a view. Either table_name or table must be specified.
+sql_context_container (Optional[SQLContextContainer]) – SQL context container. an be generated from a SQLContextContainerBuilder. See Structured Index Configuration for more details.
+-
+- delete_nodes(node_ids: List[str], delete_from_docstore: bool = False, **delete_kwargs: Any) None #
+Delete a list of nodes from the index.
+- Parameters
+doc_ids (List[str]) – A list of doc_ids from the nodes to delete
+- delete_ref_doc(ref_doc_id: str, delete_from_docstore: bool = False, **delete_kwargs: Any) None #
+Delete a document and it’s nodes by using ref_doc_id.
+- classmethod from_documents(documents: Sequence[Document], storage_context: Optional[StorageContext] = None, show_progress: bool = False, callback_manager: Optional[CallbackManager] = None, transformations: Optional[List[TransformComponent]] = None, service_context: Optional[ServiceContext] = None, **kwargs: Any) IndexType #
+Create index from documents.
+- Parameters
+documents (Optional[Sequence[BaseDocument]]) – List of documents to build the index from.
+- property index_id: str#
+Get the index struct.
+- property ref_doc_info: Dict[str, RefDocInfo]#
+Retrieve a dict mapping of ingested documents and their nodes+metadata.
+- refresh(documents: Sequence[Document], **update_kwargs: Any) List[bool] #
+Refresh an index with documents that have changed.
+This allows users to save LLM and Embedding model calls, while only updating documents that have any changes in text or metadata. It will also insert any documents that previously were not stored.
+- refresh_ref_docs(documents: Sequence[Document], **update_kwargs: Any) List[bool] #
+Refresh an index with documents that have changed.
+This allows users to save LLM and Embedding model calls, while only updating documents that have any changes in text or metadata. It will also insert any documents that previously were not stored.
+- set_index_id(index_id: str) None #
+Set the index id.
+NOTE: if you decide to set the index_id on the index_struct manually, you will need to explicitly call add_index_struct on the index_store to update the index store.
+- Parameters
+index_id (str) – Index id to set.
+- update(document: Document, **update_kwargs: Any) None #
+Update a document and it’s corresponding nodes.
+This is equivalent to deleting the document and then inserting it again.
+- Parameters
+document (Union[BaseDocument, BaseIndex]) – document to update
+insert_kwargs (Dict) – kwargs to pass to insert
+delete_kwargs (Dict) – kwargs to pass to delete
+-
+- update_ref_doc(document: Document, **update_kwargs: Any) None #
+Update a document and it’s corresponding nodes.
+This is equivalent to deleting the document and then inserting it again.
+- Parameters
+document (Union[BaseDocument, BaseIndex]) – document to update
+insert_kwargs (Dict) – kwargs to pass to insert
+delete_kwargs (Dict) – kwargs to pass to delete
+-
+- class llama_index.core.indices.struct_store.SQLStructStoreQueryEngine(index: SQLStructStoreIndex, sql_context_container: Optional[SQLContextContainerBuilder] = None, sql_only: bool = False, **kwargs: Any)#
+GPT SQL query engine over a structured database.
+NOTE: deprecated in favor of SQLTableRetriever, kept for backward compatibility.
+Runs raw SQL over a SQLStructStoreIndex. No LLM calls are made here. NOTE: this query cannot work with composed indices - if the index contains subindices, those subindices will not be queried.
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- class llama_index.core.indices.struct_store.SQLTableRetrieverQueryEngine(sql_database: SQLDatabase, table_retriever: ObjectRetriever[SQLTableSchema], llm: Optional[LLM] = None, text_to_sql_prompt: Optional[BasePromptTemplate] = None, context_query_kwargs: Optional[dict] = None, synthesize_response: bool = True, response_synthesis_prompt: Optional[BasePromptTemplate] = None, refine_synthesis_prompt: Optional[BasePromptTemplate] = None, service_context: Optional[ServiceContext] = None, context_str_prefix: Optional[str] = None, sql_only: bool = False, callback_manager: Optional[CallbackManager] = None, **kwargs: Any)#
+SQL Table retriever query engine.
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- property service_context: Optional[ServiceContext]#
+Get service context.
+- property sql_retriever: NLSQLRetriever#
+Get SQL retriever.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.

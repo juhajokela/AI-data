@@ -1,0 +1,17 @@
+Graph Query Engine#
+- class llama_index.core.query_engine.graph_query_engine.ComposableGraphQueryEngine(graph: ComposableGraph, custom_query_engines: Optional[Dict[str, BaseQueryEngine]] = None, recursive: bool = True, **kwargs: Any)#
+Composable graph query engine.
+This query engine can operate over a ComposableGraph. It can take in custom query engines for its sub-indices.
+- Parameters
+graph (ComposableGraph) – A ComposableGraph object.
+custom_query_engines (Optional[Dict[str, BaseQueryEngine]]) – A dictionary of custom query engines.
+recursive (bool) – Whether to recursively query the graph.
+**kwargs – additional arguments to be passed to the underlying index query engine.
+-
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.

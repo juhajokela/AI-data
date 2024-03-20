@@ -1,0 +1,28 @@
+Pandas Query Engine#
+Default query for PandasIndex.
+WARNING: This tool provides the Agent access to the eval function. Arbitrary code execution is possible on the machine running this tool. This tool is not recommended to be used in a production setting, and would require heavy sandboxing or virtual machines
+- llama_index.core.query_engine.pandas.pandas_query_engine.GPTNLPandasQueryEngine#
+alias of
+PandasQueryEngine
+- llama_index.core.query_engine.pandas.pandas_query_engine.NLPandasQueryEngine#
+alias of
+PandasQueryEngine
+- class llama_index.core.query_engine.pandas.pandas_query_engine.PandasQueryEngine(df: DataFrame, instruction_str: Optional[str] = None, instruction_parser: Optional[PandasInstructionParser] = None, pandas_prompt: Optional[BasePromptTemplate] = None, output_kwargs: Optional[dict] = None, head: int = 5, verbose: bool = False, service_context: Optional[ServiceContext] = None, llm: Optional[LLM] = None, synthesize_response: bool = False, response_synthesis_prompt: Optional[BasePromptTemplate] = None, **kwargs: Any)#
+Pandas query engine.
+Convert natural language to Pandas python code.
+WARNING: This tool provides the Agent access to the eval function. Arbitrary code execution is possible on the machine running this tool. This tool is not recommended to be used in a production setting, and would require heavy sandboxing or virtual machines
+- Parameters
+df (pd.DataFrame) – Pandas dataframe to use.
+instruction_str (Optional[str]) – Instruction string to use.
+output_processor (Optional[Callable[[str], str]]) – Output processor. A callable that takes in the output string, pandas DataFrame, and any output kwargs and returns a string. eg.kwargs[“max_colwidth”] = [int] is used to set the length of text that each column can display during str(df). Set it to a higher number if there is possibly long text in the dataframe.
+pandas_prompt (Optional[BasePromptTemplate]) – Pandas prompt to use.
+head (int) – Number of rows to show in the table context.
+llm (Optional[LLM]) – Language model to use.
+-
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.

@@ -1,0 +1,94 @@
+Using LLMs#
+Concept#
+Picking the proper Large Language Model (LLM) is one of the first steps you need to consider when building any LLM application over your data.
+LLMs are a core component of LlamaIndex. They can be used as standalone modules or plugged into other core LlamaIndex modules (indices, retrievers, query engines). They are always used during the response synthesis step (e.g. after retrieval). Depending on the type of index being used, LLMs may also be used during index construction, insertion, and query traversal.
+LlamaIndex provides a unified interface for defining LLM modules, whether it’s from OpenAI, Hugging Face, or LangChain, so that you don’t have to write the boilerplate code of defining the LLM interface yourself. This interface consists of the following (more details below):
+Support for text completion and chat endpoints (details below)
+Support for streaming and non-streaming endpoints
+Support for synchronous and asynchronous endpoints
+Usage Pattern#
+The following code snippet shows how you can get started using LLMs.
+If you don’t already have it, install your LLM:
+pip install llama-index-llms-openai
+Then:
+from llama_index.llms.openai import OpenAI
+# non-streaming
+resp = OpenAI().complete("Paul Graham is ")
+print(resp)
+A Note on Tokenization#
+By default, LlamaIndex uses a global tokenizer for all token counting. This defaults to
+cl100k from tiktoken, which is the tokenizer to match the default LLM
+gpt-3.5-turbo.
+If you change the LLM, you may need to update this tokenizer to ensure accurate token counts, chunking, and prompting.
+The single requirement for a tokenizer is that it is a callable function, that takes a string, and returns a list.
+You can set a global tokenizer like so:
+from llama_index.core import Settings
+# tiktoken
+import tiktoken
+Settings.tokenizer = tiktoken.encoding_for_model("gpt-3.5-turbo").encode
+# huggingface
+from transformers import AutoTokenizer
+Settings.tokenizer = AutoTokenizer.from_pretrained(
+"HuggingFaceH4/zephyr-7b-beta"
+)
+LLM Compatibility Tracking#
+While LLMs are powerful, not every LLM is easy to set up. Furthermore, even with proper setup, some LLMs have trouble performing tasks that require strict instruction following.
+LlamaIndex offers integrations with nearly every LLM, but it can be often unclear if the LLM will work well out of the box, or if further customization is needed.
+The tables below attempt to validate the initial experience with various LlamaIndex features for various LLMs. These notebooks serve as a best attempt to gauge performance, as well as how much effort and tweaking is needed to get things to function properly.
+Generally, paid APIs such as OpenAI or Anthropic are viewed as more reliable. However, local open-source models have been gaining popularity due to their customizability and approach to transparency.
+Contributing: Anyone is welcome to contribute new LLMs to the documentation. Simply copy an existing notebook, setup and test your LLM, and open a PR with your results.
+If you have ways to improve the setup for existing notebooks, contributions to change this are welcome!
+Legend
+✅ = should work fine
+⚠️ = sometimes unreliable, may need prompt engineering to improve
+🛑 = usually unreliable, would need prompt engineering/fine-tuning to improve
+Paid LLM APIs#
+Open Source LLMs#
+Since open source LLMs require large amounts of resources, the quantization is reported. Quantization is just a method for reducing the size of an LLM by shrinking the accuracy of calculations within the model. Research has shown that up to 4Bit quantization can be achieved for large LLMs without impacting performance too severely.
+Modules#
+We support integrations with OpenAI, Hugging Face, PaLM, and more.
+- Available LLM integrations
+- AI21
+- Anthropic
+- AnyScale
+- Bedrock
+- Clarifai
+- Cohere
+- Dashscope
+- EverlyAI
+- Fireworks
+- Friendli
+- Gradient
+- Groq
+- Hugging Face
+- Konko
+- LangChain
+- LiteLLM
+- Llama API
+- Llama CPP
+- LocalAI
+- MariTalk
+- MistralAI
+- PremAI
+- MonsterAPI
+- MyMagic
+- NeutrinoAI
+- Nvidia TensorRT-LLM
+- Nvidia Triton
+- Ollama
+- OpenAI
+- OpenLLM
+- OpenRouter
+- PaLM
+- Perplexity
+- Portkey
+- Predibase
+- Replicate
+- RunGPT
+- SageMaker
+- Solar
+- Together.ai
+- Vertex
+- vLLM
+- Xorbits Inference
+- ModelScope

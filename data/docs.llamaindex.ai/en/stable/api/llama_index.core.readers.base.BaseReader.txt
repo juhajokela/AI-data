@@ -1,0 +1,11 @@
+BaseReader#
+- class llama_index.core.readers.base.BaseReader#
+Bases:
+ABC
+Utilities for loading data from a directory.
+Methods Summary
+Methods Documentation
+- lazy_load_data(*args: Any, **load_kwargs: Any) Iterable[Document] #
+Load data from the input directory lazily.
+- load_langchain_documents(**load_kwargs: Any) List[LCDocument] #
+Load data in LangChain document format.

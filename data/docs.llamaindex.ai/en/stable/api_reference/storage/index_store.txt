@@ -1,0 +1,29 @@
+Index Store#
+- class llama_index.core.storage.index_store.SimpleIndexStore(simple_kvstore: Optional[SimpleKVStore] = None)#
+Simple in-memory Index store.
+- Parameters
+simple_kvstore (SimpleKVStore) – simple key-value store
+- add_index_struct(index_struct: IndexStruct) None #
+Add an index struct.
+- Parameters
+index_struct (IndexStruct) – index struct
+- delete_index_struct(key: str) None #
+Delete an index struct.
+- Parameters
+key (str) – index struct key
+- classmethod from_persist_dir(persist_dir: str = './storage', fs: Optional[AbstractFileSystem] = None) SimpleIndexStore #
+Create a SimpleIndexStore from a persist directory.
+- classmethod from_persist_path(persist_path: str, fs: Optional[AbstractFileSystem] = None) SimpleIndexStore #
+Create a SimpleIndexStore from a persist path.
+- get_index_struct(struct_id: Optional[str] = None) Optional[IndexStruct] #
+Get an index struct.
+- Parameters
+struct_id (Optional[str]) – index struct id
+- index_structs() List[IndexStruct] #
+Get all index structs.
+- Returns
+index structs
+- Return type
+List[IndexStruct]
+- persist(persist_path: str = './storage/index_store.json', fs: Optional[AbstractFileSystem] = None) None #
+Persist the store.

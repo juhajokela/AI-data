@@ -1,0 +1,26 @@
+Storage Context#
+LlamaIndex offers core abstractions around storage of Nodes, indices, and vectors. A key abstraction is the StorageContext - this contains the underlying BaseDocumentStore (for nodes), BaseIndexStore (for indices), and VectorStore (for vectors).
+The Document/Node and index stores rely on a common KVStore abstraction, which is also detailed below.
+We show the API references for the Storage Classes, loading indices from the Storage Context, and the Storage Context class itself below.
+- class llama_index.core.storage.storage_context.StorageContext(docstore: BaseDocumentStore, index_store: BaseIndexStore, vector_stores: Dict[str, VectorStore], graph_store: GraphStore)#
+Storage context.
+The storage context container is a utility container for storing nodes, indices, and vectors. It contains the following: - docstore: BaseDocumentStore - index_store: BaseIndexStore - vector_store: VectorStore - graph_store: GraphStore
+- add_vector_store(vector_store: VectorStore, namespace: str) None #
+Add a vector store to the storage context.
+- classmethod from_defaults(docstore: Optional[BaseDocumentStore] = None, index_store: Optional[BaseIndexStore] = None, vector_store: Optional[Union[VectorStore, BasePydanticVectorStore]] = None, image_store: Optional[VectorStore] = None, vector_stores: Optional[Dict[str, Union[VectorStore, BasePydanticVectorStore]]] = None, graph_store: Optional[GraphStore] = None, persist_dir: Optional[str] = None, fs: Optional[AbstractFileSystem] = None) StorageContext #
+Create a StorageContext from defaults.
+- Parameters
+docstore (Optional[BaseDocumentStore]) – document store
+index_store (Optional[BaseIndexStore]) – index store
+vector_store (Optional[VectorStore]) – vector store
+graph_store (Optional[GraphStore]) – graph store
+image_store (Optional[VectorStore]) – image store
+-
+- classmethod from_dict(save_dict: dict) StorageContext #
+Create a StorageContext from dict.
+- persist(persist_dir: Union[str, PathLike] = './storage', docstore_fname: str = 'docstore.json', index_store_fname: str = 'index_store.json', vector_store_fname: str = 'vector_store.json', image_store_fname: str = 'image_store.json', graph_store_fname: str = 'graph_store.json', fs: Optional[AbstractFileSystem] = None) None #
+Persist the storage context.
+- Parameters
+persist_dir (str) – directory to persist the storage context
+- property vector_store: VectorStore#
+Backwrds compatibility for vector_store property.

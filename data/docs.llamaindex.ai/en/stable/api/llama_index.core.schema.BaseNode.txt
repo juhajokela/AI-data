@@ -1,0 +1,61 @@
+BaseNode#
+- pydantic model llama_index.core.schema.BaseNode#
+Base node Object.
+Generic abstract interface for retrievable nodes
+Show JSON schema
+{ "title": "BaseNode", "description": "Base node Object.\n\nGeneric abstract interface for retrievable nodes", "type": "object", "properties": { "id_": { "title": "Id ", "description": "Unique ID of the node.", "type": "string" }, "embedding": { "title": "Embedding", "description": "Embedding of the node.", "type": "array", "items": { "type": "number" } }, "extra_info": { "title": "Extra Info", "description": "A flat dictionary of metadata fields", "type": "object" }, "excluded_embed_metadata_keys": { "title": "Excluded Embed Metadata Keys", "description": "Metadata keys that are excluded from text for the embed model.", "type": "array", "items": { "type": "string" } }, "excluded_llm_metadata_keys": { "title": "Excluded Llm Metadata Keys", "description": "Metadata keys that are excluded from text for the LLM.", "type": "array", "items": { "type": "string" } }, "relationships": { "title": "Relationships", "description": "A mapping of relationships to other node information.", "type": "object", "additionalProperties": { "anyOf": [ { "$ref": "#/definitions/RelatedNodeInfo" }, { "type": "array", "items": { "$ref": "#/definitions/RelatedNodeInfo" } } ] } }, "class_name": { "title": "Class Name", "type": "string", "default": "base_component" } }, "definitions": { "ObjectType": { "title": "ObjectType", "description": "An enumeration.", "enum": [ "1", "2", "3", "4" ], "type": "string" }, "RelatedNodeInfo": { "title": "RelatedNodeInfo", "description": "Base component object to capture class names.", "type": "object", "properties": { "node_id": { "title": "Node Id", "type": "string" }, "node_type": { "$ref": "#/definitions/ObjectType" }, "metadata": { "title": "Metadata", "type": "object" }, "hash": { "title": "Hash", "type": "string" }, "class_name": { "title": "Class Name", "type": "string", "default": "RelatedNodeInfo" } }, "required": [ "node_id" ] } } }
+- Config
+allow_population_by_field_name: bool = True
+validate_assignment: bool = True
+-
+- Fields
+relationships (Dict[llama_index.core.schema.NodeRelationship, Union[llama_index.core.schema.RelatedNodeInfo, List[llama_index.core.schema.RelatedNodeInfo]]])
+- field embedding: Optional[List[float]] = None#
+” metadata fields - injected as part of the text shown to LLMs as context - injected as part of the text for generating embeddings - used by vector DBs for metadata filtering
+Embedding of the node.
+- field excluded_embed_metadata_keys: List[str] [Optional]#
+Metadata keys that are excluded from text for the embed model.
+- field excluded_llm_metadata_keys: List[str] [Optional]#
+Metadata keys that are excluded from text for the LLM.
+- field id_: str [Optional]#
+Unique ID of the node.
+- field metadata: Dict[str, Any] [Optional] (alias 'extra_info')#
+A flat dictionary of metadata fields
+- field relationships: Dict[NodeRelationship, Union[RelatedNodeInfo, List[RelatedNodeInfo]]] [Optional]#
+A mapping of relationships to other node information.
+Get node as RelatedNodeInfo.
+- abstract get_content(metadata_mode: MetadataMode = MetadataMode.ALL) str #
+Get object content.
+- get_embedding() List[float] #
+Get embedding.
+Errors if embedding is None.
+- abstract get_metadata_str(mode: MetadataMode = MetadataMode.ALL) str #
+Metadata string.
+- abstract classmethod get_type() str #
+Get Object type.
+- abstract set_content(value: Any) None #
+Set the content of the node.
+- property child_nodes: Optional[List[RelatedNodeInfo]]#
+Child nodes.
+- property extra_info: Dict[str, Any]#
+Extra info.
+- Type
+TODO
+- Type
+DEPRECATED
+- abstract property hash: str#
+Get hash of node.
+- property next_node: Optional[RelatedNodeInfo]#
+Next node.
+- property node_id: str#
+- property parent_node: Optional[RelatedNodeInfo]#
+Parent node.
+- property prev_node: Optional[RelatedNodeInfo]#
+Prev node.
+- property ref_doc_id: Optional[str]#
+Get ref doc id.
+- Type
+Deprecated
+- property source_node: Optional[RelatedNodeInfo]#
+Source object node.
+Extracted from the relationships field.

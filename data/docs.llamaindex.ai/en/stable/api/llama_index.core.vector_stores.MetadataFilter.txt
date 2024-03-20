@@ -1,0 +1,15 @@
+MetadataFilter#
+- pydantic model llama_index.core.vector_stores.MetadataFilter#
+Comprehensive metadata filter for vector stores to support more operators.
+Value uses Strict* types, as int, float and str are compatible types and were all converted to string before.
+See: https://docs.pydantic.dev/latest/usage/types/#strict-types
+Show JSON schema
+{ "title": "MetadataFilter", "description": "Comprehensive metadata filter for vector stores to support more operators.\n\nValue uses Strict* types, as int, float and str are compatible types and were all\nconverted to string before.\n\nSee: https://docs.pydantic.dev/latest/usage/types/#strict-types", "type": "object", "properties": { "key": { "title": "Key", "type": "string" }, "value": { "title": "Value", "anyOf": [ { "type": "integer" }, { "type": "number" }, { "type": "string" }, { "type": "array", "items": { "anyOf": [ { "type": "integer" }, { "type": "number" }, { "type": "string" } ] } } ] }, "operator": { "default": "==", "allOf": [ { "$ref": "#/definitions/FilterOperator" } ] } }, "required": [ "key", "value" ], "definitions": { "FilterOperator": { "title": "FilterOperator", "description": "Vector store filter operator.", "enum": [ "==", ">", "<", "!=", ">=", "<=", "in", "nin", "text_match", "contains" ], "type": "string" } } }
+- Fields
+- field key: str [Required]#
+- field operator: FilterOperator = FilterOperator.EQ#
+- field value: Union[StrictInt, StrictFloat, StrictStr, List[Union[StrictInt, StrictFloat, StrictStr]]] [Required]#
+- classmethod from_dict(filter_dict: Dict) MetadataFilter #
+Create MetadataFilter from dictionary.
+- Parameters
+filter_dict – Dict with key, value and operator.

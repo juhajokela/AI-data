@@ -1,0 +1,9 @@
+Embeddings#
+Users have a few options to choose from when it comes to embeddings.
+OpenAIEmbedding: the default embedding class. Defaults to “text-embedding-ada-002”
+HuggingFaceEmbedding: a generic wrapper around HuggingFace’s transformers models.
+OptimumEmbedding: support for usage and creation of ONNX models from Optimum and HuggingFace.
+InstructorEmbedding: a wrapper around Instructor embedding models.
+LangchainEmbedding: a wrapper around Langchain’s embedding models.
+GoogleUnivSentEncoderEmbedding: a wrapper around Google’s Universal Sentence Encoder.
+AdapterEmbeddingModel: an adapter around any embedding model.

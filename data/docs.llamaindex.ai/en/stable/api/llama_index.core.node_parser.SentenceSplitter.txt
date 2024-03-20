@@ -1,0 +1,40 @@
+SentenceSplitter#
+- pydantic model llama_index.core.node_parser.SentenceSplitter#
+Parse text with a preference for complete sentences.
+In general, this class tries to keep sentences and paragraphs together. Therefore compared to the original TokenTextSplitter, there are less likely to be hanging sentences or parts of sentences at the end of the node chunk.
+Show JSON schema
+{ "title": "SentenceSplitter", "description": "Parse text with a preference for complete sentences.\n\nIn general, this class tries to keep sentences and paragraphs together. Therefore\ncompared to the original TokenTextSplitter, there are less likely to be\nhanging sentences or parts of sentences at the end of the node chunk.", "type": "object", "properties": { "include_metadata": { "title": "Include Metadata", "description": "Whether or not to consider metadata when splitting.", "default": true, "type": "boolean" }, "include_prev_next_rel": { "title": "Include Prev Next Rel", "description": "Include prev/next node relationships.", "default": true, "type": "boolean" }, "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "chunk_size": { "title": "Chunk Size", "description": "The token chunk size for each chunk.", "default": 1024, "exclusiveMinimum": 0, "type": "integer" }, "chunk_overlap": { "title": "Chunk Overlap", "description": "The token overlap of each chunk when splitting.", "default": 200, "gte": 0, "type": "integer" }, "separator": { "title": "Separator", "description": "Default separator for splitting into words", "default": " ", "type": "string" }, "paragraph_separator": { "title": "Paragraph Separator", "description": "Separator between paragraphs.", "default": "\n\n\n", "type": "string" }, "secondary_chunking_regex": { "title": "Secondary Chunking Regex", "description": "Backup regex for splitting into sentences.", "default": "[^,.;\u3002\uff1f\uff01]+[,.;\u3002\uff1f\uff01]?", "type": "string" }, "class_name": { "title": "Class Name", "type": "string", "default": "SentenceSplitter" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+chunk_overlap (int)
+chunk_size (int)
+paragraph_separator (str)
+secondary_chunking_regex (str)
+separator (str)
+-
+- Validators
+_validate_id_func»
+id_func
+-
+- field chunk_overlap: int = 200#
+The token overlap of each chunk when splitting.
+- field chunk_size: int = 1024#
+The token chunk size for each chunk.
+- Constraints
+exclusiveMinimum = 0
+-
+- field paragraph_separator: str = '\n\n\n'#
+Separator between paragraphs.
+- field secondary_chunking_regex: str = '[^,.;。？！]+[,.;。？！]?'#
+Backup regex for splitting into sentences.
+- field separator: str = ' '#
+Default separator for splitting into words
+- classmethod class_name() str #
+Get the class name, used as a unique ID in serialization.
+This provides a key that makes serialization robust against actual class name changes.
+- classmethod from_defaults(separator: str = ' ', chunk_size: int = 1024, chunk_overlap: int = 200, tokenizer: Optional[Callable] = None, paragraph_separator: str = '\n\n\n', chunking_tokenizer_fn: Optional[Callable[[str], List[str]]] = None, secondary_chunking_regex: str = '[^,.;。？！]+[,.;。？！]?', callback_manager: Optional[CallbackManager] = None, include_metadata: bool = True, include_prev_next_rel: bool = True) SentenceSplitter #
+Initialize with parameters.
+- split_text(text: str) List[str] #
+- split_text_metadata_aware(text: str, metadata_str: str) List[str] #

@@ -1,0 +1,17 @@
+Retriever Modules#
+We are actively adding more tailored retrieval guides. In the meanwhile, please take a look at the API References.
+Index Retrievers#
+Please see the retriever modes for more details on how to get a retriever from any given index.
+If you want to import the corresponding retrievers directly, please check out our API reference.
+Comprehensive Retriever Guides#
+Check out our comprehensive guides on various retriever modules, many of which cover advanced concepts (auto-retrieval, routing, ensembling, and more).
+Advanced Retrieval and Search#
+These guides contain advanced retrieval techniques. Some are common like keyword/hybrid search, reranking, and more. Some are specific to LLM + RAG pipelines, like small-to-big and auto-merging retrieval.
+Auto-Retrieval#
+These retrieval techniques perform semi-structured queries, combining semantic search with structured filtering.
+Knowledge Graph Retrievers#
+Composed Retrievers#
+These are retrieval techniques that are composed on top of other retrieval techniques - providing higher-level capabilities like hierarchical retrieval and query decomposition.
+Managed Retrievers#
+Other Retrievers#
+These are guides that don’t fit neatly into a category but should be highlighted regardless.

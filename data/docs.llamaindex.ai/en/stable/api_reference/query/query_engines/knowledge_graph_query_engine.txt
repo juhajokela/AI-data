@@ -1,0 +1,24 @@
+Knowledge Graph Query Engine#
+Knowledge Graph Query Engine.
+- class llama_index.core.query_engine.knowledge_graph_query_engine.KnowledgeGraphQueryEngine(llm: Optional[LLM] = None, storage_context: Optional[StorageContext] = None, graph_query_synthesis_prompt: Optional[BasePromptTemplate] = None, graph_response_answer_prompt: Optional[BasePromptTemplate] = None, refresh_schema: bool = False, verbose: bool = False, response_synthesizer: Optional[BaseSynthesizer] = None, service_context: Optional[ServiceContext] = None, **kwargs: Any)#
+Knowledge graph query engine.
+Query engine to call a knowledge graph.
+- Parameters
+service_context (Optional[ServiceContext]) – A service context to use.
+storage_context (Optional[StorageContext]) – A storage context to use.
+refresh_schema (bool) – Whether to refresh the schema.
+verbose (bool) – Whether to print intermediate results.
+response_synthesizer (Optional[BaseSynthesizer]) – A BaseSynthesizer object.
+**kwargs – Additional keyword arguments.
+-
+- async agenerate_query(query_str: str) str #
+Generate a Graph Store Query from a query bundle.
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- generate_query(query_str: str) str #
+Generate a Graph Store Query from a query bundle.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.

@@ -1,0 +1,182 @@
+RankGPT Reranker Demonstration (Van Gogh Wiki)#
+This demo integrates RankGPT into LlamaIndex as a reranker.
+Paper: Is ChatGPT Good at Search? Investigating Large Language Models as Re-Ranking Agents
+the idea of
+RankGPT:
+it is a zero-shot listwise passage reranking using LLM (ChatGPT or GPT-4 or other LLMs)
+it applies permutation generation approach and sliding window strategy to rerank passages efficiently.
+In this example, we use Van Gogh’s wikipedia as an example to compare the Retrieval results with/without RankGPT reranking. we showcase two models for RankGPT:
+OpenAI
+GPT3.5
+Mistralmodel.
+%pip install llama-index-postprocessor-rankgpt-rerank
+%pip install llama-index-llms-huggingface
+%pip install llama-index-llms-openai
+%pip install llama-index-llms-ollama
+import nest_asyncio
+nest_asyncio.apply()
+import logging
+import sys
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
+from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
+from llama_index.core.postprocessor import LLMRerank
+from llama_index.llms.openai import OpenAI
+from IPython.display import Markdown, display
+import os
+OPENAI_API_TOKEN = "sk-"
+os.environ["OPENAI_API_KEY"] = OPENAI_API_TOKEN
+Load Data, Build Index#
+from llama_index.core import Settings
+Settings.llm = OpenAI(temperature=0, model="gpt-3.5-turbo")
+Settings.chunk_size = 512
+Download Van Gogh wiki from Wikipedia#
+from pathlib import Path
+import requests
+wiki_titles = [
+"Vincent van Gogh",
+]
+data_path = Path("data_wiki")
+for title in wiki_titles:
+response = requests.get(
+"https://en.wikipedia.org/w/api.php",
+params={
+"action": "query",
+"format": "json",
+"titles": title,
+"prop": "extracts",
+"explaintext": True,
+},
+).json()
+page = next(iter(response["query"]["pages"].values()))
+wiki_text = page["extract"]
+if not data_path.exists():
+Path.mkdir(data_path)
+with open(data_path / f"{title}.txt", "w") as fp:
+fp.write(wiki_text)
+# load documents
+documents = SimpleDirectoryReader("./data_wiki/").load_data()
+Build vector store index for this Wikipedia page#
+index = VectorStoreIndex.from_documents(
+documents,
+)
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+Retrieval + RankGPT reranking#
+Steps:
+Setting up retriever and reranker (as an option)
+Retrieve results given a search query without reranking
+Retrieve results given a search query with RankGPT reranking enabled
+Comparing the results with and without reranking
+from llama_index.core.retrievers import VectorIndexRetriever
+from llama_index.core import QueryBundle
+from llama_index.postprocessor.rankgpt_rerank import RankGPTRerank
+import pandas as pd
+from IPython.display import display, HTML
+def get_retrieved_nodes(
+query_str, vector_top_k=10, reranker_top_n=3, with_reranker=False
+):
+query_bundle = QueryBundle(query_str)
+# configure retriever
+retriever = VectorIndexRetriever(
+index=index,
+similarity_top_k=vector_top_k,
+)
+retrieved_nodes = retriever.retrieve(query_bundle)
+if with_reranker:
+# configure reranker
+reranker = RankGPTRerank(
+llm=OpenAI(
+model="gpt-3.5-turbo-16k",
+temperature=0.0,
+api_key=OPENAI_API_TOKEN,
+),
+top_n=reranker_top_n,
+verbose=True,
+)
+retrieved_nodes = reranker.postprocess_nodes(
+retrieved_nodes, query_bundle
+)
+return retrieved_nodes
+def pretty_print(df):
+return display(HTML(df.to_html().replace("\\n", "<br>")))
+def visualize_retrieved_nodes(nodes) -> None:
+result_dicts = []
+for node in nodes:
+result_dict = {"Score": node.score, "Text": node.node.get_text()}
+result_dicts.append(result_dict)
+pretty_print(pd.DataFrame(result_dicts))
+Retrieval top 3 results without Reranking#
+new_nodes = get_retrieved_nodes(
+"Which date did Paul Gauguin arrive in Arles?",
+vector_top_k=3,
+with_reranker=False,
+)
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+Expected result is:#
+After much pleading from Van Gogh, Gauguin arrived in Arles on 23 October and, in November, the two painted together. Gauguin depicted Van Gogh in his The Painter of Sunflowers;
+visualize_retrieved_nodes(new_nodes)
+Finding: the right result is ranked at 2nd without reranking#
+Retrieve and Reranking top 10 results using RankGPT and return top 3#
+new_nodes = get_retrieved_nodes(
+"Which date did Paul Gauguin arrive in Arles ?",
+vector_top_k=10,
+reranker_top_n=3,
+with_reranker=True,
+)
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+After Reranking, new rank list for nodes: [1, 6, 0, 2, 7, 9, 4, 5, 3, 8]
+visualize_retrieved_nodes(new_nodes)
+Finding: After RankGPT reranking, the top 1st result is the right text containing the answer#
+Using other LLM for RankGPT reranking#
+Using
+Ollama for serving local
+Mistral models#
+from llama_index.llms.ollama import Ollama
+llm = Ollama(model="mistral", request_timeout=30.0)
+from llama_index.core.retrievers import VectorIndexRetriever
+from llama_index.core import QueryBundle
+import pandas as pd
+from IPython.display import display, HTML
+from llama_index.llms.huggingface import (
+HuggingFaceInferenceAPI,
+HuggingFaceLLM,
+)
+from llama_index.postprocessor.rankgpt_rerank import RankGPTRerank
+def get_retrieved_nodes(
+query_str, vector_top_k=5, reranker_top_n=3, with_reranker=False
+):
+query_bundle = QueryBundle(query_str)
+# configure retriever
+retriever = VectorIndexRetriever(
+index=index,
+similarity_top_k=vector_top_k,
+)
+retrieved_nodes = retriever.retrieve(query_bundle)
+if with_reranker:
+# configure reranker
+reranker = RankGPTRerank(
+llm=llm,
+top_n=reranker_top_n,
+verbose=True,
+)
+retrieved_nodes = reranker.postprocess_nodes(
+retrieved_nodes, query_bundle
+)
+return retrieved_nodes
+new_nodes = get_retrieved_nodes(
+"Which date did Paul Gauguin arrive in Arles ?",
+vector_top_k=10,
+reranker_top_n=3,
+with_reranker=True,
+)
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:11434/api/chat "HTTP/1.1 200 OK"
+HTTP Request: POST http://localhost:11434/api/chat "HTTP/1.1 200 OK"
+After Reranking, new rank list for nodes: [4, 5, 0, 1, 2, 3, 6, 7, 8, 9]
+visualize_retrieved_nodes(new_nodes)

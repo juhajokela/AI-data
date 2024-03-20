@@ -1,0 +1,27 @@
+Prompts#
+Concept#
+Prompting is the fundamental input that gives LLMs their expressive power. LlamaIndex uses prompts to build the index, do insertion, perform traversal during querying, and to synthesize the final answer.
+LlamaIndex uses a set of default prompt templates that work well out of the box.
+In addition, there are some prompts written and used specifically for chat models like
+gpt-3.5-turbo here.
+Users may also provide their own prompt templates to further customize the behavior of the framework. The best method for customizing is copying the default prompt from the link above, and using that as the base for any modifications.
+Usage Pattern#
+Using prompts is simple.
+from llama_index.core import PromptTemplate
+template = (
+"We have provided context information below. \n"
+"---------------------\n"
+"{context_str}"
+"\n---------------------\n"
+"Given this information, please answer the question: {query_str}\n"
+)
+qa_template = PromptTemplate(template)
+# you can create text prompt (for completion API)
+prompt = qa_template.format(context_str=..., query_str=...)
+# or easily convert to message prompts (for chat API)
+messages = qa_template.format_messages(context_str=..., query_str=...)
+See our Usage Pattern Guide for more details.
+Example Guides#
+Simple Customization Examples
+Prompt Engineering Guides
+Experimental

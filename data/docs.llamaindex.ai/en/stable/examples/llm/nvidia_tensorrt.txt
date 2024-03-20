@@ -1,0 +1,35 @@
+Nvidia TensorRT-LLM#
+TensorRT-LLM provides users with an easy-to-use Python API to define Large Language Models (LLMs) and build TensorRT engines that contain state-of-the-art optimizations to perform inference efficiently on NVIDIA GPUs.
+TensorRT-LLM Environment Setup#
+Since TensorRT-LLM is a SDK for interacting with local models in process there are a few environment steps that must be followed to ensure that the TensorRT-LLM setup can be used.
+Nvidia Cuda 12.2 or higher is currently required to run TensorRT-LLM
+Install
+tensorrt_llmvia pip with
+pip3 install tensorrt_llm -U --extra-index-url https://pypi.nvidia.com
+For this example we will use Llama2. The Llama2 model files need to be created via scripts following the instructions here
+The following files will be created from following the stop above
+Llama_float16_tp1_rank0.engine: The main output of the build script, containing the executable graph of operations with the model weights embedded.
+config.json: Includes detailed information about the model, like its general structure and precision, as well as information about which plug-ins were incorporated into the engine.
+model.cache: Caches some of the timing and optimization information from model compilation, making successive builds quicker.
+-
+mkdir model
+Move all of the files mentioned above to the model directory.
+%pip install llama-index-llms-nvidia-tensorrt
+!pip install tensorrt_llm==0.7.0 --extra-index-url https://pypi.nvidia.com --extra-index-url https://download.pytorch.org/whl/cu121
+Basic Usage#
+Call
+complete with a prompt#
+from llama_index.llms.nvidia_tensorrt import LocalTensorRTLLM
+def completion_to_prompt(completion: str) -> str:
+"""
+Given a completion, return the prompt using llama2 format.
+"""
+return f"<s> [INST] {completion} [/INST] "
+llm = LocalTensorRTLLM(
+model_path="./model",
+engine_name="llama_float16_tp1_rank0.engine",
+tokenizer_dir="meta-llama/Llama-2-13b-chat",
+completion_to_prompt=completion_to_prompt,
+)
+resp = llm.complete("Who is Paul Graham?")
+print(str(resp))

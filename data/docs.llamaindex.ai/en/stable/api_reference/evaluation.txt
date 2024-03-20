@@ -1,0 +1,873 @@
+Evaluation#
+We have modules for both LLM-based evaluation and retrieval-based evaluation.
+Evaluation modules.
+- class llama_index.core.evaluation.AnswerRelevancyEvaluator(llm: ~typing.Optional[~llama_index.core.llms.llm.LLM] = None, raise_error: bool = False, eval_template: str | llama_index.core.prompts.base.BasePromptTemplate | None = None, score_threshold: float = 2.0, parser_function: ~typing.Callable[[str], ~typing.Tuple[~typing.Optional[float], ~typing.Optional[str]]] = <function _default_parser_function>, service_context: ~typing.Optional[~llama_index.core.service_context.ServiceContext] = None)#
+Answer relevancy evaluator.
+Evaluates the relevancy of response to a query. This evaluator considers the query string and response string.
+- Parameters
+service_context (Optional[ServiceContext]) – The service context to use for evaluation.
+raise_error (Optional[bool]) – Whether to raise an error if the response is invalid. Defaults to False.
+eval_template (Optional[Union[str, BasePromptTemplate]]) – The template to use for evaluation.
+refine_template (Optional[Union[str, BasePromptTemplate]]) – The template to use for refinement.
+-
+- async aevaluate(query: str | None = None, response: str | None = None, contexts: Optional[Sequence[str]] = None, sleep_time_in_seconds: int = 0, **kwargs: Any) EvaluationResult #
+Evaluate whether the response is relevant to the query.
+- async aevaluate_response(query: Optional[str] = None, response: Optional[Response] = None, **kwargs: Any) EvaluationResult #
+Run evaluation with query string and generated Response object.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- evaluate(query: Optional[str] = None, response: Optional[str] = None, contexts: Optional[Sequence[str]] = None, **kwargs: Any) EvaluationResult #
+Run evaluation with query string, retrieved contexts, and generated response string.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- evaluate_response(query: Optional[str] = None, response: Optional[Response] = None, **kwargs: Any) EvaluationResult #
+Run evaluation with query string and generated Response object.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- class llama_index.core.evaluation.BaseEvaluator#
+Base Evaluator class.
+- abstract async aevaluate(query: Optional[str] = None, response: Optional[str] = None, contexts: Optional[Sequence[str]] = None, **kwargs: Any) EvaluationResult #
+Run evaluation with query string, retrieved contexts, and generated response string.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- async aevaluate_response(query: Optional[str] = None, response: Optional[Response] = None, **kwargs: Any) EvaluationResult #
+Run evaluation with query string and generated Response object.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- evaluate(query: Optional[str] = None, response: Optional[str] = None, contexts: Optional[Sequence[str]] = None, **kwargs: Any) EvaluationResult #
+Run evaluation with query string, retrieved contexts, and generated response string.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- evaluate_response(query: Optional[str] = None, response: Optional[Response] = None, **kwargs: Any) EvaluationResult #
+Run evaluation with query string and generated Response object.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- pydantic model llama_index.core.evaluation.BaseRetrievalEvaluator#
+Base Retrieval Evaluator class.
+Show JSON schema
+{ "title": "BaseRetrievalEvaluator", "description": "Base Retrieval Evaluator class.", "type": "object", "properties": { "metrics": { "title": "Metrics", "description": "List of metrics to evaluate", "type": "array", "items": { "$ref": "#/definitions/BaseRetrievalMetric" } } }, "required": [ "metrics" ], "definitions": { "BaseRetrievalMetric": { "title": "BaseRetrievalMetric", "description": "Base class for retrieval metrics.", "type": "object", "properties": { "metric_name": { "title": "Metric Name", "type": "string" } }, "required": [ "metric_name" ] } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+metrics (List[llama_index.core.evaluation.retrieval.metrics_base.BaseRetrievalMetric])
+-
+- field metrics: List[BaseRetrievalMetric] [Required]#
+List of metrics to evaluate
+- async aevaluate(query: str, expected_ids: List[str], expected_texts: Optional[List[str]] = None, mode: RetrievalEvalMode = RetrievalEvalMode.TEXT, **kwargs: Any) RetrievalEvalResult #
+Run evaluation with query string, retrieved contexts, and generated response string.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- async aevaluate_dataset(dataset: EmbeddingQAFinetuneDataset, workers: int = 2, show_progress: bool = False, **kwargs: Any) List[RetrievalEvalResult] #
+Run evaluation with dataset.
+- classmethod construct(_fields_set: Optional[SetStr] = None, **values: Any) Model #
+Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data. Default values are respected, but no other validation is performed. Behaves as if Config.extra = ‘allow’ was set since it adds all passed values
+- copy(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, update: Optional[DictStrAny] = None, deep: bool = False) Model #
+Duplicate a model, optionally choose which fields to include, exclude and change.
+- Parameters
+include – fields to include in new model
+exclude – fields to exclude from new model, as with values this takes precedence over include
+update – values to change/add in the new model. Note: the data is not validated before creating the new model: you should trust this data
+deep – set to True to make a deep copy of the model
+-
+- Returns
+new model instance
+- dict(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, by_alias: bool = False, skip_defaults: Optional[bool] = None, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) DictStrAny #
+Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+- evaluate(query: str, expected_ids: List[str], expected_texts: Optional[List[str]] = None, mode: RetrievalEvalMode = RetrievalEvalMode.TEXT, **kwargs: Any) RetrievalEvalResult #
+Run evaluation results with query string and expected ids.
+- Parameters
+query (str) – Query string
+expected_ids (List[str]) – Expected ids
+-
+- Returns
+Evaluation result
+- Return type
+- classmethod from_metric_names(metric_names: List[str], **kwargs: Any) BaseRetrievalEvaluator #
+Create evaluator from metric names.
+- Parameters
+metric_names (List[str]) – List of metric names
+**kwargs – Additional arguments for the evaluator
+-
+- classmethod from_orm(obj: Any) Model #
+- json(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, by_alias: bool = False, skip_defaults: Optional[bool] = None, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[Any], Any]] = None, models_as_dict: bool = True, **dumps_kwargs: Any) unicode #
+Generate a JSON representation of the model, include and exclude arguments as per dict().
+encoder is an optional function to supply as default to json.dumps(), other arguments as per json.dumps().
+- classmethod parse_file(path: Union[str, Path], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod parse_obj(obj: Any) Model #
+- classmethod parse_raw(b: Union[str, bytes], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod schema(by_alias: bool = True, ref_template: unicode = '#/definitions/{model}') DictStrAny #
+- classmethod schema_json(*, by_alias: bool = True, ref_template: unicode = '#/definitions/{model}', **dumps_kwargs: Any) unicode #
+- classmethod update_forward_refs(**localns: Any) None #
+Try to update ForwardRefs on fields based on this Model, globalns and localns.
+- classmethod validate(value: Any) Model #
+- class llama_index.core.evaluation.BatchEvalRunner(evaluators: Dict[str, BaseEvaluator], workers: int = 2, show_progress: bool = False)#
+Batch evaluation runner.
+- Parameters
+evaluators (Dict[str, BaseEvaluator]) – Dictionary of evaluators.
+workers (int) – Number of workers to use for parallelization. Defaults to 2.
+show_progress (bool) – Whether to show progress bars. Defaults to False.
+-
+- async aevaluate_queries(query_engine: BaseQueryEngine, queries: Optional[List[str]] = None, **eval_kwargs_lists: Dict[str, Any]) Dict[str, List[EvaluationResult]] #
+Evaluate queries.
+- Parameters
+query_engine (BaseQueryEngine) – Query engine.
+queries (Optional[List[str]]) – List of query strings. Defaults to None.
+**eval_kwargs_lists (Dict[str, Any]) – Dict of lists of kwargs to pass to evaluator. Defaults to None.
+-
+- async aevaluate_response_strs(queries: Optional[List[str]] = None, response_strs: Optional[List[str]] = None, contexts_list: Optional[List[List[str]]] = None, **eval_kwargs_lists: Dict[str, Any]) Dict[str, List[EvaluationResult]] #
+Evaluate query, response pairs.
+This evaluates queries, responses, contexts as string inputs. Can supply additional kwargs to the evaluator in eval_kwargs_lists.
+- Parameters
+queries (Optional[List[str]]) – List of query strings. Defaults to None.
+response_strs (Optional[List[str]]) – List of response strings. Defaults to None.
+contexts_list (Optional[List[List[str]]]) – List of context lists. Defaults to None.
+**eval_kwargs_lists (Dict[str, Any]) –
+Dict of either dicts or lists of kwargs to pass to evaluator. Defaults to None.
+multiple evaluators: {evaluator: {kwarg: [list of values]},…} single evaluator: {kwarg: [list of values]}
+-
+- async aevaluate_responses(queries: Optional[List[str]] = None, responses: Optional[List[Response]] = None, **eval_kwargs_lists: Dict[str, Any]) Dict[str, List[EvaluationResult]] #
+Evaluate query, response pairs.
+This evaluates queries and response objects.
+- Parameters
+queries (Optional[List[str]]) – List of query strings. Defaults to None.
+responses (Optional[List[Response]]) – List of response objects. Defaults to None.
+**eval_kwargs_lists (Dict[str, Any]) –
+Dict of either dicts or lists of kwargs to pass to evaluator. Defaults to None.
+multiple evaluators: {evaluator: {kwarg: [list of values]},…} single evaluator: {kwarg: [list of values]}
+-
+- evaluate_queries(query_engine: BaseQueryEngine, queries: Optional[List[str]] = None, **eval_kwargs_lists: Dict[str, Any]) Dict[str, List[EvaluationResult]] #
+Evaluate queries.
+Sync version of aevaluate_queries.
+- evaluate_response_strs(queries: Optional[List[str]] = None, response_strs: Optional[List[str]] = None, contexts_list: Optional[List[List[str]]] = None, **eval_kwargs_lists: List) Dict[str, List[EvaluationResult]] #
+Evaluate query, response pairs.
+Sync version of aevaluate_response_strs.
+- evaluate_responses(queries: Optional[List[str]] = None, responses: Optional[List[Response]] = None, **eval_kwargs_lists: Dict[str, Any]) Dict[str, List[EvaluationResult]] #
+Evaluate query, response objs.
+Sync version of aevaluate_responses.
+- class llama_index.core.evaluation.ContextRelevancyEvaluator(llm: ~typing.Optional[~llama_index.core.llms.llm.LLM] = None, raise_error: bool = False, eval_template: str | llama_index.core.prompts.base.BasePromptTemplate | None = None, refine_template: str | llama_index.core.prompts.base.BasePromptTemplate | None = None, score_threshold: float = 4.0, parser_function: ~typing.Callable[[str], ~typing.Tuple[~typing.Optional[float], ~typing.Optional[str]]] = <function _default_parser_function>, service_context: ~typing.Optional[~llama_index.core.service_context.ServiceContext] = None)#
+Context relevancy evaluator.
+Evaluates the relevancy of retrieved contexts to a query. This evaluator considers the query string and retrieved contexts.
+- Parameters
+service_context (Optional[ServiceContext]) – The service context to use for evaluation.
+raise_error (Optional[bool]) – Whether to raise an error if the response is invalid. Defaults to False.
+eval_template (Optional[Union[str, BasePromptTemplate]]) – The template to use for evaluation.
+refine_template (Optional[Union[str, BasePromptTemplate]]) – The template to use for refinement.
+-
+- async aevaluate(query: str | None = None, response: str | None = None, contexts: Optional[Sequence[str]] = None, sleep_time_in_seconds: int = 0, **kwargs: Any) EvaluationResult #
+Evaluate whether the contexts is relevant to the query.
+- async aevaluate_response(query: Optional[str] = None, response: Optional[Response] = None, **kwargs: Any) EvaluationResult #
+Run evaluation with query string and generated Response object.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- evaluate(query: Optional[str] = None, response: Optional[str] = None, contexts: Optional[Sequence[str]] = None, **kwargs: Any) EvaluationResult #
+Run evaluation with query string, retrieved contexts, and generated response string.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- evaluate_response(query: Optional[str] = None, response: Optional[Response] = None, **kwargs: Any) EvaluationResult #
+Run evaluation with query string and generated Response object.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- class llama_index.core.evaluation.CorrectnessEvaluator(llm: ~typing.Optional[~llama_index.core.llms.llm.LLM] = None, eval_template: ~typing.Optional[~typing.Union[~llama_index.core.prompts.base.BasePromptTemplate, str]] = None, score_threshold: float = 4.0, service_context: ~typing.Optional[~llama_index.core.service_context.ServiceContext] = None, parser_function: ~typing.Callable[[str], ~typing.Tuple[~typing.Optional[float], ~typing.Optional[str]]] = <function default_parser>)#
+Correctness evaluator.
+Evaluates the correctness of a question answering system. This evaluator depends on reference answer to be provided, in addition to the query string and response string.
+It outputs a score between 1 and 5, where 1 is the worst and 5 is the best, along with a reasoning for the score. Passing is defined as a score greater than or equal to the given threshold.
+- Parameters
+service_context (Optional[ServiceContext]) – Service context.
+eval_template (Optional[Union[BasePromptTemplate, str]]) – Template for the evaluation prompt.
+score_threshold (float) – Numerical threshold for passing the evaluation, defaults to 4.0.
+-
+- async aevaluate(query: Optional[str] = None, response: Optional[str] = None, contexts: Optional[Sequence[str]] = None, reference: Optional[str] = None, sleep_time_in_seconds: int = 0, **kwargs: Any) EvaluationResult #
+Run evaluation with query string, retrieved contexts, and generated response string.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- async aevaluate_response(query: Optional[str] = None, response: Optional[Response] = None, **kwargs: Any) EvaluationResult #
+Run evaluation with query string and generated Response object.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- evaluate(query: Optional[str] = None, response: Optional[str] = None, contexts: Optional[Sequence[str]] = None, **kwargs: Any) EvaluationResult #
+Run evaluation with query string, retrieved contexts, and generated response string.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- evaluate_response(query: Optional[str] = None, response: Optional[Response] = None, **kwargs: Any) EvaluationResult #
+Run evaluation with query string and generated Response object.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- class llama_index.core.evaluation.DatasetGenerator(*args, **kwargs)#
+Generate dataset (question/ question-answer pairs) based on the given documents.
+NOTE: this is a beta feature, subject to change!
+- Parameters
+nodes (List[Node]) – List of nodes. (Optional)
+llm (LLM) – Language model.
+callback_manager (CallbackManager) – Callback manager.
+num_questions_per_chunk – number of question to be generated per chunk. Each document is chunked of size 512 words.
+text_question_template – Question generation template.
+question_gen_query – Question generation query.
+-
+- async agenerate_dataset_from_nodes(num: int | None = None) QueryResponseDataset #
+Generates questions for each document.
+- async agenerate_questions_from_nodes(num: int | None = None) List[str] #
+Generates questions for each document.
+- classmethod from_documents(documents: List[Document], llm: Optional[LLM] = None, transformations: Optional[List[TransformComponent]] = None, callback_manager: Optional[CallbackManager] = None, num_questions_per_chunk: int = 10, text_question_template: llama_index.core.prompts.base.BasePromptTemplate | None = None, text_qa_template: llama_index.core.prompts.base.BasePromptTemplate | None = None, question_gen_query: str | None = None, required_keywords: Optional[List[str]] = None, exclude_keywords: Optional[List[str]] = None, show_progress: bool = False, service_context: llama_index.core.service_context.ServiceContext | None = None) DatasetGenerator #
+Generate dataset from documents.
+- generate_dataset_from_nodes(num: int | None = None) QueryResponseDataset #
+Generates questions for each document.
+- generate_questions_from_nodes(num: int | None = None) List[str] #
+Generates questions for each document.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- pydantic model llama_index.core.evaluation.EmbeddingQAFinetuneDataset#
+Embedding QA Finetuning Dataset.
+- Parameters
+queries (Dict[str, str]) – Dict id -> query.
+corpus (Dict[str, str]) – Dict id -> string.
+relevant_docs (Dict[str, List[str]]) – Dict query id -> list of doc ids.
+-
+Show JSON schema
+{ "title": "EmbeddingQAFinetuneDataset", "description": "Embedding QA Finetuning Dataset.\n\nArgs:\n queries (Dict[str, str]): Dict id -> query.\n corpus (Dict[str, str]): Dict id -> string.\n relevant_docs (Dict[str, List[str]]): Dict query id -> list of doc ids.", "type": "object", "properties": { "queries": { "title": "Queries", "type": "object", "additionalProperties": { "type": "string" } }, "corpus": { "title": "Corpus", "type": "object", "additionalProperties": { "type": "string" } }, "relevant_docs": { "title": "Relevant Docs", "type": "object", "additionalProperties": { "type": "array", "items": { "type": "string" } } }, "mode": { "title": "Mode", "default": "text", "type": "string" } }, "required": [ "queries", "corpus", "relevant_docs" ] }
+- Fields
+corpus (Dict[str, str])
+mode (str)
+queries (Dict[str, str])
+relevant_docs (Dict[str, List[str]])
+-
+- field corpus: Dict[str, str] [Required]#
+- field mode: str = 'text'#
+- field queries: Dict[str, str] [Required]#
+- field relevant_docs: Dict[str, List[str]] [Required]#
+- classmethod construct(_fields_set: Optional[SetStr] = None, **values: Any) Model #
+Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data. Default values are respected, but no other validation is performed. Behaves as if Config.extra = ‘allow’ was set since it adds all passed values
+- copy(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, update: Optional[DictStrAny] = None, deep: bool = False) Model #
+Duplicate a model, optionally choose which fields to include, exclude and change.
+- Parameters
+include – fields to include in new model
+exclude – fields to exclude from new model, as with values this takes precedence over include
+update – values to change/add in the new model. Note: the data is not validated before creating the new model: you should trust this data
+deep – set to True to make a deep copy of the model
+-
+- Returns
+new model instance
+- dict(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, by_alias: bool = False, skip_defaults: Optional[bool] = None, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) DictStrAny #
+Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+- classmethod from_json(path: str) EmbeddingQAFinetuneDataset #
+Load json.
+- classmethod from_orm(obj: Any) Model #
+- json(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, by_alias: bool = False, skip_defaults: Optional[bool] = None, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[Any], Any]] = None, models_as_dict: bool = True, **dumps_kwargs: Any) unicode #
+Generate a JSON representation of the model, include and exclude arguments as per dict().
+encoder is an optional function to supply as default to json.dumps(), other arguments as per json.dumps().
+- classmethod parse_file(path: Union[str, Path], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod parse_obj(obj: Any) Model #
+- classmethod parse_raw(b: Union[str, bytes], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- save_json(path: str) None #
+Save json.
+- classmethod schema(by_alias: bool = True, ref_template: unicode = '#/definitions/{model}') DictStrAny #
+- classmethod schema_json(*, by_alias: bool = True, ref_template: unicode = '#/definitions/{model}', **dumps_kwargs: Any) unicode #
+- classmethod update_forward_refs(**localns: Any) None #
+Try to update ForwardRefs on fields based on this Model, globalns and localns.
+- classmethod validate(value: Any) Model #
+- property query_docid_pairs: List[Tuple[str, List[str]]]#
+Get query, relevant doc ids.
+- pydantic model llama_index.core.evaluation.EvaluationResult#
+Evaluation result.
+Output of an BaseEvaluator.
+Show JSON schema
+{ "title": "EvaluationResult", "description": "Evaluation result.\n\nOutput of an BaseEvaluator.", "type": "object", "properties": { "query": { "title": "Query", "description": "Query string", "type": "string" }, "contexts": { "title": "Contexts", "description": "Context strings", "type": "array", "items": { "type": "string" } }, "response": { "title": "Response", "description": "Response string", "type": "string" }, "passing": { "title": "Passing", "description": "Binary evaluation result (passing or not)", "type": "boolean" }, "feedback": { "title": "Feedback", "description": "Feedback or reasoning for the response", "type": "string" }, "score": { "title": "Score", "description": "Score for the response", "type": "number" }, "pairwise_source": { "title": "Pairwise Source", "description": "Used only for pairwise and specifies whether it is from original order of presented answers or flipped order", "type": "string" }, "invalid_result": { "title": "Invalid Result", "description": "Whether the evaluation result is an invalid one.", "default": false, "type": "boolean" }, "invalid_reason": { "title": "Invalid Reason", "description": "Reason for invalid evaluation.", "type": "string" } } }
+- Fields
+contexts (Optional[Sequence[str]])
+feedback (Optional[str])
+invalid_reason (Optional[str])
+invalid_result (bool)
+pairwise_source (Optional[str])
+passing (Optional[bool])
+query (Optional[str])
+response (Optional[str])
+score (Optional[float])
+-
+- field contexts: Optional[Sequence[str]] = None#
+Context strings
+- field feedback: Optional[str] = None#
+Feedback or reasoning for the response
+- field invalid_reason: Optional[str] = None#
+Reason for invalid evaluation.
+- field invalid_result: bool = False#
+Whether the evaluation result is an invalid one.
+- field pairwise_source: Optional[str] = None#
+Used only for pairwise and specifies whether it is from original order of presented answers or flipped order
+- field passing: Optional[bool] = None#
+Binary evaluation result (passing or not)
+- field query: Optional[str] = None#
+Query string
+- field response: Optional[str] = None#
+Response string
+- field score: Optional[float] = None#
+Score for the response
+- classmethod construct(_fields_set: Optional[SetStr] = None, **values: Any) Model #
+Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data. Default values are respected, but no other validation is performed. Behaves as if Config.extra = ‘allow’ was set since it adds all passed values
+- copy(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, update: Optional[DictStrAny] = None, deep: bool = False) Model #
+Duplicate a model, optionally choose which fields to include, exclude and change.
+- Parameters
+include – fields to include in new model
+exclude – fields to exclude from new model, as with values this takes precedence over include
+update – values to change/add in the new model. Note: the data is not validated before creating the new model: you should trust this data
+deep – set to True to make a deep copy of the model
+-
+- Returns
+new model instance
+- dict(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, by_alias: bool = False, skip_defaults: Optional[bool] = None, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) DictStrAny #
+Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+- classmethod from_orm(obj: Any) Model #
+- json(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, by_alias: bool = False, skip_defaults: Optional[bool] = None, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[Any], Any]] = None, models_as_dict: bool = True, **dumps_kwargs: Any) unicode #
+Generate a JSON representation of the model, include and exclude arguments as per dict().
+encoder is an optional function to supply as default to json.dumps(), other arguments as per json.dumps().
+- classmethod parse_file(path: Union[str, Path], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod parse_obj(obj: Any) Model #
+- classmethod parse_raw(b: Union[str, bytes], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod schema(by_alias: bool = True, ref_template: unicode = '#/definitions/{model}') DictStrAny #
+- classmethod schema_json(*, by_alias: bool = True, ref_template: unicode = '#/definitions/{model}', **dumps_kwargs: Any) unicode #
+- classmethod update_forward_refs(**localns: Any) None #
+Try to update ForwardRefs on fields based on this Model, globalns and localns.
+- classmethod validate(value: Any) Model #
+- class llama_index.core.evaluation.FaithfulnessEvaluator(llm: Optional[LLM] = None, raise_error: bool = False, eval_template: Optional[Union[str, BasePromptTemplate]] = None, refine_template: Optional[Union[str, BasePromptTemplate]] = None, service_context: Optional[ServiceContext] = None)#
+Faithfulness evaluator.
+Evaluates whether a response is faithful to the contexts (i.e. whether the response is supported by the contexts or hallucinated.)
+This evaluator only considers the response string and the list of context strings.
+- Parameters
+service_context (Optional[ServiceContext]) – The service context to use for evaluation.
+raise_error (bool) – Whether to raise an error when the response is invalid. Defaults to False.
+eval_template (Optional[Union[str, BasePromptTemplate]]) – The template to use for evaluation.
+refine_template (Optional[Union[str, BasePromptTemplate]]) – The template to use for refining the evaluation.
+-
+- async aevaluate(query: str | None = None, response: str | None = None, contexts: Optional[Sequence[str]] = None, sleep_time_in_seconds: int = 0, **kwargs: Any) EvaluationResult #
+Evaluate whether the response is faithful to the contexts.
+- async aevaluate_response(query: Optional[str] = None, response: Optional[Response] = None, **kwargs: Any) EvaluationResult #
+Run evaluation with query string and generated Response object.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- evaluate(query: Optional[str] = None, response: Optional[str] = None, contexts: Optional[Sequence[str]] = None, **kwargs: Any) EvaluationResult #
+Run evaluation with query string, retrieved contexts, and generated response string.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- evaluate_response(query: Optional[str] = None, response: Optional[Response] = None, **kwargs: Any) EvaluationResult #
+Run evaluation with query string and generated Response object.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- class llama_index.core.evaluation.GuidelineEvaluator(llm: Optional[LLM] = None, guidelines: Optional[str] = None, eval_template: Optional[Union[BasePromptTemplate, str]] = None, service_context: Optional[ServiceContext] = None)#
+Guideline evaluator.
+Evaluates whether a query and response pair passes the given guidelines.
+This evaluator only considers the query string and the response string.
+- Parameters
+service_context (Optional[ServiceContext]) – The service context to use for evaluation.
+guidelines (Optional[str]) – User-added guidelines to use for evaluation. Defaults to None, which uses the default guidelines.
+eval_template (Optional[Union[str, BasePromptTemplate]]) – The template to use for evaluation.
+-
+- async aevaluate(query: Optional[str] = None, response: Optional[str] = None, contexts: Optional[Sequence[str]] = None, sleep_time_in_seconds: int = 0, **kwargs: Any) EvaluationResult #
+Evaluate whether the query and response pair passes the guidelines.
+- async aevaluate_response(query: Optional[str] = None, response: Optional[Response] = None, **kwargs: Any) EvaluationResult #
+Run evaluation with query string and generated Response object.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- evaluate(query: Optional[str] = None, response: Optional[str] = None, contexts: Optional[Sequence[str]] = None, **kwargs: Any) EvaluationResult #
+Run evaluation with query string, retrieved contexts, and generated response string.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- evaluate_response(query: Optional[str] = None, response: Optional[Response] = None, **kwargs: Any) EvaluationResult #
+Run evaluation with query string and generated Response object.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- pydantic model llama_index.core.evaluation.HitRate#
+Hit rate metric.
+Show JSON schema
+{ "title": "HitRate", "description": "Hit rate metric.", "type": "object", "properties": { "metric_name": { "title": "Metric Name", "default": "hit_rate", "type": "string" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+metric_name (str)
+-
+- field metric_name: str = 'hit_rate'#
+- compute(query: Optional[str] = None, expected_ids: Optional[List[str]] = None, retrieved_ids: Optional[List[str]] = None, expected_texts: Optional[List[str]] = None, retrieved_texts: Optional[List[str]] = None, **kwargs: Any) RetrievalMetricResult #
+Compute metric.
+- classmethod construct(_fields_set: Optional[SetStr] = None, **values: Any) Model #
+Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data. Default values are respected, but no other validation is performed. Behaves as if Config.extra = ‘allow’ was set since it adds all passed values
+- copy(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, update: Optional[DictStrAny] = None, deep: bool = False) Model #
+Duplicate a model, optionally choose which fields to include, exclude and change.
+- Parameters
+include – fields to include in new model
+exclude – fields to exclude from new model, as with values this takes precedence over include
+update – values to change/add in the new model. Note: the data is not validated before creating the new model: you should trust this data
+deep – set to True to make a deep copy of the model
+-
+- Returns
+new model instance
+- dict(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, by_alias: bool = False, skip_defaults: Optional[bool] = None, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) DictStrAny #
+Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+- classmethod from_orm(obj: Any) Model #
+- json(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, by_alias: bool = False, skip_defaults: Optional[bool] = None, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[Any], Any]] = None, models_as_dict: bool = True, **dumps_kwargs: Any) unicode #
+Generate a JSON representation of the model, include and exclude arguments as per dict().
+encoder is an optional function to supply as default to json.dumps(), other arguments as per json.dumps().
+- classmethod parse_file(path: Union[str, Path], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod parse_obj(obj: Any) Model #
+- classmethod parse_raw(b: Union[str, bytes], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod schema(by_alias: bool = True, ref_template: unicode = '#/definitions/{model}') DictStrAny #
+- classmethod schema_json(*, by_alias: bool = True, ref_template: unicode = '#/definitions/{model}', **dumps_kwargs: Any) unicode #
+- classmethod update_forward_refs(**localns: Any) None #
+Try to update ForwardRefs on fields based on this Model, globalns and localns.
+- classmethod validate(value: Any) Model #
+- llama_index.core.evaluation.LabelledQADataset#
+alias of
+EmbeddingQAFinetuneDataset
+- pydantic model llama_index.core.evaluation.MRR#
+MRR metric.
+Show JSON schema
+{ "title": "MRR", "description": "MRR metric.", "type": "object", "properties": { "metric_name": { "title": "Metric Name", "default": "mrr", "type": "string" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+metric_name (str)
+-
+- field metric_name: str = 'mrr'#
+- compute(query: Optional[str] = None, expected_ids: Optional[List[str]] = None, retrieved_ids: Optional[List[str]] = None, expected_texts: Optional[List[str]] = None, retrieved_texts: Optional[List[str]] = None, **kwargs: Any) RetrievalMetricResult #
+Compute metric.
+- classmethod construct(_fields_set: Optional[SetStr] = None, **values: Any) Model #
+Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data. Default values are respected, but no other validation is performed. Behaves as if Config.extra = ‘allow’ was set since it adds all passed values
+- copy(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, update: Optional[DictStrAny] = None, deep: bool = False) Model #
+Duplicate a model, optionally choose which fields to include, exclude and change.
+- Parameters
+include – fields to include in new model
+exclude – fields to exclude from new model, as with values this takes precedence over include
+update – values to change/add in the new model. Note: the data is not validated before creating the new model: you should trust this data
+deep – set to True to make a deep copy of the model
+-
+- Returns
+new model instance
+- dict(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, by_alias: bool = False, skip_defaults: Optional[bool] = None, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) DictStrAny #
+Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+- classmethod from_orm(obj: Any) Model #
+- json(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, by_alias: bool = False, skip_defaults: Optional[bool] = None, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[Any], Any]] = None, models_as_dict: bool = True, **dumps_kwargs: Any) unicode #
+Generate a JSON representation of the model, include and exclude arguments as per dict().
+encoder is an optional function to supply as default to json.dumps(), other arguments as per json.dumps().
+- classmethod parse_file(path: Union[str, Path], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod parse_obj(obj: Any) Model #
+- classmethod parse_raw(b: Union[str, bytes], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod schema(by_alias: bool = True, ref_template: unicode = '#/definitions/{model}') DictStrAny #
+- classmethod schema_json(*, by_alias: bool = True, ref_template: unicode = '#/definitions/{model}', **dumps_kwargs: Any) unicode #
+- classmethod update_forward_refs(**localns: Any) None #
+Try to update ForwardRefs on fields based on this Model, globalns and localns.
+- classmethod validate(value: Any) Model #
+- pydantic model llama_index.core.evaluation.MultiModalRetrieverEvaluator#
+Retriever evaluator.
+This module will evaluate a retriever using a set of metrics.
+- Parameters
+metrics (List[BaseRetrievalMetric]) – Sequence of metrics to evaluate
+retriever – Retriever to evaluate.
+node_postprocessors (Optional[List[BaseNodePostprocessor]]) – Post-processor to apply after retrieval.
+-
+Show JSON schema
+{ "title": "MultiModalRetrieverEvaluator", "description": "Retriever evaluator.\n\nThis module will evaluate a retriever using a set of metrics.\n\nArgs:\n metrics (List[BaseRetrievalMetric]): Sequence of metrics to evaluate\n retriever: Retriever to evaluate.\n node_postprocessors (Optional[List[BaseNodePostprocessor]]): Post-processor to apply after retrieval.", "type": "object", "properties": { "metrics": { "title": "Metrics", "description": "List of metrics to evaluate", "type": "array", "items": { "$ref": "#/definitions/BaseRetrievalMetric" } }, "retriever": { "title": "Retriever" }, "node_postprocessors": { "title": "Node Postprocessors", "description": "Optional post-processor", "type": "array", "items": { "$ref": "#/definitions/BaseNodePostprocessor" } } }, "required": [ "metrics" ], "definitions": { "BaseRetrievalMetric": { "title": "BaseRetrievalMetric", "description": "Base class for retrieval metrics.", "type": "object", "properties": { "metric_name": { "title": "Metric Name", "type": "string" } }, "required": [ "metric_name" ] }, "BaseNodePostprocessor": { "title": "BaseNodePostprocessor", "description": "Chainable mixin.\n\nA module that can produce a `QueryComponent` from a set of inputs through\n`as_query_component`.\n\nIf plugged in directly into a `QueryPipeline`, the `ChainableMixin` will be\nconverted into a `QueryComponent` with default parameters.", "type": "object", "properties": { "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "class_name": { "title": "Class Name", "type": "string", "default": "BaseNodePostprocessor" } } } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+metrics (List[llama_index.core.evaluation.retrieval.metrics_base.BaseRetrievalMetric])
+node_postprocessors (Optional[List[llama_index.core.postprocessor.types.BaseNodePostprocessor]])
+retriever (llama_index.core.base.base_retriever.BaseRetriever)
+-
+- field metrics: List[BaseRetrievalMetric] [Required]#
+List of metrics to evaluate
+- field node_postprocessors: Optional[List[BaseNodePostprocessor]] = None#
+Optional post-processor
+- field retriever: BaseRetriever [Required]#
+Retriever to evaluate
+- async aevaluate(query: str, expected_ids: List[str], expected_texts: Optional[List[str]] = None, mode: RetrievalEvalMode = RetrievalEvalMode.TEXT, **kwargs: Any) RetrievalEvalResult #
+Run evaluation with query string, retrieved contexts, and generated response string.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- async aevaluate_dataset(dataset: EmbeddingQAFinetuneDataset, workers: int = 2, show_progress: bool = False, **kwargs: Any) List[RetrievalEvalResult] #
+Run evaluation with dataset.
+- classmethod construct(_fields_set: Optional[SetStr] = None, **values: Any) Model #
+Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data. Default values are respected, but no other validation is performed. Behaves as if Config.extra = ‘allow’ was set since it adds all passed values
+- copy(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, update: Optional[DictStrAny] = None, deep: bool = False) Model #
+Duplicate a model, optionally choose which fields to include, exclude and change.
+- Parameters
+include – fields to include in new model
+exclude – fields to exclude from new model, as with values this takes precedence over include
+update – values to change/add in the new model. Note: the data is not validated before creating the new model: you should trust this data
+deep – set to True to make a deep copy of the model
+-
+- Returns
+new model instance
+- dict(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, by_alias: bool = False, skip_defaults: Optional[bool] = None, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) DictStrAny #
+Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+- evaluate(query: str, expected_ids: List[str], expected_texts: Optional[List[str]] = None, mode: RetrievalEvalMode = RetrievalEvalMode.TEXT, **kwargs: Any) RetrievalEvalResult #
+Run evaluation results with query string and expected ids.
+- Parameters
+query (str) – Query string
+expected_ids (List[str]) – Expected ids
+-
+- Returns
+Evaluation result
+- Return type
+- classmethod from_metric_names(metric_names: List[str], **kwargs: Any) BaseRetrievalEvaluator #
+Create evaluator from metric names.
+- Parameters
+metric_names (List[str]) – List of metric names
+**kwargs – Additional arguments for the evaluator
+-
+- classmethod from_orm(obj: Any) Model #
+- json(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, by_alias: bool = False, skip_defaults: Optional[bool] = None, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[Any], Any]] = None, models_as_dict: bool = True, **dumps_kwargs: Any) unicode #
+Generate a JSON representation of the model, include and exclude arguments as per dict().
+encoder is an optional function to supply as default to json.dumps(), other arguments as per json.dumps().
+- classmethod parse_file(path: Union[str, Path], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod parse_obj(obj: Any) Model #
+- classmethod parse_raw(b: Union[str, bytes], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod schema(by_alias: bool = True, ref_template: unicode = '#/definitions/{model}') DictStrAny #
+- classmethod schema_json(*, by_alias: bool = True, ref_template: unicode = '#/definitions/{model}', **dumps_kwargs: Any) unicode #
+- classmethod update_forward_refs(**localns: Any) None #
+Try to update ForwardRefs on fields based on this Model, globalns and localns.
+- classmethod validate(value: Any) Model #
+- class llama_index.core.evaluation.PairwiseComparisonEvaluator(llm: ~typing.Optional[~llama_index.core.llms.llm.LLM] = None, eval_template: ~typing.Optional[~typing.Union[~llama_index.core.prompts.base.BasePromptTemplate, str]] = None, parser_function: ~typing.Callable[[str], ~typing.Tuple[~typing.Optional[bool], ~typing.Optional[float], ~typing.Optional[str]]] = <function _default_parser_function>, enforce_consensus: bool = True, service_context: ~typing.Optional[~llama_index.core.service_context.ServiceContext] = None)#
+Pairwise comparison evaluator.
+Evaluates the quality of a response vs. a “reference” response given a question by having an LLM judge which response is better.
+Outputs whether the response given is better than the reference response.
+- Parameters
+service_context (Optional[ServiceContext]) – The service context to use for evaluation.
+eval_template (Optional[Union[str, BasePromptTemplate]]) – The template to use for evaluation.
+enforce_consensus (bool) – Whether to enforce consensus (consistency if we flip the order of the answers). Defaults to True.
+-
+- async aevaluate(query: Optional[str] = None, response: Optional[str] = None, contexts: Optional[Sequence[str]] = None, second_response: Optional[str] = None, reference: Optional[str] = None, sleep_time_in_seconds: int = 0, **kwargs: Any) EvaluationResult #
+Run evaluation with query string, retrieved contexts, and generated response string.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- async aevaluate_response(query: Optional[str] = None, response: Optional[Response] = None, **kwargs: Any) EvaluationResult #
+Run evaluation with query string and generated Response object.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- evaluate(query: Optional[str] = None, response: Optional[str] = None, contexts: Optional[Sequence[str]] = None, **kwargs: Any) EvaluationResult #
+Run evaluation with query string, retrieved contexts, and generated response string.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- evaluate_response(query: Optional[str] = None, response: Optional[Response] = None, **kwargs: Any) EvaluationResult #
+Run evaluation with query string and generated Response object.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- pydantic model llama_index.core.evaluation.QueryResponseDataset#
+Query Response Dataset.
+The response can be empty if the dataset is generated from documents.
+- Parameters
+queries (Dict[str, str]) – Query id -> query.
+responses (Dict[str, str]) – Query id -> response.
+-
+Show JSON schema
+{ "title": "QueryResponseDataset", "description": "Query Response Dataset.\n\nThe response can be empty if the dataset is generated from documents.\n\nArgs:\n queries (Dict[str, str]): Query id -> query.\n responses (Dict[str, str]): Query id -> response.", "type": "object", "properties": { "queries": { "title": "Queries", "description": "Query id -> query", "type": "object", "additionalProperties": { "type": "string" } }, "responses": { "title": "Responses", "description": "Query id -> response", "type": "object", "additionalProperties": { "type": "string" } } } }
+- Fields
+queries (Dict[str, str])
+responses (Dict[str, str])
+-
+- field queries: Dict[str, str] [Optional]#
+Query id -> query
+- field responses: Dict[str, str] [Optional]#
+Query id -> response
+- classmethod construct(_fields_set: Optional[SetStr] = None, **values: Any) Model #
+Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data. Default values are respected, but no other validation is performed. Behaves as if Config.extra = ‘allow’ was set since it adds all passed values
+- copy(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, update: Optional[DictStrAny] = None, deep: bool = False) Model #
+Duplicate a model, optionally choose which fields to include, exclude and change.
+- Parameters
+include – fields to include in new model
+exclude – fields to exclude from new model, as with values this takes precedence over include
+update – values to change/add in the new model. Note: the data is not validated before creating the new model: you should trust this data
+deep – set to True to make a deep copy of the model
+-
+- Returns
+new model instance
+- dict(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, by_alias: bool = False, skip_defaults: Optional[bool] = None, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) DictStrAny #
+Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+- classmethod from_json(path: str) QueryResponseDataset #
+Load json.
+- classmethod from_orm(obj: Any) Model #
+- classmethod from_qr_pairs(qr_pairs: List[Tuple[str, str]]) QueryResponseDataset #
+Create from qr pairs.
+- json(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, by_alias: bool = False, skip_defaults: Optional[bool] = None, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[Any], Any]] = None, models_as_dict: bool = True, **dumps_kwargs: Any) unicode #
+Generate a JSON representation of the model, include and exclude arguments as per dict().
+encoder is an optional function to supply as default to json.dumps(), other arguments as per json.dumps().
+- classmethod parse_file(path: Union[str, Path], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod parse_obj(obj: Any) Model #
+- classmethod parse_raw(b: Union[str, bytes], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- save_json(path: str) None #
+Save json.
+- classmethod schema(by_alias: bool = True, ref_template: unicode = '#/definitions/{model}') DictStrAny #
+- classmethod schema_json(*, by_alias: bool = True, ref_template: unicode = '#/definitions/{model}', **dumps_kwargs: Any) unicode #
+- classmethod update_forward_refs(**localns: Any) None #
+Try to update ForwardRefs on fields based on this Model, globalns and localns.
+- classmethod validate(value: Any) Model #
+- property qr_pairs: List[Tuple[str, str]]#
+Get pairs.
+- property questions: List[str]#
+Get questions.
+- llama_index.core.evaluation.QueryResponseEvaluator#
+alias of
+RelevancyEvaluator
+- class llama_index.core.evaluation.RelevancyEvaluator(llm: Optional[LLM] = None, raise_error: bool = False, eval_template: Optional[Union[str, BasePromptTemplate]] = None, refine_template: Optional[Union[str, BasePromptTemplate]] = None, service_context: Optional[ServiceContext] = None)#
+Relenvancy evaluator.
+Evaluates the relevancy of retrieved contexts and response to a query. This evaluator considers the query string, retrieved contexts, and response string.
+- Parameters
+service_context (Optional[ServiceContext]) – The service context to use for evaluation.
+raise_error (Optional[bool]) – Whether to raise an error if the response is invalid. Defaults to False.
+eval_template (Optional[Union[str, BasePromptTemplate]]) – The template to use for evaluation.
+refine_template (Optional[Union[str, BasePromptTemplate]]) – The template to use for refinement.
+-
+- async aevaluate(query: str | None = None, response: str | None = None, contexts: Optional[Sequence[str]] = None, sleep_time_in_seconds: int = 0, **kwargs: Any) EvaluationResult #
+Evaluate whether the contexts and response are relevant to the query.
+- async aevaluate_response(query: Optional[str] = None, response: Optional[Response] = None, **kwargs: Any) EvaluationResult #
+Run evaluation with query string and generated Response object.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- evaluate(query: Optional[str] = None, response: Optional[str] = None, contexts: Optional[Sequence[str]] = None, **kwargs: Any) EvaluationResult #
+Run evaluation with query string, retrieved contexts, and generated response string.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- evaluate_response(query: Optional[str] = None, response: Optional[Response] = None, **kwargs: Any) EvaluationResult #
+Run evaluation with query string and generated Response object.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- llama_index.core.evaluation.ResponseEvaluator#
+alias of
+FaithfulnessEvaluator
+- pydantic model llama_index.core.evaluation.RetrievalEvalResult#
+Retrieval eval result.
+NOTE: this abstraction might change in the future.
+- query#
+Query string
+- Type
+str
+- expected_ids#
+Expected ids
+- Type
+List[str]
+- retrieved_ids#
+Retrieved ids
+- Type
+List[str]
+- metric_dict#
+Metric dictionary for the evaluation
+- Type
+Dict[str, BaseRetrievalMetric]
+Show JSON schema
+{ "title": "RetrievalEvalResult", "description": "Retrieval eval result.\n\nNOTE: this abstraction might change in the future.\n\nAttributes:\n query (str): Query string\n expected_ids (List[str]): Expected ids\n retrieved_ids (List[str]): Retrieved ids\n metric_dict (Dict[str, BaseRetrievalMetric]): Metric dictionary for the evaluation", "type": "object", "properties": { "query": { "title": "Query", "description": "Query string", "type": "string" }, "expected_ids": { "title": "Expected Ids", "description": "Expected ids", "type": "array", "items": { "type": "string" } }, "expected_texts": { "title": "Expected Texts", "description": "Expected texts associated with nodes provided in `expected_ids`", "type": "array", "items": { "type": "string" } }, "retrieved_ids": { "title": "Retrieved Ids", "description": "Retrieved ids", "type": "array", "items": { "type": "string" } }, "retrieved_texts": { "title": "Retrieved Texts", "description": "Retrieved texts", "type": "array", "items": { "type": "string" } }, "mode": { "description": "text or image", "default": "text", "allOf": [ { "$ref": "#/definitions/RetrievalEvalMode" } ] }, "metric_dict": { "title": "Metric Dict", "description": "Metric dictionary for the evaluation", "type": "object", "additionalProperties": { "$ref": "#/definitions/RetrievalMetricResult" } } }, "required": [ "query", "expected_ids", "retrieved_ids", "retrieved_texts", "metric_dict" ], "definitions": { "RetrievalEvalMode": { "title": "RetrievalEvalMode", "description": "Evaluation of retrieval modality.", "enum": [ "text", "image" ], "type": "string" }, "RetrievalMetricResult": { "title": "RetrievalMetricResult", "description": "Metric result.\n\nAttributes:\n score (float): Score for the metric\n metadata (Dict[str, Any]): Metadata for the metric result", "type": "object", "properties": { "score": { "title": "Score", "description": "Score for the metric", "type": "number" }, "metadata": { "title": "Metadata", "description": "Metadata for the metric result", "type": "object" } }, "required": [ "score" ] } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+expected_ids (List[str])
+expected_texts (Optional[List[str]])
+metric_dict (Dict[str, llama_index.core.evaluation.retrieval.metrics_base.RetrievalMetricResult])
+mode (llama_index.core.evaluation.retrieval.base.RetrievalEvalMode)
+query (str)
+retrieved_ids (List[str])
+retrieved_texts (List[str])
+-
+- field expected_ids: List[str] [Required]#
+Expected ids
+- field expected_texts: Optional[List[str]] = None#
+Expected texts associated with nodes provided in expected_ids
+- field metric_dict: Dict[str, RetrievalMetricResult] [Required]#
+Metric dictionary for the evaluation
+- field mode: RetrievalEvalMode = RetrievalEvalMode.TEXT#
+text or image
+- field query: str [Required]#
+Query string
+- field retrieved_ids: List[str] [Required]#
+Retrieved ids
+- field retrieved_texts: List[str] [Required]#
+Retrieved texts
+- classmethod construct(_fields_set: Optional[SetStr] = None, **values: Any) Model #
+Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data. Default values are respected, but no other validation is performed. Behaves as if Config.extra = ‘allow’ was set since it adds all passed values
+- copy(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, update: Optional[DictStrAny] = None, deep: bool = False) Model #
+Duplicate a model, optionally choose which fields to include, exclude and change.
+- Parameters
+include – fields to include in new model
+exclude – fields to exclude from new model, as with values this takes precedence over include
+update – values to change/add in the new model. Note: the data is not validated before creating the new model: you should trust this data
+deep – set to True to make a deep copy of the model
+-
+- Returns
+new model instance
+- dict(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, by_alias: bool = False, skip_defaults: Optional[bool] = None, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) DictStrAny #
+Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+- classmethod from_orm(obj: Any) Model #
+- json(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, by_alias: bool = False, skip_defaults: Optional[bool] = None, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[Any], Any]] = None, models_as_dict: bool = True, **dumps_kwargs: Any) unicode #
+Generate a JSON representation of the model, include and exclude arguments as per dict().
+encoder is an optional function to supply as default to json.dumps(), other arguments as per json.dumps().
+- classmethod parse_file(path: Union[str, Path], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod parse_obj(obj: Any) Model #
+- classmethod parse_raw(b: Union[str, bytes], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod schema(by_alias: bool = True, ref_template: unicode = '#/definitions/{model}') DictStrAny #
+- classmethod schema_json(*, by_alias: bool = True, ref_template: unicode = '#/definitions/{model}', **dumps_kwargs: Any) unicode #
+- classmethod update_forward_refs(**localns: Any) None #
+Try to update ForwardRefs on fields based on this Model, globalns and localns.
+- classmethod validate(value: Any) Model #
+- property metric_vals_dict: Dict[str, float]#
+Dictionary of metric values.
+- pydantic model llama_index.core.evaluation.RetrievalMetricResult#
+Metric result.
+- score#
+Score for the metric
+- Type
+float
+- metadata#
+Metadata for the metric result
+- Type
+Dict[str, Any]
+Show JSON schema
+{ "title": "RetrievalMetricResult", "description": "Metric result.\n\nAttributes:\n score (float): Score for the metric\n metadata (Dict[str, Any]): Metadata for the metric result", "type": "object", "properties": { "score": { "title": "Score", "description": "Score for the metric", "type": "number" }, "metadata": { "title": "Metadata", "description": "Metadata for the metric result", "type": "object" } }, "required": [ "score" ] }
+- Fields
+metadata (Dict[str, Any])
+score (float)
+-
+- field metadata: Dict[str, Any] [Optional]#
+Metadata for the metric result
+- field score: float [Required]#
+Score for the metric
+- classmethod construct(_fields_set: Optional[SetStr] = None, **values: Any) Model #
+Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data. Default values are respected, but no other validation is performed. Behaves as if Config.extra = ‘allow’ was set since it adds all passed values
+- copy(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, update: Optional[DictStrAny] = None, deep: bool = False) Model #
+Duplicate a model, optionally choose which fields to include, exclude and change.
+- Parameters
+include – fields to include in new model
+exclude – fields to exclude from new model, as with values this takes precedence over include
+update – values to change/add in the new model. Note: the data is not validated before creating the new model: you should trust this data
+deep – set to True to make a deep copy of the model
+-
+- Returns
+new model instance
+- dict(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, by_alias: bool = False, skip_defaults: Optional[bool] = None, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) DictStrAny #
+Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+- classmethod from_orm(obj: Any) Model #
+- json(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, by_alias: bool = False, skip_defaults: Optional[bool] = None, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[Any], Any]] = None, models_as_dict: bool = True, **dumps_kwargs: Any) unicode #
+Generate a JSON representation of the model, include and exclude arguments as per dict().
+encoder is an optional function to supply as default to json.dumps(), other arguments as per json.dumps().
+- classmethod parse_file(path: Union[str, Path], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod parse_obj(obj: Any) Model #
+- classmethod parse_raw(b: Union[str, bytes], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod schema(by_alias: bool = True, ref_template: unicode = '#/definitions/{model}') DictStrAny #
+- classmethod schema_json(*, by_alias: bool = True, ref_template: unicode = '#/definitions/{model}', **dumps_kwargs: Any) unicode #
+- classmethod update_forward_refs(**localns: Any) None #
+Try to update ForwardRefs on fields based on this Model, globalns and localns.
+- classmethod validate(value: Any) Model #
+- pydantic model llama_index.core.evaluation.RetrieverEvaluator#
+Retriever evaluator.
+This module will evaluate a retriever using a set of metrics.
+- Parameters
+metrics (List[BaseRetrievalMetric]) – Sequence of metrics to evaluate
+retriever – Retriever to evaluate.
+node_postprocessors (Optional[List[BaseNodePostprocessor]]) – Post-processor to apply after retrieval.
+-
+Show JSON schema
+{ "title": "RetrieverEvaluator", "description": "Retriever evaluator.\n\nThis module will evaluate a retriever using a set of metrics.\n\nArgs:\n metrics (List[BaseRetrievalMetric]): Sequence of metrics to evaluate\n retriever: Retriever to evaluate.\n node_postprocessors (Optional[List[BaseNodePostprocessor]]): Post-processor to apply after retrieval.", "type": "object", "properties": { "metrics": { "title": "Metrics", "description": "List of metrics to evaluate", "type": "array", "items": { "$ref": "#/definitions/BaseRetrievalMetric" } }, "retriever": { "title": "Retriever" }, "node_postprocessors": { "title": "Node Postprocessors", "description": "Optional post-processor", "type": "array", "items": { "$ref": "#/definitions/BaseNodePostprocessor" } } }, "required": [ "metrics" ], "definitions": { "BaseRetrievalMetric": { "title": "BaseRetrievalMetric", "description": "Base class for retrieval metrics.", "type": "object", "properties": { "metric_name": { "title": "Metric Name", "type": "string" } }, "required": [ "metric_name" ] }, "BaseNodePostprocessor": { "title": "BaseNodePostprocessor", "description": "Chainable mixin.\n\nA module that can produce a `QueryComponent` from a set of inputs through\n`as_query_component`.\n\nIf plugged in directly into a `QueryPipeline`, the `ChainableMixin` will be\nconverted into a `QueryComponent` with default parameters.", "type": "object", "properties": { "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "class_name": { "title": "Class Name", "type": "string", "default": "BaseNodePostprocessor" } } } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+metrics (List[llama_index.core.evaluation.retrieval.metrics_base.BaseRetrievalMetric])
+node_postprocessors (Optional[List[llama_index.core.postprocessor.types.BaseNodePostprocessor]])
+retriever (llama_index.core.base.base_retriever.BaseRetriever)
+-
+- field metrics: List[BaseRetrievalMetric] [Required]#
+List of metrics to evaluate
+- field node_postprocessors: Optional[List[BaseNodePostprocessor]] = None#
+Optional post-processor
+- field retriever: BaseRetriever [Required]#
+Retriever to evaluate
+- async aevaluate(query: str, expected_ids: List[str], expected_texts: Optional[List[str]] = None, mode: RetrievalEvalMode = RetrievalEvalMode.TEXT, **kwargs: Any) RetrievalEvalResult #
+Run evaluation with query string, retrieved contexts, and generated response string.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- async aevaluate_dataset(dataset: EmbeddingQAFinetuneDataset, workers: int = 2, show_progress: bool = False, **kwargs: Any) List[RetrievalEvalResult] #
+Run evaluation with dataset.
+- classmethod construct(_fields_set: Optional[SetStr] = None, **values: Any) Model #
+Creates a new model setting __dict__ and __fields_set__ from trusted or pre-validated data. Default values are respected, but no other validation is performed. Behaves as if Config.extra = ‘allow’ was set since it adds all passed values
+- copy(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, update: Optional[DictStrAny] = None, deep: bool = False) Model #
+Duplicate a model, optionally choose which fields to include, exclude and change.
+- Parameters
+include – fields to include in new model
+exclude – fields to exclude from new model, as with values this takes precedence over include
+update – values to change/add in the new model. Note: the data is not validated before creating the new model: you should trust this data
+deep – set to True to make a deep copy of the model
+-
+- Returns
+new model instance
+- dict(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, by_alias: bool = False, skip_defaults: Optional[bool] = None, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False) DictStrAny #
+Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+- evaluate(query: str, expected_ids: List[str], expected_texts: Optional[List[str]] = None, mode: RetrievalEvalMode = RetrievalEvalMode.TEXT, **kwargs: Any) RetrievalEvalResult #
+Run evaluation results with query string and expected ids.
+- Parameters
+query (str) – Query string
+expected_ids (List[str]) – Expected ids
+-
+- Returns
+Evaluation result
+- Return type
+- classmethod from_metric_names(metric_names: List[str], **kwargs: Any) BaseRetrievalEvaluator #
+Create evaluator from metric names.
+- Parameters
+metric_names (List[str]) – List of metric names
+**kwargs – Additional arguments for the evaluator
+-
+- classmethod from_orm(obj: Any) Model #
+- json(*, include: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, exclude: Optional[Union[AbstractSetIntStr, MappingIntStrAny]] = None, by_alias: bool = False, skip_defaults: Optional[bool] = None, exclude_unset: bool = False, exclude_defaults: bool = False, exclude_none: bool = False, encoder: Optional[Callable[[Any], Any]] = None, models_as_dict: bool = True, **dumps_kwargs: Any) unicode #
+Generate a JSON representation of the model, include and exclude arguments as per dict().
+encoder is an optional function to supply as default to json.dumps(), other arguments as per json.dumps().
+- classmethod parse_file(path: Union[str, Path], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod parse_obj(obj: Any) Model #
+- classmethod parse_raw(b: Union[str, bytes], *, content_type: unicode = None, encoding: unicode = 'utf8', proto: Protocol = None, allow_pickle: bool = False) Model #
+- classmethod schema(by_alias: bool = True, ref_template: unicode = '#/definitions/{model}') DictStrAny #
+- classmethod schema_json(*, by_alias: bool = True, ref_template: unicode = '#/definitions/{model}', **dumps_kwargs: Any) unicode #
+- classmethod update_forward_refs(**localns: Any) None #
+Try to update ForwardRefs on fields based on this Model, globalns and localns.
+- classmethod validate(value: Any) Model #
+- class llama_index.core.evaluation.SemanticSimilarityEvaluator(embed_model: Optional[BaseEmbedding] = None, similarity_fn: Optional[Callable[[...], float]] = None, similarity_mode: Optional[SimilarityMode] = None, similarity_threshold: float = 0.8, service_context: Optional[ServiceContext] = None)#
+Embedding similarity evaluator.
+Evaluate the quality of a question answering system by comparing the similarity between embeddings of the generated answer and the reference answer.
+Inspired by this paper: - Semantic Answer Similarity for Evaluating Question Answering Models
+- Parameters
+service_context (Optional[ServiceContext]) – Service context.
+similarity_threshold (float) – Embedding similarity threshold for “passing”. Defaults to 0.8.
+-
+- async aevaluate(query: Optional[str] = None, response: Optional[str] = None, contexts: Optional[Sequence[str]] = None, reference: Optional[str] = None, **kwargs: Any) EvaluationResult #
+Run evaluation with query string, retrieved contexts, and generated response string.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- async aevaluate_response(query: Optional[str] = None, response: Optional[Response] = None, **kwargs: Any) EvaluationResult #
+Run evaluation with query string and generated Response object.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- evaluate(query: Optional[str] = None, response: Optional[str] = None, contexts: Optional[Sequence[str]] = None, **kwargs: Any) EvaluationResult #
+Run evaluation with query string, retrieved contexts, and generated response string.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- evaluate_response(query: Optional[str] = None, response: Optional[Response] = None, **kwargs: Any) EvaluationResult #
+Run evaluation with query string and generated Response object.
+Subclasses can override this method to provide custom evaluation logic and take in additional arguments.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- llama_index.core.evaluation.generate_qa_embedding_pairs(nodes: List[TextNode], llm: LLM, qa_generate_prompt_tmpl: str = 'Context information is below.\n\n---------------------\n{context_str}\n---------------------\n\nGiven the context information and not prior knowledge.\ngenerate only questions based on the below query.\n\nYou are a Teacher/ Professor. Your task is to setup {num_questions_per_chunk} questions for an upcoming quiz/examination. The questions should be diverse in nature across the document. Restrict the questions to the context information provided."\n', num_questions_per_chunk: int = 2) EmbeddingQAFinetuneDataset #
+Generate examples given a set of nodes.
+- llama_index.core.evaluation.generate_question_context_pairs(nodes: List[TextNode], llm: LLM, qa_generate_prompt_tmpl: str = 'Context information is below.\n\n---------------------\n{context_str}\n---------------------\n\nGiven the context information and not prior knowledge.\ngenerate only questions based on the below query.\n\nYou are a Teacher/ Professor. Your task is to setup {num_questions_per_chunk} questions for an upcoming quiz/examination. The questions should be diverse in nature across the document. Restrict the questions to the context information provided."\n', num_questions_per_chunk: int = 2) EmbeddingQAFinetuneDataset #
+Generate examples given a set of nodes.
+- llama_index.core.evaluation.get_retrieval_results_df(names: List[str], results_arr: List[List[RetrievalEvalResult]], metric_keys: Optional[List[str]] = None) DataFrame #
+Display retrieval results.
+- llama_index.core.evaluation.resolve_metrics(metrics: List[str]) List[Type[BaseRetrievalMetric]] #
+Resolve metrics from list of metric names.

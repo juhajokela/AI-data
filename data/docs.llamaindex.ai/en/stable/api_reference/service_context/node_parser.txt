@@ -1,0 +1,190 @@
+Node Parser#
+llama_index.core.node_parser Package#
+Node parsers.
+Functions#
+Classes#
+- pydantic model llama_index.core.extractors.SummaryExtractor#
+Summary extractor. Node-level extractor with adjacent sharing. Extracts section_summary, prev_section_summary, next_section_summary metadata fields.
+- Parameters
+llm (Optional[LLM]) – LLM
+summaries (List[str]) – list of summaries to extract: ‘self’, ‘prev’, ‘next’
+prompt_template (str) – template for summary extraction
+-
+Show JSON schema
+{ "title": "SummaryExtractor", "description": "Summary extractor. Node-level extractor with adjacent sharing.\nExtracts `section_summary`, `prev_section_summary`, `next_section_summary`\nmetadata fields.\n\nArgs:\n llm (Optional[LLM]): LLM\n summaries (List[str]): list of summaries to extract: 'self', 'prev', 'next'\n prompt_template (str): template for summary extraction", "type": "object", "properties": { "is_text_node_only": { "title": "Is Text Node Only", "default": true, "type": "boolean" }, "show_progress": { "title": "Show Progress", "description": "Whether to show progress.", "default": true, "type": "boolean" }, "metadata_mode": { "description": "Metadata mode to use when reading nodes.", "default": "all", "allOf": [ { "$ref": "#/definitions/MetadataMode" } ] }, "node_text_template": { "title": "Node Text Template", "description": "Template to represent how node text is mixed with metadata text.", "default": "[Excerpt from document]\n{metadata_str}\nExcerpt:\n-----\n{content}\n-----\n", "type": "string" }, "disable_template_rewrite": { "title": "Disable Template Rewrite", "description": "Disable the node template rewrite.", "default": false, "type": "boolean" }, "in_place": { "title": "In Place", "description": "Whether to process nodes in place.", "default": true, "type": "boolean" }, "num_workers": { "title": "Num Workers", "description": "Number of workers to use for concurrent async processing.", "default": 4, "type": "integer" }, "llm": { "title": "Llm", "description": "The LLM to use for generation.", "anyOf": [ { "$ref": "#/definitions/LLMPredictor" }, { "$ref": "#/definitions/LLM" } ] }, "summaries": { "title": "Summaries", "description": "List of summaries to extract: 'self', 'prev', 'next'", "type": "array", "items": { "type": "string" } }, "prompt_template": { "title": "Prompt Template", "description": "Template to use when generating summaries.", "default": "Here is the content of the section:\n{context_str}\n\nSummarize the key topics and entities of the section. \nSummary: ", "type": "string" }, "class_name": { "title": "Class Name", "type": "string", "default": "SummaryExtractor" } }, "required": [ "llm", "summaries" ], "definitions": { "MetadataMode": { "title": "MetadataMode", "description": "An enumeration.", "enum": [ "all", "embed", "llm", "none" ], "type": "string" }, "BasePromptTemplate": { "title": "BasePromptTemplate", "description": "Chainable mixin.\n\nA module that can produce a `QueryComponent` from a set of inputs through\n`as_query_component`.\n\nIf plugged in directly into a `QueryPipeline`, the `ChainableMixin` will be\nconverted into a `QueryComponent` with default parameters.", "type": "object", "properties": { "metadata": { "title": "Metadata", "type": "object" }, "template_vars": { "title": "Template Vars", "type": "array", "items": { "type": "string" } }, "kwargs": { "title": "Kwargs", "type": "object", "additionalProperties": { "type": "string" } }, "output_parser": { "title": "Output Parser", "type": "object", "default": {} }, "template_var_mappings": { "title": "Template Var Mappings", "description": "Template variable mappings (Optional).", "type": "object" } }, "required": [ "metadata", "template_vars", "kwargs" ] }, "PydanticProgramMode": { "title": "PydanticProgramMode", "description": "Pydantic program mode.", "enum": [ "default", "openai", "llm", "guidance", "lm-format-enforcer" ], "type": "string" }, "LLMPredictor": { "title": "LLMPredictor", "description": "LLM predictor class.\n\nA lightweight wrapper on top of LLMs that handles:\n- conversion of prompts to the string input format expected by LLMs\n- logging of prompts and responses to a callback manager\n\nNOTE: Mostly keeping around for legacy reasons. A potential future path is to\ndeprecate this class and move all functionality into the LLM class.", "type": "object", "properties": { "system_prompt": { "title": "System Prompt", "type": "string" }, "query_wrapper_prompt": { "$ref": "#/definitions/BasePromptTemplate" }, "pydantic_program_mode": { "default": "default", "allOf": [ { "$ref": "#/definitions/PydanticProgramMode" } ] }, "class_name": { "title": "Class Name", "type": "string", "default": "LLMPredictor" } } }, "LLM": { "title": "LLM", "description": "LLM interface.", "type": "object", "properties": { "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "system_prompt": { "title": "System Prompt", "description": "System prompt for LLM calls.", "type": "string" }, "output_parser": { "title": "Output Parser", "description": "Output parser to parse, validate, and correct errors programmatically.", "type": "object", "default": {} }, "pydantic_program_mode": { "default": "default", "allOf": [ { "$ref": "#/definitions/PydanticProgramMode" } ] }, "query_wrapper_prompt": { "title": "Query Wrapper Prompt", "description": "Query wrapper prompt for LLM calls.", "allOf": [ { "$ref": "#/definitions/BasePromptTemplate" } ] }, "class_name": { "title": "Class Name", "type": "string", "default": "base_component" } } } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+llm (Union[llama_index.core.service_context_elements.llm_predictor.LLMPredictor, llama_index.core.llms.llm.LLM])
+prompt_template (str)
+summaries (List[str])
+-
+- field llm: Union[LLMPredictor, LLM] [Required]#
+The LLM to use for generation.
+- field prompt_template: str = 'Here is the content of the section:\n{context_str}\n\nSummarize the key topics and entities of the section. \nSummary: '#
+Template to use when generating summaries.
+- field summaries: List[str] [Required]#
+List of summaries to extract: ‘self’, ‘prev’, ‘next’
+- async aextract(nodes: Sequence[BaseNode]) List[Dict] #
+Extracts metadata for a sequence of nodes, returning a list of metadata dictionaries corresponding to each node.
+- Parameters
+nodes (Sequence[Document]) – nodes to extract metadata from
+- classmethod class_name() str #
+Get class name.
+- pydantic model llama_index.core.extractors.QuestionsAnsweredExtractor#
+Questions answered extractor. Node-level extractor. Extracts questions_this_excerpt_can_answer metadata field.
+- Parameters
+llm (Optional[LLM]) – LLM
+questions (int) – number of questions to extract
+prompt_template (str) – template for question extraction,
+embedding_only (bool) – whether to use embedding only
+-
+Show JSON schema
+{ "title": "QuestionsAnsweredExtractor", "description": "Questions answered extractor. Node-level extractor.\nExtracts `questions_this_excerpt_can_answer` metadata field.\n\nArgs:\n llm (Optional[LLM]): LLM\n questions (int): number of questions to extract\n prompt_template (str): template for question extraction,\n embedding_only (bool): whether to use embedding only", "type": "object", "properties": { "is_text_node_only": { "title": "Is Text Node Only", "default": true, "type": "boolean" }, "show_progress": { "title": "Show Progress", "description": "Whether to show progress.", "default": true, "type": "boolean" }, "metadata_mode": { "description": "Metadata mode to use when reading nodes.", "default": "all", "allOf": [ { "$ref": "#/definitions/MetadataMode" } ] }, "node_text_template": { "title": "Node Text Template", "description": "Template to represent how node text is mixed with metadata text.", "default": "[Excerpt from document]\n{metadata_str}\nExcerpt:\n-----\n{content}\n-----\n", "type": "string" }, "disable_template_rewrite": { "title": "Disable Template Rewrite", "description": "Disable the node template rewrite.", "default": false, "type": "boolean" }, "in_place": { "title": "In Place", "description": "Whether to process nodes in place.", "default": true, "type": "boolean" }, "num_workers": { "title": "Num Workers", "description": "Number of workers to use for concurrent async processing.", "default": 4, "type": "integer" }, "llm": { "title": "Llm", "description": "The LLM to use for generation.", "anyOf": [ { "$ref": "#/definitions/LLMPredictor" }, { "$ref": "#/definitions/LLM" } ] }, "questions": { "title": "Questions", "description": "The number of questions to generate.", "default": 5, "exclusiveMinimum": 0, "type": "integer" }, "prompt_template": { "title": "Prompt Template", "description": "Prompt template to use when generating questions.", "default": "Here is the context:\n{context_str}\n\nGiven the contextual information, generate {num_questions} questions this context can provide specific answers to which are unlikely to be found elsewhere.\n\nHigher-level summaries of surrounding context may be provided as well. Try using these summaries to generate better questions that this context can answer.\n\n", "type": "string" }, "embedding_only": { "title": "Embedding Only", "description": "Whether to use metadata for emebddings only.", "default": true, "type": "boolean" }, "class_name": { "title": "Class Name", "type": "string", "default": "QuestionsAnsweredExtractor" } }, "required": [ "llm" ], "definitions": { "MetadataMode": { "title": "MetadataMode", "description": "An enumeration.", "enum": [ "all", "embed", "llm", "none" ], "type": "string" }, "BasePromptTemplate": { "title": "BasePromptTemplate", "description": "Chainable mixin.\n\nA module that can produce a `QueryComponent` from a set of inputs through\n`as_query_component`.\n\nIf plugged in directly into a `QueryPipeline`, the `ChainableMixin` will be\nconverted into a `QueryComponent` with default parameters.", "type": "object", "properties": { "metadata": { "title": "Metadata", "type": "object" }, "template_vars": { "title": "Template Vars", "type": "array", "items": { "type": "string" } }, "kwargs": { "title": "Kwargs", "type": "object", "additionalProperties": { "type": "string" } }, "output_parser": { "title": "Output Parser", "type": "object", "default": {} }, "template_var_mappings": { "title": "Template Var Mappings", "description": "Template variable mappings (Optional).", "type": "object" } }, "required": [ "metadata", "template_vars", "kwargs" ] }, "PydanticProgramMode": { "title": "PydanticProgramMode", "description": "Pydantic program mode.", "enum": [ "default", "openai", "llm", "guidance", "lm-format-enforcer" ], "type": "string" }, "LLMPredictor": { "title": "LLMPredictor", "description": "LLM predictor class.\n\nA lightweight wrapper on top of LLMs that handles:\n- conversion of prompts to the string input format expected by LLMs\n- logging of prompts and responses to a callback manager\n\nNOTE: Mostly keeping around for legacy reasons. A potential future path is to\ndeprecate this class and move all functionality into the LLM class.", "type": "object", "properties": { "system_prompt": { "title": "System Prompt", "type": "string" }, "query_wrapper_prompt": { "$ref": "#/definitions/BasePromptTemplate" }, "pydantic_program_mode": { "default": "default", "allOf": [ { "$ref": "#/definitions/PydanticProgramMode" } ] }, "class_name": { "title": "Class Name", "type": "string", "default": "LLMPredictor" } } }, "LLM": { "title": "LLM", "description": "LLM interface.", "type": "object", "properties": { "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "system_prompt": { "title": "System Prompt", "description": "System prompt for LLM calls.", "type": "string" }, "output_parser": { "title": "Output Parser", "description": "Output parser to parse, validate, and correct errors programmatically.", "type": "object", "default": {} }, "pydantic_program_mode": { "default": "default", "allOf": [ { "$ref": "#/definitions/PydanticProgramMode" } ] }, "query_wrapper_prompt": { "title": "Query Wrapper Prompt", "description": "Query wrapper prompt for LLM calls.", "allOf": [ { "$ref": "#/definitions/BasePromptTemplate" } ] }, "class_name": { "title": "Class Name", "type": "string", "default": "base_component" } } } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+embedding_only (bool)
+llm (Union[llama_index.core.service_context_elements.llm_predictor.LLMPredictor, llama_index.core.llms.llm.LLM])
+prompt_template (str)
+questions (int)
+-
+- field embedding_only: bool = True#
+Whether to use metadata for emebddings only.
+- field llm: Union[LLMPredictor, LLM] [Required]#
+The LLM to use for generation.
+- field prompt_template: str = 'Here is the context:\n{context_str}\n\nGiven the contextual information, generate {num_questions} questions this context can provide specific answers to which are unlikely to be found elsewhere.\n\nHigher-level summaries of surrounding context may be provided as well. Try using these summaries to generate better questions that this context can answer.\n\n'#
+Prompt template to use when generating questions.
+- field questions: int = 5#
+The number of questions to generate.
+- Constraints
+exclusiveMinimum = 0
+-
+- async aextract(nodes: Sequence[BaseNode]) List[Dict] #
+Extracts metadata for a sequence of nodes, returning a list of metadata dictionaries corresponding to each node.
+- Parameters
+nodes (Sequence[Document]) – nodes to extract metadata from
+- classmethod class_name() str #
+Get class name.
+- pydantic model llama_index.core.extractors.TitleExtractor#
+Title extractor. Useful for long documents. Extracts document_title metadata field.
+- Parameters
+llm (Optional[LLM]) – LLM
+nodes (int) – number of nodes from front to use for title extraction
+node_template (str) – template for node-level title clues extraction
+combine_template (str) – template for combining node-level clues into a document-level title
+-
+Show JSON schema
+{ "title": "TitleExtractor", "description": "Title extractor. Useful for long documents. Extracts `document_title`\nmetadata field.\n\nArgs:\n llm (Optional[LLM]): LLM\n nodes (int): number of nodes from front to use for title extraction\n node_template (str): template for node-level title clues extraction\n combine_template (str): template for combining node-level clues into\n a document-level title", "type": "object", "properties": { "is_text_node_only": { "title": "Is Text Node Only", "default": false, "type": "boolean" }, "show_progress": { "title": "Show Progress", "description": "Whether to show progress.", "default": true, "type": "boolean" }, "metadata_mode": { "description": "Metadata mode to use when reading nodes.", "default": "all", "allOf": [ { "$ref": "#/definitions/MetadataMode" } ] }, "node_text_template": { "title": "Node Text Template", "description": "Template to represent how node text is mixed with metadata text.", "default": "[Excerpt from document]\n{metadata_str}\nExcerpt:\n-----\n{content}\n-----\n", "type": "string" }, "disable_template_rewrite": { "title": "Disable Template Rewrite", "description": "Disable the node template rewrite.", "default": false, "type": "boolean" }, "in_place": { "title": "In Place", "description": "Whether to process nodes in place.", "default": true, "type": "boolean" }, "num_workers": { "title": "Num Workers", "description": "Number of workers to use for concurrent async processing.", "default": 4, "type": "integer" }, "llm": { "title": "Llm", "description": "The LLM to use for generation.", "anyOf": [ { "$ref": "#/definitions/LLMPredictor" }, { "$ref": "#/definitions/LLM" } ] }, "nodes": { "title": "Nodes", "description": "The number of nodes to extract titles from.", "default": 5, "exclusiveMinimum": 0, "type": "integer" }, "node_template": { "title": "Node Template", "description": "The prompt template to extract titles with.", "default": "Context: {context_str}. Give a title that summarizes all of the unique entities, titles or themes found in the context. Title: ", "type": "string" }, "combine_template": { "title": "Combine Template", "description": "The prompt template to merge titles with.", "default": "{context_str}. Based on the above candidate titles and content, what is the comprehensive title for this document? Title: ", "type": "string" }, "class_name": { "title": "Class Name", "type": "string", "default": "TitleExtractor" } }, "required": [ "llm" ], "definitions": { "MetadataMode": { "title": "MetadataMode", "description": "An enumeration.", "enum": [ "all", "embed", "llm", "none" ], "type": "string" }, "BasePromptTemplate": { "title": "BasePromptTemplate", "description": "Chainable mixin.\n\nA module that can produce a `QueryComponent` from a set of inputs through\n`as_query_component`.\n\nIf plugged in directly into a `QueryPipeline`, the `ChainableMixin` will be\nconverted into a `QueryComponent` with default parameters.", "type": "object", "properties": { "metadata": { "title": "Metadata", "type": "object" }, "template_vars": { "title": "Template Vars", "type": "array", "items": { "type": "string" } }, "kwargs": { "title": "Kwargs", "type": "object", "additionalProperties": { "type": "string" } }, "output_parser": { "title": "Output Parser", "type": "object", "default": {} }, "template_var_mappings": { "title": "Template Var Mappings", "description": "Template variable mappings (Optional).", "type": "object" } }, "required": [ "metadata", "template_vars", "kwargs" ] }, "PydanticProgramMode": { "title": "PydanticProgramMode", "description": "Pydantic program mode.", "enum": [ "default", "openai", "llm", "guidance", "lm-format-enforcer" ], "type": "string" }, "LLMPredictor": { "title": "LLMPredictor", "description": "LLM predictor class.\n\nA lightweight wrapper on top of LLMs that handles:\n- conversion of prompts to the string input format expected by LLMs\n- logging of prompts and responses to a callback manager\n\nNOTE: Mostly keeping around for legacy reasons. A potential future path is to\ndeprecate this class and move all functionality into the LLM class.", "type": "object", "properties": { "system_prompt": { "title": "System Prompt", "type": "string" }, "query_wrapper_prompt": { "$ref": "#/definitions/BasePromptTemplate" }, "pydantic_program_mode": { "default": "default", "allOf": [ { "$ref": "#/definitions/PydanticProgramMode" } ] }, "class_name": { "title": "Class Name", "type": "string", "default": "LLMPredictor" } } }, "LLM": { "title": "LLM", "description": "LLM interface.", "type": "object", "properties": { "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "system_prompt": { "title": "System Prompt", "description": "System prompt for LLM calls.", "type": "string" }, "output_parser": { "title": "Output Parser", "description": "Output parser to parse, validate, and correct errors programmatically.", "type": "object", "default": {} }, "pydantic_program_mode": { "default": "default", "allOf": [ { "$ref": "#/definitions/PydanticProgramMode" } ] }, "query_wrapper_prompt": { "title": "Query Wrapper Prompt", "description": "Query wrapper prompt for LLM calls.", "allOf": [ { "$ref": "#/definitions/BasePromptTemplate" } ] }, "class_name": { "title": "Class Name", "type": "string", "default": "base_component" } } } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+combine_template (str)
+is_text_node_only (bool)
+llm (Union[llama_index.core.service_context_elements.llm_predictor.LLMPredictor, llama_index.core.llms.llm.LLM])
+node_template (str)
+nodes (int)
+-
+- field combine_template: str = '{context_str}. Based on the above candidate titles and content, what is the comprehensive title for this document? Title: '#
+The prompt template to merge titles with.
+- field is_text_node_only: bool = False#
+- field llm: Union[LLMPredictor, LLM] [Required]#
+The LLM to use for generation.
+- field node_template: str = 'Context: {context_str}. Give a title that summarizes all of the unique entities, titles or themes found in the context. Title: '#
+The prompt template to extract titles with.
+- field nodes: int = 5#
+The number of nodes to extract titles from.
+- Constraints
+exclusiveMinimum = 0
+-
+- async aextract(nodes: Sequence[BaseNode]) List[Dict] #
+Extracts metadata for a sequence of nodes, returning a list of metadata dictionaries corresponding to each node.
+- Parameters
+nodes (Sequence[Document]) – nodes to extract metadata from
+- classmethod class_name() str #
+Get class name.
+- async extract_titles(nodes_by_doc_id: Dict) Dict #
+- pydantic model llama_index.core.extractors.KeywordExtractor#
+Keyword extractor. Node-level extractor. Extracts excerpt_keywords metadata field.
+- Parameters
+llm (Optional[LLM]) – LLM
+keywords (int) – number of keywords to extract
+-
+Show JSON schema
+{ "title": "KeywordExtractor", "description": "Keyword extractor. Node-level extractor. Extracts\n`excerpt_keywords` metadata field.\n\nArgs:\n llm (Optional[LLM]): LLM\n keywords (int): number of keywords to extract", "type": "object", "properties": { "is_text_node_only": { "title": "Is Text Node Only", "default": true, "type": "boolean" }, "show_progress": { "title": "Show Progress", "description": "Whether to show progress.", "default": true, "type": "boolean" }, "metadata_mode": { "description": "Metadata mode to use when reading nodes.", "default": "all", "allOf": [ { "$ref": "#/definitions/MetadataMode" } ] }, "node_text_template": { "title": "Node Text Template", "description": "Template to represent how node text is mixed with metadata text.", "default": "[Excerpt from document]\n{metadata_str}\nExcerpt:\n-----\n{content}\n-----\n", "type": "string" }, "disable_template_rewrite": { "title": "Disable Template Rewrite", "description": "Disable the node template rewrite.", "default": false, "type": "boolean" }, "in_place": { "title": "In Place", "description": "Whether to process nodes in place.", "default": true, "type": "boolean" }, "num_workers": { "title": "Num Workers", "description": "Number of workers to use for concurrent async processing.", "default": 4, "type": "integer" }, "llm": { "title": "Llm", "description": "The LLM to use for generation.", "anyOf": [ { "$ref": "#/definitions/LLMPredictor" }, { "$ref": "#/definitions/LLM" } ] }, "keywords": { "title": "Keywords", "description": "The number of keywords to extract.", "default": 5, "exclusiveMinimum": 0, "type": "integer" }, "class_name": { "title": "Class Name", "type": "string", "default": "KeywordExtractor" } }, "required": [ "llm" ], "definitions": { "MetadataMode": { "title": "MetadataMode", "description": "An enumeration.", "enum": [ "all", "embed", "llm", "none" ], "type": "string" }, "BasePromptTemplate": { "title": "BasePromptTemplate", "description": "Chainable mixin.\n\nA module that can produce a `QueryComponent` from a set of inputs through\n`as_query_component`.\n\nIf plugged in directly into a `QueryPipeline`, the `ChainableMixin` will be\nconverted into a `QueryComponent` with default parameters.", "type": "object", "properties": { "metadata": { "title": "Metadata", "type": "object" }, "template_vars": { "title": "Template Vars", "type": "array", "items": { "type": "string" } }, "kwargs": { "title": "Kwargs", "type": "object", "additionalProperties": { "type": "string" } }, "output_parser": { "title": "Output Parser", "type": "object", "default": {} }, "template_var_mappings": { "title": "Template Var Mappings", "description": "Template variable mappings (Optional).", "type": "object" } }, "required": [ "metadata", "template_vars", "kwargs" ] }, "PydanticProgramMode": { "title": "PydanticProgramMode", "description": "Pydantic program mode.", "enum": [ "default", "openai", "llm", "guidance", "lm-format-enforcer" ], "type": "string" }, "LLMPredictor": { "title": "LLMPredictor", "description": "LLM predictor class.\n\nA lightweight wrapper on top of LLMs that handles:\n- conversion of prompts to the string input format expected by LLMs\n- logging of prompts and responses to a callback manager\n\nNOTE: Mostly keeping around for legacy reasons. A potential future path is to\ndeprecate this class and move all functionality into the LLM class.", "type": "object", "properties": { "system_prompt": { "title": "System Prompt", "type": "string" }, "query_wrapper_prompt": { "$ref": "#/definitions/BasePromptTemplate" }, "pydantic_program_mode": { "default": "default", "allOf": [ { "$ref": "#/definitions/PydanticProgramMode" } ] }, "class_name": { "title": "Class Name", "type": "string", "default": "LLMPredictor" } } }, "LLM": { "title": "LLM", "description": "LLM interface.", "type": "object", "properties": { "callback_manager": { "title": "Callback Manager", "type": "object", "default": {} }, "system_prompt": { "title": "System Prompt", "description": "System prompt for LLM calls.", "type": "string" }, "output_parser": { "title": "Output Parser", "description": "Output parser to parse, validate, and correct errors programmatically.", "type": "object", "default": {} }, "pydantic_program_mode": { "default": "default", "allOf": [ { "$ref": "#/definitions/PydanticProgramMode" } ] }, "query_wrapper_prompt": { "title": "Query Wrapper Prompt", "description": "Query wrapper prompt for LLM calls.", "allOf": [ { "$ref": "#/definitions/BasePromptTemplate" } ] }, "class_name": { "title": "Class Name", "type": "string", "default": "base_component" } } } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+keywords (int)
+llm (Union[llama_index.core.service_context_elements.llm_predictor.LLMPredictor, llama_index.core.llms.llm.LLM])
+-
+- field keywords: int = 5#
+The number of keywords to extract.
+- Constraints
+exclusiveMinimum = 0
+-
+- field llm: Union[LLMPredictor, LLM] [Required]#
+The LLM to use for generation.
+- async aextract(nodes: Sequence[BaseNode]) List[Dict] #
+Extracts metadata for a sequence of nodes, returning a list of metadata dictionaries corresponding to each node.
+- Parameters
+nodes (Sequence[Document]) – nodes to extract metadata from
+- classmethod class_name() str #
+Get class name.
+- pydantic model llama_index.core.extractors.BaseExtractor#
+Metadata extractor.
+Show JSON schema
+{ "title": "BaseExtractor", "description": "Metadata extractor.", "type": "object", "properties": { "is_text_node_only": { "title": "Is Text Node Only", "default": true, "type": "boolean" }, "show_progress": { "title": "Show Progress", "description": "Whether to show progress.", "default": true, "type": "boolean" }, "metadata_mode": { "description": "Metadata mode to use when reading nodes.", "default": "all", "allOf": [ { "$ref": "#/definitions/MetadataMode" } ] }, "node_text_template": { "title": "Node Text Template", "description": "Template to represent how node text is mixed with metadata text.", "default": "[Excerpt from document]\n{metadata_str}\nExcerpt:\n-----\n{content}\n-----\n", "type": "string" }, "disable_template_rewrite": { "title": "Disable Template Rewrite", "description": "Disable the node template rewrite.", "default": false, "type": "boolean" }, "in_place": { "title": "In Place", "description": "Whether to process nodes in place.", "default": true, "type": "boolean" }, "num_workers": { "title": "Num Workers", "description": "Number of workers to use for concurrent async processing.", "default": 4, "type": "integer" }, "class_name": { "title": "Class Name", "type": "string", "default": "MetadataExtractor" } }, "definitions": { "MetadataMode": { "title": "MetadataMode", "description": "An enumeration.", "enum": [ "all", "embed", "llm", "none" ], "type": "string" } } }
+- Config
+arbitrary_types_allowed: bool = True
+-
+- Fields
+disable_template_rewrite (bool)
+in_place (bool)
+is_text_node_only (bool)
+metadata_mode (llama_index.core.schema.MetadataMode)
+node_text_template (str)
+num_workers (int)
+show_progress (bool)
+-
+- field disable_template_rewrite: bool = False#
+Disable the node template rewrite.
+- field in_place: bool = True#
+Whether to process nodes in place.
+- field is_text_node_only: bool = True#
+- field metadata_mode: MetadataMode = MetadataMode.ALL#
+Metadata mode to use when reading nodes.
+- field node_text_template: str = '[Excerpt from document]\n{metadata_str}\nExcerpt:\n-----\n{content}\n-----\n'#
+Template to represent how node text is mixed with metadata text.
+- field num_workers: int = 4#
+Number of workers to use for concurrent async processing.
+- field show_progress: bool = True#
+Whether to show progress.
+- async acall(nodes: List[BaseNode], **kwargs: Any) List[BaseNode] #
+Post process nodes parsed from documents.
+Allows extractors to be chained.
+- Parameters
+nodes (List[BaseNode]) – nodes to post-process
+- abstract async aextract(nodes: Sequence[BaseNode]) List[Dict] #
+Extracts metadata for a sequence of nodes, returning a list of metadata dictionaries corresponding to each node.
+- Parameters
+nodes (Sequence[Document]) – nodes to extract metadata from
+- async aprocess_nodes(nodes: List[BaseNode], excluded_embed_metadata_keys: Optional[List[str]] = None, excluded_llm_metadata_keys: Optional[List[str]] = None, **kwargs: Any) List[BaseNode] #
+Post process nodes parsed from documents.
+Allows extractors to be chained.
+- Parameters
+nodes (List[BaseNode]) – nodes to post-process
+excluded_embed_metadata_keys (Optional[List[str]]) – keys to exclude from embed metadata
+excluded_llm_metadata_keys (Optional[List[str]]) – keys to exclude from llm metadata
+-
+- classmethod class_name() str #
+Get class name.
+- extract(nodes: Sequence[BaseNode]) List[Dict] #
+Extracts metadata for a sequence of nodes, returning a list of metadata dictionaries corresponding to each node.
+- Parameters
+nodes (Sequence[Document]) – nodes to extract metadata from
+- classmethod from_dict(data: Dict[str, Any], **kwargs: Any) Self #

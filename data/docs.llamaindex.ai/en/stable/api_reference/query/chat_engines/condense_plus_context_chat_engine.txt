@@ -1,0 +1,22 @@
+Condense Plus Context Chat Engine#
+- class llama_index.core.chat_engine.condense_plus_context.CondensePlusContextChatEngine(retriever: BaseRetriever, llm: LLM, memory: BaseMemory, context_prompt: Optional[str] = None, condense_prompt: Optional[str] = None, system_prompt: Optional[str] = None, skip_condense: bool = False, node_postprocessors: Optional[List[BaseNodePostprocessor]] = None, callback_manager: Optional[CallbackManager] = None, verbose: bool = False)#
+Condensed Conversation & Context Chat Engine.
+First condense a conversation and latest user message to a standalone question Then build a context for the standalone question from a retriever, Then pass the context along with prompt and user message to LLM to generate a response.
+- async achat(message: str, chat_history: Optional[List[ChatMessage]] = None) AgentChatResponse #
+Async version of main chat interface.
+- async astream_chat(message: str, chat_history: Optional[List[ChatMessage]] = None) StreamingAgentChatResponse #
+Async version of main chat interface.
+- chat(message: str, chat_history: Optional[List[ChatMessage]] = None) AgentChatResponse #
+Main chat interface.
+- property chat_history: List[ChatMessage]#
+Get chat history.
+- chat_repl() None #
+Enter interactive chat REPL.
+- classmethod from_defaults(retriever: BaseRetriever, llm: Optional[LLM] = None, service_context: Optional[ServiceContext] = None, chat_history: Optional[List[ChatMessage]] = None, memory: Optional[BaseMemory] = None, system_prompt: Optional[str] = None, context_prompt: Optional[str] = None, condense_prompt: Optional[str] = None, skip_condense: bool = False, node_postprocessors: Optional[List[BaseNodePostprocessor]] = None, verbose: bool = False, **kwargs: Any) CondensePlusContextChatEngine #
+Initialize a CondensePlusContextChatEngine from default parameters.
+- reset() None #
+Reset conversation state.
+- stream_chat(message: str, chat_history: Optional[List[ChatMessage]] = None) StreamingAgentChatResponse #
+Stream chat interface.
+- streaming_chat_repl() None #
+Enter interactive chat REPL with streaming responses.

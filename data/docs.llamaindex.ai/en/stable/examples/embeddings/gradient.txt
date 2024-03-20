@@ -1,0 +1,46 @@
+Gradient Embeddings#
+Gradient offers embeddings model that can be easily integrated with LlamaIndex. Below is an example of how to use it with LlamaIndex.
+%pip install llama-index-llms-gradient
+%pip install llama-index-embeddings-gradient
+# Install the required packages
+%pip install llama-index --quiet
+%pip install gradientai --quiet
+Gradient needs an access token and workspaces id for authorization. They can be obtained from:
+Gradient UI, or
+Gradient CLI with
+gradient envcommand.
+import os
+os.environ["GRADIENT_ACCESS_TOKEN"] = "{GRADIENT_ACCESS_TOKEN}"
+os.environ["GRADIENT_WORKSPACE_ID"] = "{GRADIENT_WORKSPACE_ID}"
+from llama_index.llms.gradient import GradientBaseModelLLM
+# NOTE: we use a base model here, you can as well insert your fine-tuned model.
+llm = GradientBaseModelLLM(
+base_model_slug="llama2-7b-chat",
+max_tokens=400,
+)
+Download Data#
+!mkdir -p 'data/paul_graham/'
+!wget 'https://raw.githubusercontent.com/run-llama/llama_index/main/docs/examples/data/paul_graham/paul_graham_essay.txt' -O 'data/paul_graham/paul_graham_essay.txt'
+Load Documents#
+from llama_index.core import SimpleDirectoryReader
+documents = SimpleDirectoryReader("./data/paul_graham").load_data()
+print(f"Loaded {len(documents)} document(s).")
+Configure Gradient embeddings#
+from llama_index.embeddings.gradient import GradientEmbedding
+from llama_index.core import Settings
+embed_model = GradientEmbedding(
+gradient_access_token=os.environ["GRADIENT_ACCESS_TOKEN"],
+gradient_workspace_id=os.environ["GRADIENT_WORKSPACE_ID"],
+gradient_model_slug="bge-large",
+)
+Settings.embed_model = embed_model
+Settings.llm = llm
+Settings.chunk_size = 1024
+Setup and Query Index#
+from llama_index.core import VectorStoreIndex
+index = VectorStoreIndex.from_documents(documents)
+query_engine = index.as_query_engine()
+response = query_engine.query(
+"What did the author do after his time at Y Combinator?"
+)
+print(response)

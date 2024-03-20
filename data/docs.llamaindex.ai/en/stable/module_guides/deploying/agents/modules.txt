@@ -1,0 +1,14 @@
+Module Guides#
+These guide provide an overview of how to use our agent classes.
+For more detailed guides on how to use specific tools, check out our tools module guides.
+OpenAI Agent#
+- Build your own OpenAI Agent
+- OpenAI Agent with Query Engine Tools
+- Retrieval-Augmented OpenAI Agent
+- OpenAI Agent + Query Engine Experimental Cookbook
+- OpenAI Agent Query Planning
+- Context-Augmented OpenAI Agent
+- Recursive Retriever + Document Agents
+- Multi-Document Agents
+- GPT Builder Demo
+- Single-Turn Multi-Function Calling OpenAI Agents

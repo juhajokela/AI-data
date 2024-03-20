@@ -1,0 +1,9 @@
+VectorStoreQueryResult#
+- class llama_index.core.vector_stores.VectorStoreQueryResult(nodes: Optional[Sequence[BaseNode]] = None, similarities: Optional[List[float]] = None, ids: Optional[List[str]] = None)#
+Bases:
+object
+Vector store query result.
+Attributes Summary
+Attributes Documentation
+- ids: Optional[List[str]] = None#
+- similarities: Optional[List[float]] = None#

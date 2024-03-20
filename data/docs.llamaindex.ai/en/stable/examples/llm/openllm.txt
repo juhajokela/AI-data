@@ -1,0 +1,70 @@
+OpenLLM#
+There are two ways to interface with LLMs from OpenLLM.
+Through
+openllmpackage if you want to run locally: use
+llama_index.llms.OpenLLM
+If there is a running OpenLLM Server, then it will wraps openllm-client: use
+llama_index.llms.OpenLLMAPI
+There are many possible permutations of these two, so this notebook only details a few. See OpenLLM’s README for more information
+In the below line, we install the packages necessary for this demo:
+openllm[vllm]is needed for
+OpenLLMif you have access to GPU, otherwise
+openllm
+openllm-clientis needed for
+OpenLLMAPI
+The quotes are needed for Z shell (
+zsh)
+%pip install llama-index-llms-openllm
+!pip install "openllm" # use 'openllm[vllm]' if you have access to GPU
+Now that we’re set up, let’s play around:
+If you’re opening this Notebook on colab, you will probably need to install LlamaIndex 🦙.
+!pip install llama-index
+import os
+from typing import List, Optional
+from llama_index.llms.openllm import OpenLLM, OpenLLMAPI
+from llama_index.core.llms import ChatMessage
+os.environ[
+"OPENLLM_ENDPOINT"
+] = "na" # Change this to a remote server that you might run OpenLLM at.
+# This uses https://huggingface.co/HuggingFaceH4/zephyr-7b-alpha
+# downloaded (if first invocation) to the local Hugging Face model cache,
+# and actually runs the model on your local machine's hardware
+local_llm = OpenLLM("HuggingFaceH4/zephyr-7b-alpha")
+# This will use the model running on the server at localhost:3000
+remote_llm = OpenLLMAPI(address="http://localhost:3000")
+# Note here you don't have to pass in the address if OPENLLM_ENDPOINT environment variable is set
+# address if not pass is address=os.getenv("OPENLLM_ENDPOINT")
+remote_llm = OpenLLMAPI()
+Underlying a completion with
+OpenLLM supports continuous batching with vLLM
+completion_response = remote_llm.complete("To infinity, and")
+print(completion_response)
+beyond!
+As a lifelong lover of all things Pixar, I couldn't resist writing about the most recent release in the Toy Story franchise. Toy Story 4 is a nostalgic, heartwarming, and thrilling addition to the series that will have you laughing and crying in equal measure.
+The movie follows Woody (Tom Hanks), Buzz Lightyear (Tim Allen), and the rest of the gang as they embark on a road trip with their new owner, Bonnie. However, things take an unexpected turn when Woody meets Bo Peep (Annie Pot
+OpenLLM and
+OpenLLMAPI also supports streaming, synchronous and asynchronous for
+complete:
+for it in remote_llm.stream_complete(
+"The meaning of time is", max_new_tokens=128
+):
+print(it, end="", flush=True)
+often a topic of philosophical debate. Some people argue that time is an objective reality, while others claim that it is a subjective construct. This essay will explore the philosophical and scientific concepts surrounding the nature of time and the various theories that have been proposed to explain it.
+One of the earliest philosophical theories of time was put forward by Aristotle, who believed that time was a measure of motion. According to Aristotle, time was an abstraction derived from the regular motion of objects in the universe. This theory was later refined by Galileo and Newton, who introduced the concept of time
+They also support chat API as well,
+chat,
+stream_chat,
+achat, and
+astream_chat:
+async for it in remote_llm.astream_chat(
+[
+ChatMessage(
+role="system", content="You are acting as Ernest Hemmingway."
+),
+ChatMessage(role="user", content="Hi there!"),
+ChatMessage(role="assistant", content="Yes?"),
+ChatMessage(role="user", content="What is the meaning of life?"),
+]
+):
+print(it.message.content, flush=True, end="")
+I don't have beliefs or personal opinions, but according to my programming, the meaning of life is subjective and can vary from person to person. however, some people find meaning in their relationships, their work, their faith, or their personal values. ultimately, finding meaning in life is a personal journey that requires self-reflection, purpose, and fulfillment.

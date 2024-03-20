@@ -1,0 +1,69 @@
+Tree Retrievers#
+Summarize query.
+- class llama_index.core.indices.tree.all_leaf_retriever.TreeAllLeafRetriever(index: TreeIndex, callback_manager: Optional[CallbackManager] = None, object_map: Optional[dict] = None, verbose: bool = False, **kwargs: Any)#
+GPT all leaf retriever.
+This class builds a query-specific tree from leaf nodes to return a response. Using this query mode means that the tree index doesn’t need to be built when initialized, since we rebuild the tree for each query.
+- Parameters
+text_qa_template (Optional[BasePromptTemplate]) – Question-Answer Prompt (see Prompt Templates).
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- get_service_context() Optional[ServiceContext] #
+Attempts to resolve a service context. Short-circuits at self.service_context, self._service_context, or self._index.service_context.
+- retrieve(str_or_query_bundle: Union[str, QueryBundle]) List[NodeWithScore] #
+Retrieve nodes given query.
+- Parameters
+str_or_query_bundle (QueryType) – Either a query string or a QueryBundle object.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+Leaf query mechanism.
+- class llama_index.core.indices.tree.select_leaf_retriever.TreeSelectLeafRetriever(index: TreeIndex, query_template: Optional[BasePromptTemplate] = None, text_qa_template: Optional[BasePromptTemplate] = None, refine_template: Optional[BasePromptTemplate] = None, query_template_multiple: Optional[BasePromptTemplate] = None, child_branch_factor: int = 1, verbose: bool = False, callback_manager: Optional[CallbackManager] = None, object_map: Optional[dict] = None, **kwargs: Any)#
+Tree select leaf retriever.
+This class traverses the index graph and searches for a leaf node that can best answer the query.
+- Parameters
+query_template (Optional[BasePromptTemplate]) – Tree Select Query Prompt (see Prompt Templates).
+query_template_multiple (Optional[BasePromptTemplate]) – Tree Select Query Prompt (Multiple) (see Prompt Templates).
+child_branch_factor (int) – Number of child nodes to consider at each level. If child_branch_factor is 1, then the query will only choose one child node to traverse for any given parent node. If child_branch_factor is 2, then the query will choose two child nodes.
+-
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- get_service_context() Optional[ServiceContext] #
+Attempts to resolve a service context. Short-circuits at self.service_context, self._service_context, or self._index.service_context.
+- retrieve(str_or_query_bundle: Union[str, QueryBundle]) List[NodeWithScore] #
+Retrieve nodes given query.
+- Parameters
+str_or_query_bundle (QueryType) – Either a query string or a QueryBundle object.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- llama_index.core.indices.tree.select_leaf_retriever.get_text_from_node(node: BaseNode, level: Optional[int] = None, verbose: bool = False) str #
+Get text from node.
+Query Tree using embedding similarity between query and node text.
+- class llama_index.core.indices.tree.select_leaf_embedding_retriever.TreeSelectLeafEmbeddingRetriever(index: TreeIndex, embed_model: Optional[BaseEmbedding] = None, query_template: Optional[BasePromptTemplate] = None, text_qa_template: Optional[BasePromptTemplate] = None, refine_template: Optional[BasePromptTemplate] = None, query_template_multiple: Optional[BasePromptTemplate] = None, child_branch_factor: int = 1, verbose: bool = False, callback_manager: Optional[CallbackManager] = None, object_map: Optional[dict] = None, **kwargs: Any)#
+Tree select leaf embedding retriever.
+This class traverses the index graph using the embedding similarity between the query and the node text.
+- Parameters
+query_template (Optional[BasePromptTemplate]) – Tree Select Query Prompt (see Prompt Templates).
+query_template_multiple (Optional[BasePromptTemplate]) – Tree Select Query Prompt (Multiple) (see Prompt Templates).
+text_qa_template (Optional[BasePromptTemplate]) – Question-Answer Prompt (see Prompt Templates).
+refine_template (Optional[BasePromptTemplate]) – Refinement Prompt (see Prompt Templates).
+child_branch_factor (int) – Number of child nodes to consider at each level. If child_branch_factor is 1, then the query will only choose one child node to traverse for any given parent node. If child_branch_factor is 2, then the query will choose two child nodes.
+embed_model (Optional[BaseEmbedding]) – Embedding model to use for embedding similarity.
+-
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- get_service_context() Optional[ServiceContext] #
+Attempts to resolve a service context. Short-circuits at self.service_context, self._service_context, or self._index.service_context.
+- retrieve(str_or_query_bundle: Union[str, QueryBundle]) List[NodeWithScore] #
+Retrieve nodes given query.
+- Parameters
+str_or_query_bundle (QueryType) – Either a query string or a QueryBundle object.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.

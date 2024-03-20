@@ -1,0 +1,180 @@
+Document Store#
+- class llama_index.core.storage.docstore.BaseDocumentStore#
+- abstract async adelete_document(doc_id: str, raise_error: bool = True) None #
+Delete a document from the store.
+- abstract async adelete_ref_doc(ref_doc_id: str, raise_error: bool = True) None #
+Delete a ref_doc and all it’s associated nodes.
+- abstract async aget_all_ref_doc_info() Optional[Dict[str, RefDocInfo]] #
+Get a mapping of ref_doc_id -> RefDocInfo for all ingested documents.
+- async aget_node(node_id: str, raise_error: bool = True) BaseNode #
+Get node from docstore.
+- Parameters
+node_id (str) – node id
+raise_error (bool) – raise error if node_id not found
+-
+- async aget_node_dict(node_id_dict: Dict[int, str]) Dict[int, BaseNode] #
+Get node dict from docstore given a mapping of index to node ids.
+- Parameters
+node_id_dict (Dict[int, str]) – mapping of index to node ids
+- async aget_nodes(node_ids: List[str], raise_error: bool = True) List[BaseNode] #
+Get nodes from docstore.
+- Parameters
+node_ids (List[str]) – node ids
+raise_error (bool) – raise error if node_id not found
+-
+- abstract async aget_ref_doc_info(ref_doc_id: str) Optional[RefDocInfo] #
+Get the RefDocInfo for a given ref_doc_id.
+- abstract delete_document(doc_id: str, raise_error: bool = True) None #
+Delete a document from the store.
+- abstract delete_ref_doc(ref_doc_id: str, raise_error: bool = True) None #
+Delete a ref_doc and all it’s associated nodes.
+- abstract get_all_ref_doc_info() Optional[Dict[str, RefDocInfo]] #
+Get a mapping of ref_doc_id -> RefDocInfo for all ingested documents.
+- get_node(node_id: str, raise_error: bool = True) BaseNode #
+Get node from docstore.
+- Parameters
+node_id (str) – node id
+raise_error (bool) – raise error if node_id not found
+-
+- get_node_dict(node_id_dict: Dict[int, str]) Dict[int, BaseNode] #
+Get node dict from docstore given a mapping of index to node ids.
+- Parameters
+node_id_dict (Dict[int, str]) – mapping of index to node ids
+- get_nodes(node_ids: List[str], raise_error: bool = True) List[BaseNode] #
+Get nodes from docstore.
+- Parameters
+node_ids (List[str]) – node ids
+raise_error (bool) – raise error if node_id not found
+-
+- abstract get_ref_doc_info(ref_doc_id: str) Optional[RefDocInfo] #
+Get the RefDocInfo for a given ref_doc_id.
+- persist(persist_path: str = './storage/docstore.json', fs: Optional[AbstractFileSystem] = None) None #
+Persist the docstore to a file.
+- llama_index.core.storage.docstore.DocumentStore#
+alias of
+SimpleDocumentStore
+- class llama_index.core.storage.docstore.SimpleDocumentStore(simple_kvstore: Optional[SimpleKVStore] = None, namespace: Optional[str] = None, batch_size: int = 1)#
+Simple Document (Node) store.
+An in-memory store for Document and Node objects.
+- Parameters
+simple_kvstore (SimpleKVStore) – simple key-value store
+namespace (str) – namespace for the docstore
+-
+- add_documents(nodes: Sequence[BaseNode], allow_update: bool = True, batch_size: Optional[int] = None, store_text: bool = True) None #
+Add a document to the store.
+- Parameters
+docs (List[BaseDocument]) – documents
+allow_update (bool) – allow update of docstore from document
+-
+- async adelete_document(doc_id: str, raise_error: bool = True, remove_ref_doc_node: bool = True) None #
+Delete a document from the store.
+- async adelete_ref_doc(ref_doc_id: str, raise_error: bool = True) None #
+Delete a ref_doc and all it’s associated nodes.
+- async adocument_exists(doc_id: str) bool #
+Check if document exists.
+- async aget_all_document_hashes() Dict[str, str] #
+Get the stored hash for all documents.
+- async aget_all_ref_doc_info() Optional[Dict[str, RefDocInfo]] #
+Get a mapping of ref_doc_id -> RefDocInfo for all ingested documents.
+- async aget_document(doc_id: str, raise_error: bool = True) Optional[BaseNode] #
+Get a document from the store.
+- Parameters
+doc_id (str) – document id
+raise_error (bool) – raise error if doc_id not found
+-
+- async aget_document_hash(doc_id: str) Optional[str] #
+Get the stored hash for a document, if it exists.
+- async aget_node(node_id: str, raise_error: bool = True) BaseNode #
+Get node from docstore.
+- Parameters
+node_id (str) – node id
+raise_error (bool) – raise error if node_id not found
+-
+- async aget_node_dict(node_id_dict: Dict[int, str]) Dict[int, BaseNode] #
+Get node dict from docstore given a mapping of index to node ids.
+- Parameters
+node_id_dict (Dict[int, str]) – mapping of index to node ids
+- async aget_nodes(node_ids: List[str], raise_error: bool = True) List[BaseNode] #
+Get nodes from docstore.
+- Parameters
+node_ids (List[str]) – node ids
+raise_error (bool) – raise error if node_id not found
+-
+- async aget_ref_doc_info(ref_doc_id: str) Optional[RefDocInfo] #
+Get the RefDocInfo for a given ref_doc_id.
+- async aref_doc_exists(ref_doc_id: str) bool #
+Check if a ref_doc_id has been ingested.
+- async aset_document_hash(doc_id: str, doc_hash: str) None #
+Set the hash for a given doc_id.
+- async aset_document_hashes(doc_hashes: Dict[str, str]) None #
+Set the hash for a given doc_id.
+- async async_add_documents(nodes: Sequence[BaseNode], allow_update: bool = True, batch_size: Optional[int] = None, store_text: bool = True) None #
+Add a document to the store.
+- Parameters
+docs (List[BaseDocument]) – documents
+allow_update (bool) – allow update of docstore from document
+-
+- delete_document(doc_id: str, raise_error: bool = True, remove_ref_doc_node: bool = True) None #
+Delete a document from the store.
+- delete_ref_doc(ref_doc_id: str, raise_error: bool = True) None #
+Delete a ref_doc and all it’s associated nodes.
+- property docs: Dict[str, BaseNode]#
+Get all documents.
+- Returns
+documents
+- Return type
+Dict[str, BaseDocument]
+- document_exists(doc_id: str) bool #
+Check if document exists.
+- classmethod from_persist_dir(persist_dir: str = './storage', namespace: Optional[str] = None, fs: Optional[AbstractFileSystem] = None) SimpleDocumentStore #
+Create a SimpleDocumentStore from a persist directory.
+- Parameters
+persist_dir (str) – directory to persist the store
+namespace (Optional[str]) – namespace for the docstore
+fs (Optional[fsspec.AbstractFileSystem]) – filesystem to use
+-
+- classmethod from_persist_path(persist_path: str, namespace: Optional[str] = None, fs: Optional[AbstractFileSystem] = None) SimpleDocumentStore #
+Create a SimpleDocumentStore from a persist path.
+- Parameters
+persist_path (str) – Path to persist the store
+namespace (Optional[str]) – namespace for the docstore
+fs (Optional[fsspec.AbstractFileSystem]) – filesystem to use
+-
+- get_all_document_hashes() Dict[str, str] #
+Get the stored hash for all documents.
+- get_all_ref_doc_info() Optional[Dict[str, RefDocInfo]] #
+Get a mapping of ref_doc_id -> RefDocInfo for all ingested documents.
+- get_document(doc_id: str, raise_error: bool = True) Optional[BaseNode] #
+Get a document from the store.
+- Parameters
+doc_id (str) – document id
+raise_error (bool) – raise error if doc_id not found
+-
+- get_document_hash(doc_id: str) Optional[str] #
+Get the stored hash for a document, if it exists.
+- get_node(node_id: str, raise_error: bool = True) BaseNode #
+Get node from docstore.
+- Parameters
+node_id (str) – node id
+raise_error (bool) – raise error if node_id not found
+-
+- get_node_dict(node_id_dict: Dict[int, str]) Dict[int, BaseNode] #
+Get node dict from docstore given a mapping of index to node ids.
+- Parameters
+node_id_dict (Dict[int, str]) – mapping of index to node ids
+- get_nodes(node_ids: List[str], raise_error: bool = True) List[BaseNode] #
+Get nodes from docstore.
+- Parameters
+node_ids (List[str]) – node ids
+raise_error (bool) – raise error if node_id not found
+-
+- get_ref_doc_info(ref_doc_id: str) Optional[RefDocInfo] #
+Get the RefDocInfo for a given ref_doc_id.
+- persist(persist_path: str = './storage/docstore.json', fs: Optional[AbstractFileSystem] = None) None #
+Persist the store.
+- ref_doc_exists(ref_doc_id: str) bool #
+Check if a ref_doc_id has been ingested.
+- set_document_hash(doc_id: str, doc_hash: str) None #
+Set the hash for a given doc_id.
+- set_document_hashes(doc_hashes: Dict[str, str]) None #
+Set the hash for a given doc_id.

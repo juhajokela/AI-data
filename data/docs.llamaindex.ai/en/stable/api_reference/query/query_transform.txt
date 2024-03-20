@@ -1,0 +1,44 @@
+Query Transform#
+Query Transforms.
+- class llama_index.core.indices.query.query_transform.DecomposeQueryTransform(llm: Optional[Union[LLMPredictor, LLM]] = None, decompose_query_prompt: Optional[PromptTemplate] = None, verbose: bool = False)#
+Decompose query transform.
+Decomposes query into a subquery given the current index struct. Performs a single step transformation.
+- Parameters
+llm_predictor (Optional[LLM]) – LLM for generating hypothetical documents
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- run(query_bundle_or_str: Union[str, QueryBundle], metadata: Optional[Dict] = None) QueryBundle #
+Run query transform.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- class llama_index.core.indices.query.query_transform.HyDEQueryTransform(llm: Optional[Union[LLMPredictor, LLM]] = None, hyde_prompt: Optional[BasePromptTemplate] = None, include_original: bool = True)#
+Hypothetical Document Embeddings (HyDE) query transform.
+It uses an LLM to generate hypothetical answer(s) to a given query, and use the resulting documents as embedding strings.
+As described in [Precise Zero-Shot Dense Retrieval without Relevance Labels] (https://arxiv.org/abs/2212.10496)
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- run(query_bundle_or_str: Union[str, QueryBundle], metadata: Optional[Dict] = None) QueryBundle #
+Run query transform.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.
+- class llama_index.core.indices.query.query_transform.StepDecomposeQueryTransform(llm: Optional[Union[LLMPredictor, LLM]] = None, step_decompose_query_prompt: Optional[PromptTemplate] = None, verbose: bool = False)#
+Step decompose query transform.
+Decomposes query into a subquery given the current index struct and previous reasoning.
+NOTE: doesn’t work yet.
+- Parameters
+llm_predictor (Optional[LLM]) – LLM for generating hypothetical documents
+- as_query_component(partial: Optional[Dict[str, Any]] = None, **kwargs: Any) QueryComponent #
+Get query component.
+- get_prompts() Dict[str, BasePromptTemplate] #
+Get a prompt.
+- run(query_bundle_or_str: Union[str, QueryBundle], metadata: Optional[Dict] = None) QueryBundle #
+Run query transform.
+- update_prompts(prompts_dict: Dict[str, BasePromptTemplate]) None #
+Update prompts.
+Other prompts will remain in place.

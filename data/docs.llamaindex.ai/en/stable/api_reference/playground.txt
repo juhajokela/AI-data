@@ -1,0 +1,18 @@
+Playground#
+Experiment with different indices, models, and more.
+- class llama_index.core.playground.base.Playground(indices: ~typing.List[~llama_index.core.indices.base.BaseIndex], retriever_modes: ~typing.Dict[~typing.Type[~llama_index.core.indices.base.BaseIndex], ~typing.List[str]] = {<class 'llama_index.core.indices.tree.base.TreeIndex'>: ['select_leaf', 'select_leaf_embedding', 'all_leaf', 'root'], <class 'llama_index.core.indices.list.base.SummaryIndex'>: ['default', 'embedding', 'llm'], <class 'llama_index.core.indices.vector_store.base.VectorStoreIndex'>: ['default']})#
+Experiment with indices, models, embeddings, retriever_modes, and more.
+- compare(query_text: str, to_pandas: bool | None = True) Union[DataFrame, List[Dict[str, Any]]] #
+Compare index outputs on an input query.
+- Parameters
+query_text (str) – Query to run all indices on.
+to_pandas (Optional[bool]) – Return results in a pandas dataframe. True by default.
+-
+- Returns
+The output of each index along with other data, such as the time it took to compute. Results are stored in a Pandas Dataframe or a list of Dicts.
+- classmethod from_docs(documents: ~typing.List[~llama_index.core.schema.Document], index_classes: ~typing.List[~typing.Type[~llama_index.core.indices.base.BaseIndex]] = [<class 'llama_index.core.indices.vector_store.base.VectorStoreIndex'>, <class 'llama_index.core.indices.tree.base.TreeIndex'>, <class 'llama_index.core.indices.list.base.SummaryIndex'>], retriever_modes: ~typing.Dict[~typing.Type[~llama_index.core.indices.base.BaseIndex], ~typing.List[str]] = {<class 'llama_index.core.indices.tree.base.TreeIndex'>: ['select_leaf', 'select_leaf_embedding', 'all_leaf', 'root'], <class 'llama_index.core.indices.list.base.SummaryIndex'>: ['default', 'embedding', 'llm'], <class 'llama_index.core.indices.vector_store.base.VectorStoreIndex'>: ['default']}, **kwargs: ~typing.Any) Playground #
+Initialize with Documents using the default list of indices.
+- Parameters
+documents – A List of Documents to experiment with.
+- property retriever_modes: dict#
+Get Playground’s indices.
