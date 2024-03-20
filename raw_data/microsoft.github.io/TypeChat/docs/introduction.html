@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Introduction - TypeChat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link rel='stylesheet' type='text/css' media='screen' href='main.css'> -->
+    <link href="/TypeChat/css/5.3.0_dist_css_bootstrap.min.css" rel="stylesheet">
+    <link href="/TypeChat/css/styles.css" rel="stylesheet">
+    <script src="/TypeChat/js/interactivity.js" defer=""></script>
+    <noscript><link href="/TypeChat/css/noscript-styles.css" rel="stylesheet"></noscript>
+</head>
+
+<body class="h-100">
+<a class="skip-to-main" href="#site-content" tabindex="0">Skip to main content</a>
+<div class="d-flex w-100 h-100 p-3 mx-auto flex-column">
+<header class="container d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+    <a href="/TypeChat/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+        <!-- <svg class="bi me-2" width="40" height="32">
+            <use xlink:href="#bootstrap"></use>
+        </svg> -->
+        <span class="fs-3" style="margin-right: 2rem;">TypeChat</span>
+    </a>
+
+    <ul class="nav nav-underline"><li class="nav-item"><a href="/TypeChat/" class="nav-link">Home</a></li><li class="nav-item"><a href="/TypeChat/docs/" class="nav-link active" aria-current="page">Docs</a></li><li class="nav-item"><a href="/TypeChat/blog/" class="nav-link">Blog</a></li><li class="nav-item"><a href="https://github.com/microsoft/TypeChat" target="_blank" rel="noopener" class="nav-link">GitHub</a></li></ul>
+</header>
+<div class="d-none" id="site-content"></div>
+
+
+<main>
+<nav class="typechat-docs-smol-nav d-md-none mx-auto text-center">
+    <label class="mb-3">
+    Doc Pages
+    <select class="nav-on-change">
+    
+        <li class="mb-2">
+            <optgroup label="Home">
+                <option value="/TypeChat/docs/introduction/" selected="">Introduction</option>
+                
+                
+                <option value="/TypeChat/docs/examples/">Examples</option>
+                
+                
+                <option value="/TypeChat/docs/techniques/">Techniques</option>
+                
+                
+                <option value="/TypeChat/docs/faq/">FAQ</option>
+                
+                
+            </optgroup>
+        </li>
+    
+    </select>
+    </label>
+    <hr>
+</nav>
+<div class="container d-flex flex-nowrap with-sidebar typechat-cap-content-width">
+<nav class="flex-shrink-0 p-3 d-none d-md-block">
+    <a href="/TypeChat/docs/" class="d-flex align-items-center pb-3 mb-3 link-body-emphasis text-decoration-none border-bottom">
+        <span class="fs-5 fw-semibold">Docs</span>
+    </a>
+    <ul class="list-unstyled ps-0">
+    
+        <li class="mb-2">
+            <div class="mb-2">Home</div>
+            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 ms-2 small">
+                
+                <li class="mb-1">
+                <a href="/TypeChat/docs/introduction/" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Introduction</a>
+                
+                </li>
+                
+                <li class="mb-1">
+                <a href="/TypeChat/docs/examples/" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Examples</a>
+                
+                </li>
+                
+                <li class="mb-1">
+                <a href="/TypeChat/docs/techniques/" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Techniques</a>
+                
+                </li>
+                
+                <li class="mb-1">
+                <a href="/TypeChat/docs/faq/" class="link-body-emphasis d-inline-flex text-decoration-none rounded">FAQ</a>
+                
+                </li>
+                
+            </ul>
+        </li>
+    
+    </ul>
+</nav>
+<article class="container typechat-prose-content">
+<h1>Introduction</h1>
+<p>Large language models (or LLMs) can give us surprisingly rich answers to requests.
+Maybe you've tried chatting with a language model and been delighted at how effective it is to brainstorm with it.</p>
+<blockquote>
+<p><strong>User:</strong></p>
+<p>It's rainy in Seattle (surprise!). Got 3 quick suggestions for what I should do this weekend? Keep it short and direct.</p>
+<p><strong>ChatGPT:</strong></p>
+<ol>
+<li>Visit the Seattle Art Museum (SAM) for a day of artistic inspiration and exploration.</li>
+<li>Enjoy a cozy afternoon at a local coffee shop, sipping your favorite brew and diving into a good book.</li>
+<li>Embrace the rainy weather by taking a scenic drive to Snoqualmie Falls and witness the majestic waterfall in all its splendor.</li>
+</ol>
+</blockquote>
+<p>These models are great chat assistants on their own, but can they be used to add natural language interfaces to an application?
+The answer as many of us have seen is &quot;yes - sort of&quot;, and it really depends on how we ask the model.</p>
+<h2>Adding Structure</h2>
+<p>Remember, by default these models respond in <em>natural language</em> which is how we read and write today;
+but traditional programs are kind of bad at working with these answers.
+Most software expects to work off of a level of structure over bytes, characters, JSON blobs, etc. — not natural languages like English.
+When we don't have structure, we have to parse out what we're interested in, and it might not always be practical.</p>
+<p>One way to add some structure and make parsing easier might be to ask for a list of answers:</p>
+<blockquote>
+<p><strong>User:</strong></p>
+<p>Provide 3 suggestions for specific places to go to in Seattle on a rainy day.
+Respond in the form of a bulleted list.
+Be succinct.</p>
+<p><strong>ChatGPT:</strong></p>
+<ul>
+<li>Seattle Art Museum: Explore the extensive art collection and enjoy the indoor exhibits.</li>
+<li>Chihuly Garden and Glass: Admire the stunning glass artwork of Dale Chihuly in a covered garden and gallery.</li>
+<li>Pacific Science Center: Engage in interactive exhibits, planetarium shows, and IMAX films for a day of educational fun.</li>
+</ul>
+</blockquote>
+<p>Maybe a bulleted list is enough to go off of, but how would we break this data up?
+Strip the leading bullet points and split on <code>&quot;: &quot;</code> to separate the venue from its description?
+What if a venue has a <code>&quot;: &quot;</code> in its name?
+It turns out that we're still left with problems parsing out natural language.</p>
+<p>Now what if we asked the model for a much more structured format like JSON?
+As a matter of fact, many language models are great at generating JSON!</p>
+<blockquote>
+<p><strong>User:</strong>
+Provide 3 suggestions for specific places to go to in Seattle on a rainy day. Respond in the form of JSON. The JSON should have the following format</p>
+<pre class="shiki dark-plus" style="background-color: #1E1E1E" tabindex="0"><code><span class="line"><span style="color: #D4D4D4">[</span></span>
+<span class="line"><span style="color: #D4D4D4">    { </span><span style="color: #9CDCFE">&quot;venue&quot;</span><span style="color: #D4D4D4">: </span><span style="color: #CE9178">&quot;...&quot;</span><span style="color: #D4D4D4">, </span><span style="color: #9CDCFE">&quot;description&quot;</span><span style="color: #D4D4D4">: </span><span style="color: #CE9178">&quot;...&quot;</span><span style="color: #D4D4D4"> },</span></span>
+<span class="line"><span style="color: #D4D4D4">    { </span><span style="color: #9CDCFE">&quot;venue&quot;</span><span style="color: #D4D4D4">: </span><span style="color: #CE9178">&quot;...&quot;</span><span style="color: #D4D4D4">, </span><span style="color: #9CDCFE">&quot;description&quot;</span><span style="color: #D4D4D4">: </span><span style="color: #CE9178">&quot;...&quot;</span><span style="color: #D4D4D4"> }</span></span>
+<span class="line"><span style="color: #D4D4D4">]</span></span>
+<span class="line"></span></code></pre>
+</blockquote>
+<blockquote>
+<p><strong>ChatGPT:</strong></p>
+<pre class="shiki dark-plus" style="background-color: #1E1E1E" tabindex="0"><code><span class="line"><span style="color: #D4D4D4">[</span></span>
+<span class="line"><span style="color: #D4D4D4">    {</span></span>
+<span class="line"><span style="color: #D4D4D4">        </span><span style="color: #9CDCFE">&quot;venue&quot;</span><span style="color: #D4D4D4">: </span><span style="color: #CE9178">&quot;Seattle Art Museum&quot;</span><span style="color: #D4D4D4">,</span></span>
+<span class="line"><span style="color: #D4D4D4">        </span><span style="color: #9CDCFE">&quot;description&quot;</span><span style="color: #D4D4D4">: </span><span style="color: #CE9178">&quot;The Seattle Art Museum (SAM) is a world-class museum with a diverse collection of art from around the globe. It offers a great indoor activity for a rainy day, allowing you to explore various art exhibitions and displays, including contemporary art, African and Oceanic art, and European painting and sculpture.&quot;</span></span>
+<span class="line"><span style="color: #D4D4D4">    },</span></span>
+<span class="line"><span style="color: #D4D4D4">    {</span></span>
+<span class="line"><span style="color: #D4D4D4">        </span><span style="color: #9CDCFE">&quot;venue&quot;</span><span style="color: #D4D4D4">: </span><span style="color: #CE9178">&quot;Chihuly Garden and Glass&quot;</span><span style="color: #D4D4D4">,</span></span>
+<span class="line"><span style="color: #D4D4D4">        </span><span style="color: #9CDCFE">&quot;description&quot;</span><span style="color: #D4D4D4">: </span><span style="color: #CE9178">&quot;Chihuly Garden and Glass is an extraordinary exhibition showcasing the breathtaking glass artwork of Dale Chihuly. Located at the Seattle Center, this indoor attraction offers a mesmerizing experience as you wander through vibrant glass sculptures and installations. The beautiful interplay of light and color will captivate your senses, making it a perfect rainy day destination.&quot;</span></span>
+<span class="line"><span style="color: #D4D4D4">    },</span></span>
+<span class="line"><span style="color: #D4D4D4">    {</span></span>
+<span class="line"><span style="color: #D4D4D4">        </span><span style="color: #9CDCFE">&quot;venue&quot;</span><span style="color: #D4D4D4">: </span><span style="color: #CE9178">&quot;Museum of Pop Culture&quot;</span><span style="color: #D4D4D4">,</span></span>
+<span class="line"><span style="color: #D4D4D4">        </span><span style="color: #9CDCFE">&quot;description&quot;</span><span style="color: #D4D4D4">: </span><span style="color: #CE9178">&quot;The Museum of Pop Culture (MoPOP) is a vibrant museum dedicated to contemporary pop culture, music, science fiction, and more. It features engaging exhibits that celebrate music icons, explore science fiction themes, and delve into the world of video games. Whether you&#39;re a fan of music, movies, or pop culture in general, MoPOP offers an immersive and entertaining experience, making it an ideal choice on a rainy day.&quot;</span></span>
+<span class="line"><span style="color: #D4D4D4">    }</span></span>
+<span class="line"><span style="color: #D4D4D4">]</span></span>
+<span class="line"></span></code></pre>
+</blockquote>
+<p>Here we asked a model to respond directly with JSON code and provided a sort of &quot;template&quot; or example response to guide its answer.
+As you can see, it worked pretty well!</p>
+<p>Example responses are great, but we wondered if there was another approach.
+In our case, we asked whether we could simply guide a model with TypeScript types.</p>
+<blockquote>
+<p><strong>User:</strong>
+Provide 3 suggestions for specific places to go to in Seattle on a rainy day. Respond strictly with JSON. The JSON should be compatible with the TypeScript type <code>Response</code> from the following:</p>
+<pre class="shiki dark-plus" style="background-color: #1E1E1E" tabindex="0"><code><span class="line"><span style="color: #569CD6">interface</span><span style="color: #D4D4D4"> </span><span style="color: #4EC9B0">Response</span><span style="color: #D4D4D4"> {</span></span>
+<span class="line"><span style="color: #D4D4D4">     </span><span style="color: #9CDCFE">data</span><span style="color: #D4D4D4">: </span><span style="color: #4EC9B0">Array</span><span style="color: #D4D4D4">&lt;{ </span><span style="color: #9CDCFE">venue</span><span style="color: #D4D4D4">: </span><span style="color: #4EC9B0">string</span><span style="color: #D4D4D4">, </span><span style="color: #9CDCFE">description</span><span style="color: #D4D4D4">: </span><span style="color: #4EC9B0">string</span><span style="color: #D4D4D4"> }&gt;;</span></span>
+<span class="line"><span style="color: #D4D4D4">}</span></span>
+<span class="line"></span></code></pre>
+<p><strong>ChatGPT:</strong></p>
+<pre class="shiki dark-plus" style="background-color: #1E1E1E" tabindex="0"><code><span class="line"><span style="color: #D4D4D4">{</span></span>
+<span class="line"><span style="color: #D4D4D4">  </span><span style="color: #9CDCFE">&quot;data&quot;</span><span style="color: #D4D4D4">: [</span></span>
+<span class="line"><span style="color: #D4D4D4">    {</span></span>
+<span class="line"><span style="color: #D4D4D4">      </span><span style="color: #9CDCFE">&quot;venue&quot;</span><span style="color: #D4D4D4">: </span><span style="color: #CE9178">&quot;Museum of Pop Culture&quot;</span><span style="color: #D4D4D4">,</span></span>
+<span class="line"><span style="color: #D4D4D4">      </span><span style="color: #9CDCFE">&quot;description&quot;</span><span style="color: #D4D4D4">: </span><span style="color: #CE9178">&quot;Explore the fascinating world of popular culture through interactive exhibits, music memorabilia, and multimedia displays at the Museum of Pop Culture.&quot;</span></span>
+<span class="line"><span style="color: #D4D4D4">    },</span></span>
+<span class="line"><span style="color: #D4D4D4">    {</span></span>
+<span class="line"><span style="color: #D4D4D4">      </span><span style="color: #9CDCFE">&quot;venue&quot;</span><span style="color: #D4D4D4">: </span><span style="color: #CE9178">&quot;Seattle Art Museum&quot;</span><span style="color: #D4D4D4">,</span></span>
+<span class="line"><span style="color: #D4D4D4">      </span><span style="color: #9CDCFE">&quot;description&quot;</span><span style="color: #D4D4D4">: </span><span style="color: #CE9178">&quot;Indulge in the diverse collection of artworks from around the world at the Seattle Art Museum, featuring both contemporary and classical pieces.&quot;</span></span>
+<span class="line"><span style="color: #D4D4D4">    },</span></span>
+<span class="line"><span style="color: #D4D4D4">    {</span></span>
+<span class="line"><span style="color: #D4D4D4">      </span><span style="color: #9CDCFE">&quot;venue&quot;</span><span style="color: #D4D4D4">: </span><span style="color: #CE9178">&quot;Pike Place Market&quot;</span><span style="color: #D4D4D4">,</span></span>
+<span class="line"><span style="color: #D4D4D4">      </span><span style="color: #9CDCFE">&quot;description&quot;</span><span style="color: #D4D4D4">: </span><span style="color: #CE9178">&quot;Enjoy the vibrant atmosphere of Pike Place Market, where you can wander through covered stalls offering fresh produce, crafts, and delicious food from local vendors.&quot;</span></span>
+<span class="line"><span style="color: #D4D4D4">    }</span></span>
+<span class="line"><span style="color: #D4D4D4">  ]</span></span>
+<span class="line"><span style="color: #D4D4D4">}</span></span>
+<span class="line"></span></code></pre>
+</blockquote>
+<p>This works fairly well!
+And despite being conceptually simple, it's a very powerful way to bridge the gap between natural language and something our applications can work with.
+But we wanted to make it as easy as possible to use this pattern, and brush away some of the sharp edges of language model responses.</p>
+<p>This is the key idea behind TypeChat.
+By just giving a model with a schema (some types) and a request, we can integrate natural language into an application and work through well-typed structured data.</p>
+<h2>Introducing TypeChat</h2>
+<p>TypeChat makes it easy to build natural language interfaces using types.</p>
+<p>Simply define types that represent the intents supported in your NL application. That could be as simple as an interface for categorizing sentiment or more complex examples like types for a shopping cart or music application. For example, to add additional intents to a schema, a developer can add the intents using type composition, such as adding additional types into a discriminated union. To make schemas hierarchical, a developer can use a &quot;meta-schema&quot; to choose one or more sub-schemas based on user input.</p>
+<p>After defining your types, TypeChat takes care of the rest by:</p>
+<ol>
+<li>Constructing a prompt to the LLM using types.</li>
+<li>Validating the LLM response conforms to the schema. If the validation fails, repair the non-conforming output through further language model interaction.</li>
+<li>Summarizing succinctly (without use of a LLM) the instance and confirm that it aligns with user intent.</li>
+</ol>
+<p>Types are all you need!</p>
+
+</article>
+</div>
+</main>
+
+<footer class="container mt-auto d-flex flex-wrap justify-content-between align-items-center py-3 border-top">
+    <div class="col-md-4 d-flex align-items-center">
+        <span class="mb-3 mb-md-0 text-body-secondary">© Microsoft</span>
+    </div>
+</footer>
+
+</div>
+</body>
+
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Frequently Asked Questions (FAQ) - TypeChat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link rel='stylesheet' type='text/css' media='screen' href='main.css'> -->
+    <link href="/TypeChat/css/5.3.0_dist_css_bootstrap.min.css" rel="stylesheet">
+    <link href="/TypeChat/css/styles.css" rel="stylesheet">
+    <script src="/TypeChat/js/interactivity.js" defer=""></script>
+    <noscript><link href="/TypeChat/css/noscript-styles.css" rel="stylesheet"></noscript>
+</head>
+
+<body class="h-100">
+<a class="skip-to-main" href="#site-content" tabindex="0">Skip to main content</a>
+<div class="d-flex w-100 h-100 p-3 mx-auto flex-column">
+<header class="container d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+    <a href="/TypeChat/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+        <!-- <svg class="bi me-2" width="40" height="32">
+            <use xlink:href="#bootstrap"></use>
+        </svg> -->
+        <span class="fs-3" style="margin-right: 2rem;">TypeChat</span>
+    </a>
+
+    <ul class="nav nav-underline"><li class="nav-item"><a href="/TypeChat/" class="nav-link">Home</a></li><li class="nav-item"><a href="/TypeChat/docs/" class="nav-link active" aria-current="page">Docs</a></li><li class="nav-item"><a href="/TypeChat/blog/" class="nav-link">Blog</a></li><li class="nav-item"><a href="https://github.com/microsoft/TypeChat" target="_blank" rel="noopener" class="nav-link">GitHub</a></li></ul>
+</header>
+<div class="d-none" id="site-content"></div>
+
+
+<main>
+<nav class="typechat-docs-smol-nav d-md-none mx-auto text-center">
+    <label class="mb-3">
+    Doc Pages
+    <select class="nav-on-change">
+    
+        <li class="mb-2">
+            <optgroup label="Home">
+                
+                <option value="/TypeChat/docs/introduction/">Introduction</option>
+                
+                
+                <option value="/TypeChat/docs/examples/">Examples</option>
+                
+                
+                <option value="/TypeChat/docs/techniques/">Techniques</option>
+                
+                <option value="/TypeChat/docs/faq/" selected="">FAQ</option>
+                
+                
+            </optgroup>
+        </li>
+    
+    </select>
+    </label>
+    <hr>
+</nav>
+<div class="container d-flex flex-nowrap with-sidebar typechat-cap-content-width">
+<nav class="flex-shrink-0 p-3 d-none d-md-block">
+    <a href="/TypeChat/docs/" class="d-flex align-items-center pb-3 mb-3 link-body-emphasis text-decoration-none border-bottom">
+        <span class="fs-5 fw-semibold">Docs</span>
+    </a>
+    <ul class="list-unstyled ps-0">
+    
+        <li class="mb-2">
+            <div class="mb-2">Home</div>
+            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 ms-2 small">
+                
+                <li class="mb-1">
+                <a href="/TypeChat/docs/introduction/" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Introduction</a>
+                
+                </li>
+                
+                <li class="mb-1">
+                <a href="/TypeChat/docs/examples/" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Examples</a>
+                
+                </li>
+                
+                <li class="mb-1">
+                <a href="/TypeChat/docs/techniques/" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Techniques</a>
+                
+                </li>
+                
+                <li class="mb-1">
+                <a href="/TypeChat/docs/faq/" class="link-body-emphasis d-inline-flex text-decoration-none rounded">FAQ</a>
+                
+                </li>
+                
+            </ul>
+        </li>
+    
+    </ul>
+</nav>
+<article class="container typechat-prose-content">
+<h1>Frequently Asked Questions (FAQ)</h1>
+<h3>What is TypeChat?</h3>
+<p>TypeChat makes it easy to build natural language interfaces using types. These types represent your application's domain, such as an interface for representing user sentiment or types for actions a user could take in a music app.</p>
+<p>After defining your types, TypeChat takes care of the rest by:</p>
+<ol>
+<li>Constructing a prompt to the LLM using types.</li>
+<li>Validating the LLM response conforms to the schema. If the validation fails, repair the non-conforming output through further language model interaction.</li>
+<li>Summarizing succinctly (without use of a LLM) the instance and confirm that it aligns with user intent.</li>
+</ol>
+<p>Types are all you need!</p>
+<h3>Why is TypeChat useful?</h3>
+<p>If you want to add a natural language interface to an app – for example, let’s assume a coffee ordering app that let’s you speak out your order – then you eventually need to translate a request into something precise and concrete that your app can process for tasks like billing, ordering, etc.</p>
+<p>TypeChat lets you push on large language models to do this work without having to worry about how to parse out its response or dealing with “imaginary” items and tasks. This is because everything must be structured JSON that is validated against your types.</p>
+<h3>What are the benefits of using TypeChat?</h3>
+<p>TypeChat was created with the purpose of increasing safety in natural language interfaces.</p>
+<p>We believe TypeChat has three key primary benefits when working with large language models:</p>
+<ol>
+<li>Accurate: Large language models do a great job matching user intent to scoped types. TypeChat's validation and repair cleans up the rest!</li>
+<li>Approachable: No more prompt engineering! Types are all you need. You probably have them already lying around.</li>
+<li>Safety: Types constrain domain and model uncertainty. Repeating back the instance confirms that it aligns with user intent before taking action.</li>
+</ol>
+<h3>How does TypeChat work? How does TypeChat relate to TypeScript?</h3>
+<p>TypeChat uses TypeScript types as the “specification language” for responses from language models. The approach for sending a request is minimal that includes the user's inputs, your types, and text requesting the model to translate the user input into a JSON object in alignment with the TypeScript types.</p>
+<p>Once receiving an AI response, TypeChat uses the TypeScript compiler API under the hood to validate the data based on the types you provided. If validation fails, TypeChat sends a repair prompt back to the model that includes diagnostics from the TypeScript compiler. That’s how TypeChat can guarantee that your response is correctly typed.</p>
+<h3>How reliable is TypeChat?</h3>
+<p>TypeChat is <em>very</em> reliable. Large language models have proven they do well when constrained with unambiguous, formal descriptions of possible outputs. They also perform better the more training they have received. TypeScript is the type system for the world's most popular programming language, and JSON is the interchange format for the most popular programming language. As a result, the model has extreme familiarity with both, increasing accuracy. TypeChat purposely creates the prompt compact, and TypeScript can be as much as 5x more concise than a JSON Schema equivalent. Most of the time, the model responds well to the prompt from TypeChat, and sends back a valid instance. TypeChat adds validation, and (if that fails) self-repairing logic to obtain a valid response from the model using diagnostics from the TypeScript compiler. Finally, TypeChat keeps the user in the loop for final confirmation of intent, serving as a final safety mechanism.</p>
+<h3>What languages does TypeChat support?</h3>
+<p>Currently TypeChat is being developed just for TypeScript and JavaScript. Developers interested in support for additional languages can engage in discussion on TypeChat's repo in GitHub Discussions.</p>
+
+</article>
+</div>
+</main>
+
+<footer class="container mt-auto d-flex flex-wrap justify-content-between align-items-center py-3 border-top">
+    <div class="col-md-4 d-flex align-items-center">
+        <span class="mb-3 mb-md-0 text-body-secondary">© Microsoft</span>
+    </div>
+</footer>
+
+</div>
+</body>
+
+</html>

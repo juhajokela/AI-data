@@ -1,0 +1,4 @@
+TypeChat helps get well-typed responses from language models to build
+pragmatic natural language interfaces.
+All powered through your types.
+npm install typechat

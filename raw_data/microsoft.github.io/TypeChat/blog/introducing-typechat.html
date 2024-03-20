@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Introducing TypeChat - TypeChat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link rel='stylesheet' type='text/css' media='screen' href='main.css'> -->
+    <link href="/TypeChat/css/5.3.0_dist_css_bootstrap.min.css" rel="stylesheet">
+    <link href="/TypeChat/css/styles.css" rel="stylesheet">
+    <script src="/TypeChat/js/interactivity.js" defer=""></script>
+    <noscript><link href="/TypeChat/css/noscript-styles.css" rel="stylesheet"></noscript>
+</head>
+
+<body class="h-100">
+<a class="skip-to-main" href="#site-content" tabindex="0">Skip to main content</a>
+<div class="d-flex w-100 h-100 p-3 mx-auto flex-column">
+<header class="container d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+    <a href="/TypeChat/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+        <!-- <svg class="bi me-2" width="40" height="32">
+            <use xlink:href="#bootstrap"></use>
+        </svg> -->
+        <span class="fs-3" style="margin-right: 2rem;">TypeChat</span>
+    </a>
+
+    <ul class="nav nav-underline"><li class="nav-item"><a href="/TypeChat/" class="nav-link">Home</a></li><li class="nav-item"><a href="/TypeChat/docs/" class="nav-link">Docs</a></li><li class="nav-item"><a href="/TypeChat/blog/" class="nav-link active" aria-current="page">Blog</a></li><li class="nav-item"><a href="https://github.com/microsoft/TypeChat" target="_blank" rel="noopener" class="nav-link">GitHub</a></li></ul>
+</header>
+<div class="d-none" id="site-content"></div>
+
+
+
+<main>
+<nav class="typechat-docs-smol-nav d-md-none mx-auto text-center">
+    <label class="mb-3">
+    Blog Posts
+    <select class="nav-on-change">
+    <option value="/TypeChat/blog/introducing-typechat/" selected="">Introducing TypeChat
+        
+    
+    
+    </option></select>
+    </label>
+    <hr>
+</nav>
+<div class="container d-flex flex-nowrap with-sidebar typechat-cap-content-width">
+<aside class="flex-shrink-0 p-3 d-none d-md-block">
+<a href="/TypeChat/blog/" class="d-flex align-items-center pb-3 mb-3 link-body-emphasis text-decoration-none border-bottom">
+    <span class="fs-5 fw-semibold">Blog Posts</span>
+</a>
+<ul class="list-unstyled ps-0">
+
+    <li class="mb-2">
+        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 ms-2 small">
+            <li class="mb-1"><a href="/TypeChat/blog/introducing-typechat/" class="link-body-emphasis d-inline-flex text-decoration-none rounded active" aria-current="page">Introducing TypeChat</a>
+            
+            </li>
+        </ul>
+    </li>
+
+</ul>
+</aside>
+<article class="typechat-prose-content">
+<h1>Introducing TypeChat</h1>
+<p><em>July 20, 2023 by Anders Hejlsberg, Steve Lucco, Daniel Rosenwasser, Pierce Boggan, Umesh Madan, Mike Hopcroft, and Gayathri Chandrasekaran</em></p>
+<p>In the last few months, we've seen a rush of excitement around the newest wave of large language models.
+While chat assistants have been the most direct application, there's a big question around how to best integrate these models into existing app interfaces.</p>
+<p>In other words, how do we <em>augment</em> traditional UI with natural language interfaces?
+How do we use AI to take a user request and turn it into something our apps can operate on?
+And how do we make sure our apps are safe, and doing work that developers and users alike can trust?</p>
+<p>Today we're releasing <strong>TypeChat</strong>, an experimental library that aims to answer these questions.
+It uses the type definitions in your codebase to retrieve structured AI responses that are type-safe.</p>
+<p>You can get up and running with TypeChat today by running</p>
+<pre class="shiki dark-plus" style="background-color: #1E1E1E" tabindex="0"><code><span class="line"><span style="color: #D4D4D4">npm install typechat</span></span>
+<span class="line"><span style="color: #D4D4D4"></span></span></code></pre>
+<p>and hooking it up with any language model to work with your app.</p>
+<p>But let's first quickly explore why TypeChat exists.</p>
+<h2>Pampering and Parsing</h2>
+<p>The current wave of LLMs default to conversational <em>natural</em> language — languages that humans communicate in like English.
+Parsing natural language is an extremely difficult task, no matter how much you pamper a prompt with rules like &quot;respond in the form a bulleted list&quot;.
+Natural language might have structure, but it's hard for typical software to reconstruct it from raw text.</p>
+<p>Surprisingly, we can ask LLMs to respond in the form of JSON, and they generally respond with something sensible!</p>
+<blockquote>
+<p><strong>User:</strong></p>
+<p>Translate the following request into JSON.</p>
+<blockquote>
+<p>Could I get a blueberry muffin and a grande latte?</p>
+</blockquote>
+<p>Respond only in JSON like the following:</p>
+<pre class="shiki dark-plus" style="background-color: #1E1E1E" tabindex="0"><code><span class="line"><span style="color: #D4D4D4">{</span></span>
+<span class="line"><span style="color: #D4D4D4">    </span><span style="color: #9CDCFE">&quot;items&quot;</span><span style="color: #D4D4D4">: [</span></span>
+<span class="line"><span style="color: #D4D4D4">        { </span><span style="color: #9CDCFE">&quot;name&quot;</span><span style="color: #D4D4D4">: </span><span style="color: #CE9178">&quot;croissant&quot;</span><span style="color: #D4D4D4">, </span><span style="color: #9CDCFE">&quot;quantity&quot;</span><span style="color: #D4D4D4">: </span><span style="color: #B5CEA8">2</span><span style="color: #D4D4D4">  },</span></span>
+<span class="line"><span style="color: #D4D4D4">        { </span><span style="color: #9CDCFE">&quot;name&quot;</span><span style="color: #D4D4D4">: </span><span style="color: #CE9178">&quot;latte&quot;</span><span style="color: #D4D4D4">, </span><span style="color: #9CDCFE">&quot;quantity&quot;</span><span style="color: #D4D4D4">: </span><span style="color: #B5CEA8">1</span><span style="color: #D4D4D4">, </span><span style="color: #9CDCFE">&quot;size&quot;</span><span style="color: #D4D4D4">: </span><span style="color: #CE9178">&quot;tall&quot;</span><span style="color: #D4D4D4"> }</span></span>
+<span class="line"><span style="color: #D4D4D4">    ]</span></span>
+<span class="line"><span style="color: #D4D4D4">}</span></span>
+<span class="line"></span></code></pre>
+<p><strong>ChatBot:</strong></p>
+<pre class="shiki dark-plus" style="background-color: #1E1E1E" tabindex="0"><code><span class="line"><span style="color: #D4D4D4">{</span></span>
+<span class="line"><span style="color: #D4D4D4">    </span><span style="color: #9CDCFE">&quot;items&quot;</span><span style="color: #D4D4D4">: [</span></span>
+<span class="line"><span style="color: #D4D4D4">        {</span></span>
+<span class="line"><span style="color: #D4D4D4">            </span><span style="color: #9CDCFE">&quot;name&quot;</span><span style="color: #D4D4D4">: </span><span style="color: #CE9178">&quot;blueberry muffin&quot;</span><span style="color: #D4D4D4">,</span></span>
+<span class="line"><span style="color: #D4D4D4">            </span><span style="color: #9CDCFE">&quot;quantity&quot;</span><span style="color: #D4D4D4">: </span><span style="color: #B5CEA8">1</span></span>
+<span class="line"><span style="color: #D4D4D4">        },</span></span>
+<span class="line"><span style="color: #D4D4D4">        {</span></span>
+<span class="line"><span style="color: #D4D4D4">            </span><span style="color: #9CDCFE">&quot;name&quot;</span><span style="color: #D4D4D4">: </span><span style="color: #CE9178">&quot;latte&quot;</span><span style="color: #D4D4D4">,</span></span>
+<span class="line"><span style="color: #D4D4D4">            </span><span style="color: #9CDCFE">&quot;quantity&quot;</span><span style="color: #D4D4D4">: </span><span style="color: #B5CEA8">1</span><span style="color: #D4D4D4">,</span></span>
+<span class="line"><span style="color: #D4D4D4">            </span><span style="color: #9CDCFE">&quot;size&quot;</span><span style="color: #D4D4D4">: </span><span style="color: #CE9178">&quot;grande&quot;</span></span>
+<span class="line"><span style="color: #D4D4D4">        }</span></span>
+<span class="line"><span style="color: #D4D4D4">    ]</span></span>
+<span class="line"><span style="color: #D4D4D4">}</span></span>
+<span class="line"></span></code></pre>
+</blockquote>
+<p>This is good — though this example shows the best-case response.
+While examples can help guide structure, they don't define what an AI should return extensively, and they don't provide anything we can validate against.</p>
+<h2>Just Add Types!</h2>
+<p>Luckily <strong>types</strong> do precisely that.
+What we've found is that because LLMs have seen so many type definitions in the wild, types also act as a great guide for how an AI should respond.
+Because we're typically working with JSON — <em>JavaScript</em> Object Notation — and because it's is very near and dear to our hearts, we've been using TypeScript types in our prompts.</p>
+<blockquote>
+<p><strong>User:</strong></p>
+<p>Translate the following request into JSON.</p>
+<blockquote>
+<p>Could I get a blueberry muffin and a grande latte?</p>
+</blockquote>
+<p>Respond only in JSON that satisfies the <code>Response</code> type:</p>
+<pre class="shiki dark-plus" style="background-color: #1E1E1E" tabindex="0"><code><span class="line"><span style="color: #569CD6">type</span><span style="color: #D4D4D4"> </span><span style="color: #4EC9B0">Response</span><span style="color: #D4D4D4"> = {</span></span>
+<span class="line"><span style="color: #D4D4D4">    </span><span style="color: #9CDCFE">items</span><span style="color: #D4D4D4">: </span><span style="color: #4EC9B0">Item</span><span style="color: #D4D4D4">[];</span></span>
+<span class="line"><span style="color: #D4D4D4">};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #569CD6">type</span><span style="color: #D4D4D4"> </span><span style="color: #4EC9B0">Item</span><span style="color: #D4D4D4"> = {</span></span>
+<span class="line"><span style="color: #D4D4D4">    </span><span style="color: #9CDCFE">name</span><span style="color: #D4D4D4">: </span><span style="color: #4EC9B0">string</span><span style="color: #D4D4D4">;</span></span>
+<span class="line"><span style="color: #D4D4D4">    </span><span style="color: #9CDCFE">quantity</span><span style="color: #D4D4D4">: </span><span style="color: #4EC9B0">number</span><span style="color: #D4D4D4">;</span></span>
+<span class="line"><span style="color: #D4D4D4">    </span><span style="color: #9CDCFE">size</span><span style="color: #D4D4D4">?: </span><span style="color: #4EC9B0">string</span><span style="color: #D4D4D4">;</span></span>
+<span class="line"><span style="color: #D4D4D4">    </span><span style="color: #9CDCFE">notes</span><span style="color: #D4D4D4">?: </span><span style="color: #4EC9B0">string</span><span style="color: #D4D4D4">;</span></span>
+<span class="line"><span style="color: #D4D4D4">}</span></span>
+<span class="line"></span></code></pre>
+<p><strong>ChatBot:</strong></p>
+<pre class="shiki dark-plus" style="background-color: #1E1E1E" tabindex="0"><code><span class="line"><span style="color: #D4D4D4">{</span></span>
+<span class="line"><span style="color: #D4D4D4">  </span><span style="color: #9CDCFE">&quot;items&quot;</span><span style="color: #D4D4D4">: [</span></span>
+<span class="line"><span style="color: #D4D4D4">    {</span></span>
+<span class="line"><span style="color: #D4D4D4">      </span><span style="color: #9CDCFE">&quot;name&quot;</span><span style="color: #D4D4D4">: </span><span style="color: #CE9178">&quot;blueberry muffin&quot;</span><span style="color: #D4D4D4">,</span></span>
+<span class="line"><span style="color: #D4D4D4">      </span><span style="color: #9CDCFE">&quot;quantity&quot;</span><span style="color: #D4D4D4">: </span><span style="color: #B5CEA8">1</span></span>
+<span class="line"><span style="color: #D4D4D4">    },</span></span>
+<span class="line"><span style="color: #D4D4D4">    {</span></span>
+<span class="line"><span style="color: #D4D4D4">      </span><span style="color: #9CDCFE">&quot;name&quot;</span><span style="color: #D4D4D4">: </span><span style="color: #CE9178">&quot;latte&quot;</span><span style="color: #D4D4D4">,</span></span>
+<span class="line"><span style="color: #D4D4D4">      </span><span style="color: #9CDCFE">&quot;quantity&quot;</span><span style="color: #D4D4D4">: </span><span style="color: #B5CEA8">1</span><span style="color: #D4D4D4">,</span></span>
+<span class="line"><span style="color: #D4D4D4">      </span><span style="color: #9CDCFE">&quot;size&quot;</span><span style="color: #D4D4D4">: </span><span style="color: #CE9178">&quot;grande&quot;</span></span>
+<span class="line"><span style="color: #D4D4D4">    }</span></span>
+<span class="line"><span style="color: #D4D4D4">  ]</span></span>
+<span class="line"><span style="color: #D4D4D4">}</span></span>
+<span class="line"></span></code></pre>
+</blockquote>
+<p>This is pretty great!
+TypeScript has shown that it's well-suited to precisely describe JSON.
+But what happens when a language model stumbles and makes up a response that doesn't conform to our types?</p>
+<p>Well because these types are valid TypeScript code, we can validate the response against them using the TypeScript compiler itself!
+In fact, the error feedback from the compiler can even be used to guide repairs.
+When put together, we can get a robust process for getting well-typed responses that our apps can further massage, validate with a user, etc.</p>
+<p>In other words, <strong>types are all you need</strong>.</p>
+<h2>Enter TypeChat</h2>
+<p>The technique of combining a human prompt and a &quot;response schema&quot; is not necessarily unique — but it is promising.
+And as we've focused on translating user intent to structured data, we've found that TypeScript is very well-suited for the task.
+We've grown more confident with this approach, and in order to prove it out, we're releasing a library called TypeChat to help make it easier to use in your apps.
+<a href="https://npmjs.com/package/typechat">TypeChat is already on npm</a> if you want to try it now, and provides tools for prompt prototyping, schema validation, repair, and more.</p>
+<p>Here's the basic code to hook TypeChat up to an LLM and decide if a sentence is negative, neutral, or positive.</p>
+<pre class="shiki dark-plus" style="background-color: #1E1E1E" tabindex="0"><code><span class="line"><span style="color: #6A9955">// ./src/sentimentSchema.ts</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #6A9955">// The following is a schema definition for determining the sentiment of a some user input.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #C586C0">export</span><span style="color: #D4D4D4"> </span><span style="color: #569CD6">interface</span><span style="color: #D4D4D4"> </span><span style="color: #4EC9B0">SentimentResponse</span><span style="color: #D4D4D4"> {</span></span>
+<span class="line"><span style="color: #D4D4D4">    </span><span style="color: #6A9955">/** The sentiment of the text. */</span></span>
+<span class="line"><span style="color: #D4D4D4">    </span><span style="color: #9CDCFE">sentiment</span><span style="color: #D4D4D4">: </span><span style="color: #CE9178">&quot;negative&quot;</span><span style="color: #D4D4D4"> | </span><span style="color: #CE9178">&quot;neutral&quot;</span><span style="color: #D4D4D4"> | </span><span style="color: #CE9178">&quot;positive&quot;</span><span style="color: #D4D4D4">;</span></span>
+<span class="line"><span style="color: #D4D4D4">}</span></span>
+<span class="line"></span></code></pre>
+<pre class="shiki dark-plus" style="background-color: #1E1E1E" tabindex="0"><code><span class="line"><span style="color: #6A9955">// ./src/main.ts</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #C586C0">import</span><span style="color: #D4D4D4"> </span><span style="color: #569CD6">*</span><span style="color: #D4D4D4"> </span><span style="color: #C586C0">as</span><span style="color: #D4D4D4"> </span><span style="color: #9CDCFE">fs</span><span style="color: #D4D4D4"> </span><span style="color: #C586C0">from</span><span style="color: #D4D4D4"> </span><span style="color: #CE9178">&quot;fs&quot;</span><span style="color: #D4D4D4">;</span></span>
+<span class="line"><span style="color: #C586C0">import</span><span style="color: #D4D4D4"> </span><span style="color: #569CD6">*</span><span style="color: #D4D4D4"> </span><span style="color: #C586C0">as</span><span style="color: #D4D4D4"> </span><span style="color: #9CDCFE">path</span><span style="color: #D4D4D4"> </span><span style="color: #C586C0">from</span><span style="color: #D4D4D4"> </span><span style="color: #CE9178">&quot;path&quot;</span><span style="color: #D4D4D4">;</span></span>
+<span class="line"><span style="color: #C586C0">import</span><span style="color: #D4D4D4"> </span><span style="color: #9CDCFE">dotenv</span><span style="color: #D4D4D4"> </span><span style="color: #C586C0">from</span><span style="color: #D4D4D4"> </span><span style="color: #CE9178">&quot;dotenv&quot;</span><span style="color: #D4D4D4">;</span></span>
+<span class="line"><span style="color: #C586C0">import</span><span style="color: #D4D4D4"> </span><span style="color: #569CD6">*</span><span style="color: #D4D4D4"> </span><span style="color: #C586C0">as</span><span style="color: #D4D4D4"> </span><span style="color: #9CDCFE">typechat</span><span style="color: #D4D4D4"> </span><span style="color: #C586C0">from</span><span style="color: #D4D4D4"> </span><span style="color: #CE9178">&quot;typechat&quot;</span><span style="color: #D4D4D4">;</span></span>
+<span class="line"><span style="color: #C586C0">import</span><span style="color: #D4D4D4"> { </span><span style="color: #9CDCFE">SentimentResponse</span><span style="color: #D4D4D4"> } </span><span style="color: #C586C0">from</span><span style="color: #D4D4D4"> </span><span style="color: #CE9178">&quot;./sentimentSchema&quot;</span><span style="color: #D4D4D4">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #6A9955">// Load environment variables.</span></span>
+<span class="line"><span style="color: #9CDCFE">dotenv</span><span style="color: #D4D4D4">.</span><span style="color: #DCDCAA">config</span><span style="color: #D4D4D4">({ </span><span style="color: #9CDCFE">path:</span><span style="color: #D4D4D4"> </span><span style="color: #9CDCFE">path</span><span style="color: #D4D4D4">.</span><span style="color: #DCDCAA">join</span><span style="color: #D4D4D4">(</span><span style="color: #9CDCFE">__dirname</span><span style="color: #D4D4D4">, </span><span style="color: #CE9178">&quot;../.env&quot;</span><span style="color: #D4D4D4">) });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #6A9955">// Create a language model based on the environment variables.</span></span>
+<span class="line"><span style="color: #569CD6">const</span><span style="color: #D4D4D4"> </span><span style="color: #4FC1FF">model</span><span style="color: #D4D4D4"> = </span><span style="color: #9CDCFE">typechat</span><span style="color: #D4D4D4">.</span><span style="color: #DCDCAA">createLanguageModel</span><span style="color: #D4D4D4">(</span><span style="color: #9CDCFE">process</span><span style="color: #D4D4D4">.</span><span style="color: #9CDCFE">env</span><span style="color: #D4D4D4">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #6A9955">// Load up the contents of our &quot;Response&quot; schema.</span></span>
+<span class="line"><span style="color: #569CD6">const</span><span style="color: #D4D4D4"> </span><span style="color: #4FC1FF">schema</span><span style="color: #D4D4D4"> = </span><span style="color: #9CDCFE">fs</span><span style="color: #D4D4D4">.</span><span style="color: #DCDCAA">readFileSync</span><span style="color: #D4D4D4">(</span><span style="color: #9CDCFE">path</span><span style="color: #D4D4D4">.</span><span style="color: #DCDCAA">join</span><span style="color: #D4D4D4">(</span><span style="color: #9CDCFE">__dirname</span><span style="color: #D4D4D4">, </span><span style="color: #CE9178">&quot;sentimentSchema.ts&quot;</span><span style="color: #D4D4D4">), </span><span style="color: #CE9178">&quot;utf8&quot;</span><span style="color: #D4D4D4">);</span></span>
+<span class="line"><span style="color: #569CD6">const</span><span style="color: #D4D4D4"> </span><span style="color: #4FC1FF">translator</span><span style="color: #D4D4D4"> = </span><span style="color: #9CDCFE">typechat</span><span style="color: #D4D4D4">.</span><span style="color: #DCDCAA">createJsonTranslator</span><span style="color: #D4D4D4">&lt;</span><span style="color: #4EC9B0">SentimentResponse</span><span style="color: #D4D4D4">&gt;(</span><span style="color: #9CDCFE">model</span><span style="color: #D4D4D4">, </span><span style="color: #9CDCFE">schema</span><span style="color: #D4D4D4">, </span><span style="color: #CE9178">&quot;SentimentResponse&quot;</span><span style="color: #D4D4D4">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #6A9955">// Process requests interactively.</span></span>
+<span class="line"><span style="color: #9CDCFE">typechat</span><span style="color: #D4D4D4">.</span><span style="color: #DCDCAA">processRequests</span><span style="color: #D4D4D4">(</span><span style="color: #CE9178">&quot;😀&gt; &quot;</span><span style="color: #D4D4D4">, </span><span style="color: #6A9955">/*inputFile*/</span><span style="color: #D4D4D4"> </span><span style="color: #569CD6">undefined</span><span style="color: #D4D4D4">, </span><span style="color: #569CD6">async</span><span style="color: #D4D4D4"> (</span><span style="color: #9CDCFE">request</span><span style="color: #D4D4D4">) </span><span style="color: #569CD6">=&gt;</span><span style="color: #D4D4D4"> {</span></span>
+<span class="line"><span style="color: #D4D4D4">    </span><span style="color: #569CD6">const</span><span style="color: #D4D4D4"> </span><span style="color: #4FC1FF">response</span><span style="color: #D4D4D4"> = </span><span style="color: #C586C0">await</span><span style="color: #D4D4D4"> </span><span style="color: #9CDCFE">translator</span><span style="color: #D4D4D4">.</span><span style="color: #DCDCAA">translate</span><span style="color: #D4D4D4">(</span><span style="color: #9CDCFE">request</span><span style="color: #D4D4D4">);</span></span>
+<span class="line"><span style="color: #D4D4D4">    </span><span style="color: #C586C0">if</span><span style="color: #D4D4D4"> (!</span><span style="color: #9CDCFE">response</span><span style="color: #D4D4D4">.</span><span style="color: #9CDCFE">success</span><span style="color: #D4D4D4">) {</span></span>
+<span class="line"><span style="color: #D4D4D4">        </span><span style="color: #9CDCFE">console</span><span style="color: #D4D4D4">.</span><span style="color: #DCDCAA">log</span><span style="color: #D4D4D4">(</span><span style="color: #9CDCFE">response</span><span style="color: #D4D4D4">.</span><span style="color: #9CDCFE">message</span><span style="color: #D4D4D4">);</span></span>
+<span class="line"><span style="color: #D4D4D4">        </span><span style="color: #C586C0">return</span><span style="color: #D4D4D4">;</span></span>
+<span class="line"><span style="color: #D4D4D4">    }</span></span>
+<span class="line"><span style="color: #D4D4D4">    </span><span style="color: #9CDCFE">console</span><span style="color: #D4D4D4">.</span><span style="color: #DCDCAA">log</span><span style="color: #D4D4D4">(</span><span style="color: #CE9178">`The sentiment is </span><span style="color: #569CD6">${</span><span style="color: #9CDCFE">response</span><span style="color: #D4D4D4">.</span><span style="color: #9CDCFE">data</span><span style="color: #D4D4D4">.</span><span style="color: #9CDCFE">sentiment</span><span style="color: #569CD6">}</span><span style="color: #CE9178">`</span><span style="color: #D4D4D4">);</span></span>
+<span class="line"><span style="color: #D4D4D4">});</span></span>
+<span class="line"></span></code></pre>
+<p>TypeChat can be used in a number of different ways.
+The way we've discussed here so far is all about using a &quot;data schema&quot; to turn some user intent into a structured response;
+however, TypeChat also makes it possible to use an &quot;API schema&quot; to construct basic programs.
+We have some <a href="/TypeChat/docs/">docs</a> and <a href="/TypeChat/docs/examples/">examples</a> to get a sense of the different ways you can use TypeChat.</p>
+<h2>Open and Pluggable</h2>
+<p>First of all, TypeChat is open-source.
+We're MIT-licensed and you can <a href="https://github.com/Microsoft/TypeChat">find us on GitHub</a> where we're eager to hear your thoughts, share our ideas, and build with you.</p>
+<p>Second, TypeChat is built in a way that is meant to be model-neutral.
+While we have some very basic integration with the OpenAI API and the Azure OpenAI service for convenience, this approach should work for any chat completion-style API that you want to use — though note that at the moment, TypeChat works best with models that have been trained on both prose and code.</p>
+<h2>Try It Today!</h2>
+<p>We'd love to know if TypeChat is something that's useful and interests you!
+As we mentioned, we'll be welcoming you on <a href="https://github.com/Microsoft/TypeChat">GitHub</a> if you have any question, suggestions, and more.</p>
+<p>Happy Hacking!</p>
+
+</article>
+</div>
+</main>
+
+<footer class="container mt-auto d-flex flex-wrap justify-content-between align-items-center py-3 border-top">
+    <div class="col-md-4 d-flex align-items-center">
+        <span class="mb-3 mb-md-0 text-body-secondary">© Microsoft</span>
+    </div>
+</footer>
+
+</div>
+</body>
+
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Techniques - TypeChat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link rel='stylesheet' type='text/css' media='screen' href='main.css'> -->
+    <link href="/TypeChat/css/5.3.0_dist_css_bootstrap.min.css" rel="stylesheet">
+    <link href="/TypeChat/css/styles.css" rel="stylesheet">
+    <script src="/TypeChat/js/interactivity.js" defer=""></script>
+    <noscript><link href="/TypeChat/css/noscript-styles.css" rel="stylesheet"></noscript>
+</head>
+
+<body class="h-100">
+<a class="skip-to-main" href="#site-content" tabindex="0">Skip to main content</a>
+<div class="d-flex w-100 h-100 p-3 mx-auto flex-column">
+<header class="container d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+    <a href="/TypeChat/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+        <!-- <svg class="bi me-2" width="40" height="32">
+            <use xlink:href="#bootstrap"></use>
+        </svg> -->
+        <span class="fs-3" style="margin-right: 2rem;">TypeChat</span>
+    </a>
+
+    <ul class="nav nav-underline"><li class="nav-item"><a href="/TypeChat/" class="nav-link">Home</a></li><li class="nav-item"><a href="/TypeChat/docs/" class="nav-link active" aria-current="page">Docs</a></li><li class="nav-item"><a href="/TypeChat/blog/" class="nav-link">Blog</a></li><li class="nav-item"><a href="https://github.com/microsoft/TypeChat" target="_blank" rel="noopener" class="nav-link">GitHub</a></li></ul>
+</header>
+<div class="d-none" id="site-content"></div>
+
+
+<main>
+<nav class="typechat-docs-smol-nav d-md-none mx-auto text-center">
+    <label class="mb-3">
+    Doc Pages
+    <select class="nav-on-change">
+    
+        <li class="mb-2">
+            <optgroup label="Home">
+                
+                <option value="/TypeChat/docs/introduction/">Introduction</option>
+                
+                
+                <option value="/TypeChat/docs/examples/">Examples</option>
+                
+                <option value="/TypeChat/docs/techniques/" selected="">Techniques</option>
+                
+                
+                <option value="/TypeChat/docs/faq/">FAQ</option>
+                
+                
+            </optgroup>
+        </li>
+    
+    </select>
+    </label>
+    <hr>
+</nav>
+<div class="container d-flex flex-nowrap with-sidebar typechat-cap-content-width">
+<nav class="flex-shrink-0 p-3 d-none d-md-block">
+    <a href="/TypeChat/docs/" class="d-flex align-items-center pb-3 mb-3 link-body-emphasis text-decoration-none border-bottom">
+        <span class="fs-5 fw-semibold">Docs</span>
+    </a>
+    <ul class="list-unstyled ps-0">
+    
+        <li class="mb-2">
+            <div class="mb-2">Home</div>
+            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 ms-2 small">
+                
+                <li class="mb-1">
+                <a href="/TypeChat/docs/introduction/" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Introduction</a>
+                
+                </li>
+                
+                <li class="mb-1">
+                <a href="/TypeChat/docs/examples/" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Examples</a>
+                
+                </li>
+                
+                <li class="mb-1">
+                <a href="/TypeChat/docs/techniques/" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Techniques</a>
+                
+                </li>
+                
+                <li class="mb-1">
+                <a href="/TypeChat/docs/faq/" class="link-body-emphasis d-inline-flex text-decoration-none rounded">FAQ</a>
+                
+                </li>
+                
+            </ul>
+        </li>
+    
+    </ul>
+</nav>
+<article class="container typechat-prose-content">
+<h1>Techniques</h1>
+<p>This document defines techniques for working with TypeChat.</p>
+<h3>Schema Engineering</h3>
+<p>TypeChat replaces <em>prompt engineering</em> with <em>schema engineering</em>: Instead of writing unstructured natural language prompts to describe the format of your desired output, you write TypeScript type definitions. These TypeScript schema aren't necessarily the exact types your application uses to process and store your data. Rather, they're types that bridge between natural language and your application logic by <em>controlling and constraining</em> LLM responses in ways that are meaningful to your application.</p>
+<p>To use an analogy, in the Model-View-ViewModel (MVVM) user interface design pattern, the ViewModel bridges between the user interface and the application logic, but it isn't the model the application uses to process and store information. The schema you design for TypeChat are like the ViewModel, but are perhaps more meaningfully called <em>Response Models</em>.</p>
+<p>To maximize success with TypeChat, we recommend the following best practices when defining Response Model types:</p>
+<ul>
+<li>Keep it simple (primitives, arrays, and objects).</li>
+<li>Only use types that are representable as JSON (i.e. no classes).</li>
+<li>Make data structures as flat and regular as possible.</li>
+<li>Include comments on types and properties that describe intent in natural language.</li>
+<li>Restrict use of generics.</li>
+<li>Avoid deep inheritance hierarchies.</li>
+<li>Don't use conditional, mapped, and indexed access types.</li>
+<li>Allow room for LLMs to color slightly outside the lines (e.g. use <code>string</code> instead of literal types).</li>
+<li>Include an escape hatch to suppress hallucinations.</li>
+</ul>
+<p>The last point merits further elaboration. We've found that when Response Models attempt to fit user requests into narrow schema with no wiggle room, the LLMs are likely to hallucinate answers for user requests that are outside the domain. For example, if you ask your coffee shop bot for &quot;two tall trees&quot;, given no other option it may well turn that into two tall lattes (without letting you know it did so).</p>
+<p>However, when you include an <em>escape hatch</em> in the form of an &quot;unknown&quot; category in your schema, the LLMs happily route non-domain requests into that bucket. Not only does this greatly suppress hallucinations, it also gives you a convenient way of letting the user know which parts of a request weren't understood. The examples in the TypeChat repo all use this technique.</p>
+
+</article>
+</div>
+</main>
+
+<footer class="container mt-auto d-flex flex-wrap justify-content-between align-items-center py-3 border-top">
+    <div class="col-md-4 d-flex align-items-center">
+        <span class="mb-3 mb-md-0 text-body-secondary">© Microsoft</span>
+    </div>
+</footer>
+
+</div>
+</body>
+
+</html>
